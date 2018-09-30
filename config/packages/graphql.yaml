@@ -1,11 +1,19 @@
 overblog_graphql:
-    definitions:
-        schema:
-            query: Query
-        mappings:
-            auto_discover: false
-            types:
-                -
-                    type: yaml
-                    dir: "%kernel.project_dir%/config/graphql/types"
-                    suffix: ~
+  definitions:
+    schema:
+      query: Query
+    mappings:
+      auto_discover: false
+      types:
+      -
+        type: yaml
+        dir: "%kernel.project_dir%/config/graphql"
+        suffix: '.root'
+      -
+        type: yaml
+        dir: "%kernel.project_dir%/config/graphql/input"
+        suffix: '.input'
+      -
+        type: yaml
+        dir: "%kernel.project_dir%/config/graphql/type"
+        suffix: '.type'

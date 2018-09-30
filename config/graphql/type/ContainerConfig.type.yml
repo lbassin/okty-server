@@ -1,0 +1,10 @@
+ContainerConfig:
+  type: object
+  config:
+    fields:
+      id:
+        type: 'String!'
+      label:
+        type: 'String!'
+      fields:
+        type: '[ContainerConfigField!]!'

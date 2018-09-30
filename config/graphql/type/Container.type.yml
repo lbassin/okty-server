@@ -1,0 +1,14 @@
+Container:
+  type: object
+  config:
+    fields:
+      name:
+        type: 'String'
+      image:
+        type: 'String!'
+      docker:
+        type: 'String!'
+      version:
+        type: 'String!'
+      config:
+        type: '[ContainerConfig!]!'

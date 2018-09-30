@@ -1,0 +1,8 @@
+Query:
+  type: object
+  config:
+    fields:
+      containers:
+        type: '[Container!]!'
+        description: 'Get list of availables containers'
+        resolve: '@=resolver("App\\GraphQL\\Resolver\\Container\\Containers", [])'
