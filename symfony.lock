@@ -38,6 +38,27 @@
     "nikic/php-parser": {
         "version": "v4.0.4"
     },
+    "overblog/graphiql-bundle": {
+        "version": "0.1",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "0.1",
+            "ref": "fe8d172f2480efc598f5a8be0e732656d3594cec"
+        }
+    },
+    "overblog/graphql-bundle": {
+        "version": "0.11",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "0.11",
+            "ref": "80a27b90b4928728bc2afe3ff1198826e033285c"
+        }
+    },
+    "overblog/graphql-php-generator": {
+        "version": "v0.7.3"
+    },
     "psr/cache": {
         "version": "1.0.1"
     },
@@ -86,6 +107,9 @@
     "symfony/event-dispatcher": {
         "version": "v4.1.4"
     },
+    "symfony/expression-language": {
+        "version": "v4.1.5"
+    },
     "symfony/filesystem": {
         "version": "v4.1.4"
     },
@@ -116,6 +140,9 @@
     "symfony/http-kernel": {
         "version": "v4.1.4"
     },
+    "symfony/inflector": {
+        "version": "v4.1.5"
+    },
     "symfony/maker-bundle": {
         "version": "1.0",
         "recipe": {
@@ -137,6 +164,9 @@
             "ref": "18ebf5a940573a20de06f9c4060101eeb438cf3d"
         }
     },
+    "symfony/options-resolver": {
+        "version": "v4.1.5"
+    },
     "symfony/phpunit-bridge": {
         "version": "4.1",
         "recipe": {
@@ -149,6 +179,9 @@
     "symfony/polyfill-mbstring": {
         "version": "v1.9.0"
     },
+    "symfony/property-access": {
+        "version": "v4.1.5"
+    },
     "symfony/routing": {
         "version": "4.0",
         "recipe": {
@@ -158,7 +191,25 @@
             "ref": "5f514d9d3b8a8aac3d62ae6a86b18b90ed0c7826"
         }
     },
+    "symfony/twig-bridge": {
+        "version": "v4.1.5"
+    },
+    "symfony/twig-bundle": {
+        "version": "3.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.3",
+            "ref": "369b5b29dc52b2c190002825ae7ec24ab6f962dd"
+        }
+    },
     "symfony/yaml": {
         "version": "v4.1.4"
+    },
+    "twig/twig": {
+        "version": "v2.5.0"
+    },
+    "webonyx/graphql-php": {
+        "version": "v0.12.6"
     }
 }
