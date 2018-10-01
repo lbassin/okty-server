@@ -5,7 +5,7 @@ ContainerConfigField:
       id:
         type: 'String!'
       label:
-        type: 'String!'
+        type: 'String'
       type:
         type: 'String!'
       base:
@@ -15,4 +15,5 @@ ContainerConfigField:
       value:
         type: 'String!'
       validators:
-        type: '[Validator!]!'
+        type: '[Validator]'
+        resolve: '@=resolver("App\\GraphQL\\Resolver\\Container\\Validators", [value])'
