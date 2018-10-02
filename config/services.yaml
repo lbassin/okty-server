@@ -35,3 +35,4 @@ services:
             $githubRepo: 'okty-config'
             $githubBranch: 'master'
             $containersPath: 'config/containers'
+            $templatesPath: 'config/templates'

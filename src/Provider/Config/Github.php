@@ -16,6 +16,7 @@ class Github implements ConfigProvider
     private $githubRepo;
     private $githubBranch;
     private $containersPath;
+    private $templatesPath;
     private $cache;
 
     public function __construct(
@@ -24,6 +25,7 @@ class Github implements ConfigProvider
         string $githubRepo,
         string $githubBranch,
         string $containersPath,
+        string $templatesPath,
         CacheItemPoolInterface $cache
     )
     {
@@ -32,6 +34,7 @@ class Github implements ConfigProvider
         $this->githubRepo = $githubRepo;
         $this->githubBranch = $githubBranch;
         $this->containersPath = $containersPath;
+        $this->templatesPath = $templatesPath;
         $this->cache = $cache;
     }
 
@@ -80,6 +83,37 @@ class Github implements ConfigProvider
         $this->cache->save($cacheEntry->set($container)->expiresAfter(3600));
 
         return $container;
+    }
+
+    public function getAllTemplates(): array
+    {
+        /** @var array $templates */
+        $templates = [];
+        /** @var array $list */
+        $list = $this->getTree($this->templatesPath);
+
+        foreach ($list as $data) {
+            if (!isset($data['name'])) {
+                continue;
+            }
+
+            $templates[] = $this->getTemplate($data['name']);
+        }
+
+        return $templates;
+    }
+
+    public function getTemplate(string $name): array
+    {
+        /** @var Repo $repo */
+        $repo = $this->client->api('repo');
+        $path = $this->templatesPath . '/' . $name;
+
+        /** @var array $data */
+        $data = $repo->contents()->show($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
+        $content = base64_decode($data['content'] ?? '');
+
+        return Yaml::parse($content, Yaml::PARSE_OBJECT);
     }
 
     private function getTree(string $path): array
