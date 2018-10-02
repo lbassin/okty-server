@@ -3,4 +3,4 @@ framework:
     session:
         storage_id: session.storage.mock_file
     cache:
-        app: cache.adapter.null
+        app: cache.adapter.filesystem

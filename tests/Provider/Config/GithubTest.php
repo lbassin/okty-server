@@ -35,6 +35,8 @@ class GithubTest extends WebTestCase
         self::$container->set('Github\Client', $this->mockClient);
 
         $this->github = self::$container->get('App\Provider\Config\Github');
+
+        self::$container->get('Psr\Cache\CacheItemPoolInterface')->clear();
     }
 
     private function getTwoContainers()
@@ -86,6 +88,29 @@ class GithubTest extends WebTestCase
 
         $this->assertSame('container_id', $containers[1]['config'][0]['fields'][0]['base']);
         $this->assertCount(2, $containers[1]['config'][1]['fields'][0]['validators']);
+    }
+
+    public function testGetContainersCache()
+    {
+        self::$container->get('Psr\Cache\CacheItemPoolInterface')->clear();
+
+        $apiResponse = [
+            ["name" => "adminer.yml", "path" => "config/containers/adminer.yml", "size" => "634", "type" => "file"]
+        ];
+
+        $fixturesPath = self::$kernel->getRootDir() . '/../tests/Provider/Config/Fixtures/';
+        $adminerContainer = ["content" => base64_encode(file_get_contents($fixturesPath . 'adminer.yml'))];
+
+        $this->mockContents
+            ->expects($this->exactly(3))
+            ->method('show')
+            ->willReturnOnConsecutiveCalls($apiResponse, $adminerContainer, $apiResponse);
+
+        /** @var Container[] $containers */
+        $this->github->getAllContainers();
+        $containers = $this->github->getAllContainers();
+
+        $this->assertCount(1, $containers);
     }
 
     protected function tearDown()
