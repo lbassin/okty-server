@@ -21,7 +21,7 @@
         <env name="GITHUB_SECRET" value="password_or_token"/>
         <!-- ###- knplabs/github-api ### -->
 
-        <env name="REDIS_HOST" value=""/>
+        <env name="REDIS_URL" value=""/>
     </php>
 
     <testsuites>
