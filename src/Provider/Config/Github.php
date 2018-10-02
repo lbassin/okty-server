@@ -4,6 +4,9 @@ namespace App\Provider\Config;
 
 use Github\Api\Repo;
 use Github\Client;
+use Psr\Cache\CacheItemInterface;
+use Psr\Cache\CacheItemPoolInterface;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Yaml\Yaml;
 
 class Github implements ConfigProvider
@@ -13,13 +16,15 @@ class Github implements ConfigProvider
     private $githubRepo;
     private $githubBranch;
     private $containersPath;
+    private $cache;
 
     public function __construct(
         Client $client,
         string $githubUser,
         string $githubRepo,
         string $githubBranch,
-        string $containersPath
+        string $containersPath,
+        CacheItemPoolInterface $cache
     )
     {
         $this->client = $client;
@@ -27,6 +32,7 @@ class Github implements ConfigProvider
         $this->githubRepo = $githubRepo;
         $this->githubBranch = $githubBranch;
         $this->containersPath = $containersPath;
+        $this->cache = $cache;
     }
 
     public function getAllContainers(): array
@@ -41,14 +47,27 @@ class Github implements ConfigProvider
                 continue;
             }
 
-            $containers[] = $this->getContainer($data['name']);
+            try {
+                $containers[] = $this->getContainer($data['name']);
+            } catch (InvalidArgumentException $exception) {
+                continue;
+            }
         }
 
         return $containers;
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function getContainer(string $name): array
     {
+        /** @var CacheItemInterface $cacheEntry */
+        $cacheEntry = $this->cache->getItem(md5($name));
+        if ($cacheEntry->isHit()) {
+            return $cacheEntry->get();
+        }
+
         /** @var Repo $repo */
         $repo = $this->client->api('repo');
         $path = $this->containersPath . '/' . $name;
@@ -57,7 +76,10 @@ class Github implements ConfigProvider
         $data = $repo->contents()->show($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
         $content = base64_decode($data['content'] ?? '');
 
-        return Yaml::parse($content, Yaml::PARSE_OBJECT);
+        $container = Yaml::parse($content, Yaml::PARSE_OBJECT);
+        $this->cache->save($cacheEntry->set($container)->expiresAfter(3600));
+
+        return $container;
     }
 
     private function getTree(string $path): array
