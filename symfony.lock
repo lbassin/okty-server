@@ -104,6 +104,9 @@
     "php-http/promise": {
         "version": "v1.0.0"
     },
+    "predis/predis": {
+        "version": "v1.1.1"
+    },
     "psr/cache": {
         "version": "1.0.1"
     },

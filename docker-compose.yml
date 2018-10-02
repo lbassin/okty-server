@@ -26,5 +26,8 @@ services:
             - './:/usr/share/nginx/html'
         ports:
             - '8080:80'
+    redis:
+        image: redis:4.0.2
+        hostname: redis
 volumes:
     database:
