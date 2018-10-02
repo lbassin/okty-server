@@ -3,6 +3,6 @@ Validator:
   config:
     fields:
       name:
-        type: 'String!'
+        type: 'String'
       constraint:
-        type: 'String!'
+        type: 'String'
