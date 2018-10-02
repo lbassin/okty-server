@@ -40,80 +40,57 @@ class Github implements ConfigProvider
 
     public function getAllContainers(): array
     {
-        /** @var array $containers */
-        $containers = [];
+        return $this->getAllElements($this->containersPath);
+    }
+
+    public function getAllTemplates(): array
+    {
+        return $this->getAllElements($this->templatesPath);
+    }
+
+    private function getAllElements($path): array
+    {
+        /** @var array $elements */
+        $elements = [];
         /** @var array $list */
-        $list = $this->getTree($this->containersPath);
+        $list = $this->getTree($path);
 
         foreach ($list as $data) {
-            if (!isset($data['name'])) {
-                continue;
-            }
-
             try {
-                $containers[] = $this->getContainer($data['name']);
-            } catch (InvalidArgumentException $exception) {
+                $elements[] = $this->getElement($path, $data['name']);
+            } catch (InvalidArgumentException $e) {
                 continue;
             }
         }
 
-        return $containers;
+        return $elements;
     }
 
     /**
      * @throws InvalidArgumentException
      */
-    public function getContainer(string $name): array
+    private function getElement($path, $name): array
     {
+        $file = $path . '/' . $name;
+
         /** @var CacheItemInterface $cacheEntry */
-        $cacheEntry = $this->cache->getItem(md5($name));
+        $cacheEntry = $this->cache->getItem(md5($file));
         if ($cacheEntry->isHit()) {
             return $cacheEntry->get();
         }
 
         /** @var Repo $repo */
         $repo = $this->client->api('repo');
-        $path = $this->containersPath . '/' . $name;
 
         /** @var array $data */
-        $data = $repo->contents()->show($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
+        $data = $repo->contents()->show($this->githubUser, $this->githubRepo, $file, $this->githubBranch);
         $content = base64_decode($data['content'] ?? '');
 
-        $container = Yaml::parse($content, Yaml::PARSE_OBJECT);
-        $this->cache->save($cacheEntry->set($container)->expiresAfter(3600));
+        /** @var array $element */
+        $element = Yaml::parse($content, Yaml::PARSE_OBJECT);
+        $this->cache->save($cacheEntry->set($element)->expiresAfter(3600));
 
-        return $container;
-    }
-
-    public function getAllTemplates(): array
-    {
-        /** @var array $templates */
-        $templates = [];
-        /** @var array $list */
-        $list = $this->getTree($this->templatesPath);
-
-        foreach ($list as $data) {
-            if (!isset($data['name'])) {
-                continue;
-            }
-
-            $templates[] = $this->getTemplate($data['name']);
-        }
-
-        return $templates;
-    }
-
-    public function getTemplate(string $name): array
-    {
-        /** @var Repo $repo */
-        $repo = $this->client->api('repo');
-        $path = $this->templatesPath . '/' . $name;
-
-        /** @var array $data */
-        $data = $repo->contents()->show($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
-        $content = base64_decode($data['content'] ?? '');
-
-        return Yaml::parse($content, Yaml::PARSE_OBJECT);
+        return $element;
     }
 
     private function getTree(string $path): array
