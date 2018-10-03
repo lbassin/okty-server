@@ -7,6 +7,7 @@
         "ext-iconv": "*",
         "ext-json": "*",
         "knplabs/github-api": "^2.10",
+        "nelmio/cors-bundle": "^1.5",
         "overblog/graphql-bundle": "^0.11.7",
         "php-http/guzzle6-adapter": "^1.1",
         "predis/predis": "^1.1",
