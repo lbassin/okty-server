@@ -4,6 +4,8 @@ namespace App\Provider\Config;
 
 use Github\Api\Repo;
 use Github\Client;
+use Github\Exception\RuntimeException;
+use GraphQL\Error\UserError;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Cache\InvalidArgumentException;
@@ -83,17 +85,18 @@ class Github implements ConfigProvider
                 return $cacheEntry->get();
             }
         } catch (InvalidArgumentException $e) {
-            // Fetch data is cache failed
+            // Fetch data if cache failed
         }
 
-        /** @var Repo $repo */
-        $repo = $this->client->api('repo');
+        try {
+            /** @var Repo $repo */
+            $repo = $this->client->api('repo');
+            $data = $repo->contents()->show($this->githubUser, $this->githubRepo, $file, $this->githubBranch);
+        } catch (RuntimeException $exception) {
+            throw new UserError('Element not found');
+        }
 
-        /** @var array $data */
-        $data = $repo->contents()->show($this->githubUser, $this->githubRepo, $file, $this->githubBranch);
         $content = base64_decode($data['content'] ?? '');
-
-        /** @var array $element */
         $element = Yaml::parse($content, Yaml::PARSE_OBJECT);
         $element['id'] = pathinfo($name, PATHINFO_FILENAME);
 
@@ -104,11 +107,12 @@ class Github implements ConfigProvider
 
     private function getTree(string $path): array
     {
-        /** @var Repo $repo */
-        $repo = $this->client->api('repo');
-        /** @var array $fileInfo */
-        $fileInfo = $repo->contents()->show($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
-
-        return $fileInfo;
+        try {
+            /** @var Repo $repo */
+            $repo = $this->client->api('repo');
+            return $repo->contents()->show($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
+        } catch (RuntimeException $exception) {
+            throw new UserError('Element not found');
+        }
     }
 }
