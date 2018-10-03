@@ -1,0 +1,10 @@
+Template:
+  type: object
+  config:
+    fields:
+      name:
+        type: 'String!'
+      image:
+        type: 'String!'
+      containers:
+        type: '[TemplateConfig!]!'

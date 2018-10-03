@@ -1,0 +1,33 @@
+name: "Symfony 4"
+image: "https://cdn.worldvectorlogo.com/logos/symfony.svg"
+containers:
+- configPath: mysql
+  containerId: mysql
+  config:
+    General_name: mysql
+    General_port: '3306'
+    General_application: "./docker/database"
+    Connection_database_name: docker
+    Connection_database_user: docker
+    Connection_database_password: docker
+    Connection_database_root: 'yes'
+- configPath: adminer
+  containerId: adminer
+  config:
+    General_name: adminer
+    General_port: '8081'
+- configPath: php72
+  containerId: php
+  config:
+    General_name: php
+    General_application: "./"
+    Extensions_extensions: pdo_mysql,intl,opcache
+- configPath: nginx
+  containerId: nginx
+  config:
+    General_name: nginx
+    General_port: '8080'
+    General_application: "./"
+    Nginx_max_upload: 2M
+    Nginx_php: php
+    Nginx_index: public

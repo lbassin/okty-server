@@ -5,4 +5,6 @@ namespace App\Provider\Config;
 interface ConfigProvider
 {
     public function getAllContainers(): array;
+
+    public function getAllTemplates(): array;
 }

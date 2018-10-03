@@ -1,0 +1,11 @@
+TemplateConfig:
+  type: object
+  config:
+    fields:
+      configPath:
+        type: 'String!'
+      containerId:
+        type: 'String!'
+      config:
+        type: '[TemplateConfigField!]!'
+        resolve: '@=resolver("App\\GraphQL\\Resolver\\Template\\Config", [value])'

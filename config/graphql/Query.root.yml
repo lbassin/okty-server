@@ -6,3 +6,7 @@ Query:
         type: '[Container!]!'
         description: 'Get list of availables containers'
         resolve: '@=resolver("App\\GraphQL\\Resolver\\Container\\Containers", [])'
+      templates:
+        type: '[Template!]!'
+        description: 'Get list of availables templates'
+        resolve: '@=resolver("App\\GraphQL\\Resolver\\Template\\Templates", [])'
