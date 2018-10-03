@@ -10,3 +10,10 @@ Query:
         type: '[Template!]!'
         description: 'Get list of availables templates'
         resolve: '@=resolver("App\\GraphQL\\Resolver\\Template\\Templates", [])'
+      template:
+        type: 'Template!'
+        description: 'Get a template'
+        resolve: '@=resolver("App\\GraphQL\\Resolver\\Template\\Template", [args["id"]])'
+        args:
+          id:
+            type: 'String!'

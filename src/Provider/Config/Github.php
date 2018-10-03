@@ -48,6 +48,11 @@ class Github implements ConfigProvider
         return $this->getAllElements($this->templatesPath);
     }
 
+    public function getTemplate(string $id): array
+    {
+        return $this->getElement($this->templatesPath, $id);
+    }
+
     private function getAllElements($path): array
     {
         /** @var array $elements */
@@ -56,27 +61,25 @@ class Github implements ConfigProvider
         $list = $this->getTree($path);
 
         foreach ($list as $data) {
-            try {
-                $elements[] = $this->getElement($path, $data['name']);
-            } catch (InvalidArgumentException $e) {
-                continue;
-            }
+            $elements[] = $this->getElement($path, $data['name']);
         }
 
         return $elements;
     }
 
-    /**
-     * @throws InvalidArgumentException
-     */
     private function getElement($path, $name): array
     {
         $file = $path . '/' . $name;
 
+
         /** @var CacheItemInterface $cacheEntry */
-        $cacheEntry = $this->cache->getItem(md5($file));
-        if ($cacheEntry->isHit()) {
-            return $cacheEntry->get();
+        try {
+            $cacheEntry = $this->cache->getItem(md5($file));
+            if ($cacheEntry->isHit()) {
+                return $cacheEntry->get();
+            }
+        } catch (InvalidArgumentException $e) {
+            // Fetch data is cache failed
         }
 
         /** @var Repo $repo */
@@ -88,6 +91,8 @@ class Github implements ConfigProvider
 
         /** @var array $element */
         $element = Yaml::parse($content, Yaml::PARSE_OBJECT);
+        $element['id'] = pathinfo($name, PATHINFO_FILENAME);
+
         $this->cache->save($cacheEntry->set($element)->expiresAfter(3600));
 
         return $element;
