@@ -2,7 +2,6 @@
 
 namespace App\Tests\Provider\Config;
 
-use App\Entity\Container;
 use App\Provider\Config\Github;
 use Github\Api\Repo;
 use Github\Api\Repository\Contents;
@@ -55,17 +54,32 @@ class GithubTest extends WebTestCase
             ->method('show')
             ->willReturnOnConsecutiveCalls($apiResponse, $adminerContainer, $nginxContainer);
 
-        /** @var Container[] $containers */
-        $containers = $this->github->getAllContainers();
-
-        return $containers;
+        return $this->github->getAllContainers();
     }
 
-    public function testGetAllContainersEmpty()
+    private function getOneTemplate()
+    {
+        $apiResponse = [
+            ["name" => "symfony4.yml", "path" => "config/templates/adminer.yml", "size" => "749", "type" => "file"],
+        ];
+
+        $fixturesPath = self::$kernel->getRootDir() . '/../tests/Provider/Config/Fixtures/';
+        $symfonyTemplate = ["content" => base64_encode(file_get_contents($fixturesPath . 'symfony4.yml'))];
+
+        $this->mockContents
+            ->expects($this->exactly(2))
+            ->method('show')
+            ->willReturnOnConsecutiveCalls($apiResponse, $symfonyTemplate);
+
+        return $this->github->getAllTemplates();
+    }
+
+    public function testGetAllElementsEmpty()
     {
         $this->mockContents->method('show')->willReturn([]);
 
         $this->assertEmpty($this->github->getAllContainers());
+        $this->assertEmpty($this->github->getAllTemplates());
     }
 
     public function testGetAllContainersBasicData()
@@ -79,6 +93,14 @@ class GithubTest extends WebTestCase
         $this->assertSame('https://cdn.worldvectorlogo.com/logos/nginx.svg', $containers[1]['image']);
     }
 
+    public function testGetAllTemplatesBasicData()
+    {
+        $templates = $this->getOneTemplate();
+
+        $this->assertSame('Symfony 4', $templates[0]['name']);
+        $this->assertSame('https://cdn.worldvectorlogo.com/logos/symfony.svg', $templates[0]['image']);
+    }
+
     public function testGetAllContainersConfig()
     {
         $containers = $this->getTwoContainers();
@@ -90,10 +112,19 @@ class GithubTest extends WebTestCase
         $this->assertCount(2, $containers[1]['config'][1]['fields'][0]['validators']);
     }
 
+    public function testGetAllTemplatesContainers()
+    {
+        $templates = $this->getOneTemplate();
+
+        $this->assertCount(4, $templates[0]['containers']);
+        $this->assertCount(7, $templates[0]['containers'][0]['config']);
+
+        $this->assertSame('adminer', $templates[0]['containers'][1]['configPath']);
+        $this->assertSame('adminer', $templates[0]['containers'][1]['containerId']);
+    }
+
     public function testGetContainersCache()
     {
-        self::$container->get('Psr\Cache\CacheItemPoolInterface')->clear();
-
         $apiResponse = [
             ["name" => "adminer.yml", "path" => "config/containers/adminer.yml", "size" => "634", "type" => "file"]
         ];
@@ -106,9 +137,28 @@ class GithubTest extends WebTestCase
             ->method('show')
             ->willReturnOnConsecutiveCalls($apiResponse, $adminerContainer, $apiResponse);
 
-        /** @var Container[] $containers */
         $this->github->getAllContainers();
         $containers = $this->github->getAllContainers();
+
+        $this->assertCount(1, $containers);
+    }
+
+    public function testGetTemplatesCache()
+    {
+        $apiResponse = [
+            ["name" => "symfony4.yml", "path" => "config/templates/adminer.yml", "size" => "749", "type" => "file"],
+        ];
+
+        $fixturesPath = self::$kernel->getRootDir() . '/../tests/Provider/Config/Fixtures/';
+        $symfonyTemplate = ["content" => base64_encode(file_get_contents($fixturesPath . 'symfony4.yml'))];
+
+        $this->mockContents
+            ->expects($this->exactly(3))
+            ->method('show')
+            ->willReturnOnConsecutiveCalls($apiResponse, $symfonyTemplate, $apiResponse);
+
+        $this->github->getAllTemplates();
+        $containers = $this->github->getAllTemplates();
 
         $this->assertCount(1, $containers);
     }
@@ -116,5 +166,8 @@ class GithubTest extends WebTestCase
     protected function tearDown()
     {
         $this->github = null;
+        $this->mockContents = null;
+        $this->mockRepo = null;
+        $this->mockClient = null;
     }
 }
