@@ -43,6 +43,11 @@ class Github implements ConfigProvider
         return $this->getAllElements($this->containersPath);
     }
 
+    public function getContainer(string $id): array
+    {
+        return $this->getElement($this->containersPath, $id);
+    }
+
     public function getAllTemplates(): array
     {
         return $this->getAllElements($this->templatesPath);
@@ -70,7 +75,6 @@ class Github implements ConfigProvider
     private function getElement($path, $name): array
     {
         $file = $path . '/' . $name;
-
 
         /** @var CacheItemInterface $cacheEntry */
         try {

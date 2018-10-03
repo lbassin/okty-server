@@ -9,4 +9,6 @@ interface ConfigProvider
     public function getAllTemplates(): array;
 
     public function getTemplate(string $id): array;
+
+    public function getContainer(string $id): array;
 }
