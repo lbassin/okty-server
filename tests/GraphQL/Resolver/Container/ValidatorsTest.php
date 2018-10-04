@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace App\Test\GraphQL\Resolver\Container;
 
@@ -33,6 +33,18 @@ class ValidatorsTest extends WebTestCase
         $this->assertCount(2, $validators);
         $this->assertSame(['name' => 'required', 'constraint' => true], $validators[0]);
         $this->assertSame(['name' => 'regex', 'constraint' => "^[a-z]+$"], $validators[1]);
+    }
+
+    public function testValidatorArray()
+    {
+        $container = ['validators' => [
+            'number' => ['min' => 1, 'max' => 12],
+        ]];
+
+        $validators = call_user_func($this->resolver, $container);
+
+        $this->assertCount(1, $validators);
+        $this->assertSame(['name' => 'number', 'constraint' => '{"min":1,"max":12}'], $validators[0]);
     }
 
     public function testNoValidators()
