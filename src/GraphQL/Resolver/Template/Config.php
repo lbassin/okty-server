@@ -8,12 +8,12 @@ class Config implements ResolverInterface
 {
     public function __invoke(array $container): array
     {
+        if (!isset($container['config'])) {
+            return [];
+        }
+
         $validators = [];
         foreach ($container['config'] as $key => $value) {
-            if (is_array($value)) {
-                $value = json_encode($value);
-            }
-
             $validators[] = [
                 'label' => $key,
                 'value' => $value

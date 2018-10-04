@@ -6,8 +6,13 @@ use App\Provider\Config\Github;
 use Github\Api\Repo;
 use Github\Api\Repository\Contents;
 use Github\Client;
+use Github\Exception\RuntimeException;
+use GraphQL\Error\ClientAware;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Cache\CacheItemInterface;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Cache\Exception\InvalidArgumentException;
 
 class GithubTest extends WebTestCase
 {
@@ -19,9 +24,31 @@ class GithubTest extends WebTestCase
     private $mockClient;
     /** @var MockObject */
     private $mockContents;
+    /** @var MockObject */
+    private $mockCache;
+    /** @var MockObject */
+    private $mockCacheItem;
 
     protected function setUp()
     {
+        $this->initMocks();
+
+        self::bootKernel();
+        self::$container->set(Client::class, $this->mockClient);
+        self::$container->set(CacheItemPoolInterface::class, $this->mockCache);
+
+        $this->github = self::$container->get(Github::class);
+    }
+
+    private function initMocks()
+    {
+        $this->mockCacheItem = $this->createMock(CacheItemInterface::class);
+        $this->mockCacheItem->method('set')->willReturn($this->mockCacheItem);
+        $this->mockCacheItem->method('expiresAfter')->willReturn($this->mockCacheItem);
+
+        $this->mockCache = $this->createMock(CacheItemPoolInterface::class);
+        $this->mockCache->method('getItem')->willReturn($this->mockCacheItem);
+
         $this->mockContents = $this->createMock(Contents::class);
 
         $this->mockRepo = $this->createMock(Repo::class);
@@ -29,13 +56,6 @@ class GithubTest extends WebTestCase
 
         $this->mockClient = $this->createMock(Client::class);
         $this->mockClient->method('api')->willReturn($this->mockRepo);
-
-        self::bootKernel();
-        self::$container->set('Github\Client', $this->mockClient);
-
-        $this->github = self::$container->get('App\Provider\Config\Github');
-
-        self::$container->get('Psr\Cache\CacheItemPoolInterface')->clear();
     }
 
     private function getTwoContainers()
@@ -132,6 +152,11 @@ class GithubTest extends WebTestCase
         $fixturesPath = self::$kernel->getRootDir() . '/../tests/Provider/Config/Fixtures/';
         $adminerContainer = ["content" => base64_encode(file_get_contents($fixturesPath . 'adminer.yml'))];
 
+        $this->mockCacheItem->method('isHit')->willReturnOnConsecutiveCalls(false, true);
+        $this->mockCacheItem->method('get')->willReturn($adminerContainer);
+
+        $this->mockCache->expects($this->once())->method('save');
+
         $this->mockContents
             ->expects($this->exactly(3))
             ->method('show')
@@ -152,6 +177,11 @@ class GithubTest extends WebTestCase
         $fixturesPath = self::$kernel->getRootDir() . '/../tests/Provider/Config/Fixtures/';
         $symfonyTemplate = ["content" => base64_encode(file_get_contents($fixturesPath . 'symfony4.yml'))];
 
+        $this->mockCacheItem->method('isHit')->willReturnOnConsecutiveCalls(false, true);
+        $this->mockCacheItem->method('get')->willReturn($symfonyTemplate);
+
+        $this->mockCache->expects($this->once())->method('save');
+
         $this->mockContents
             ->expects($this->exactly(3))
             ->method('show')
@@ -161,6 +191,74 @@ class GithubTest extends WebTestCase
         $containers = $this->github->getAllTemplates();
 
         $this->assertCount(1, $containers);
+    }
+
+    public function testGetContainer()
+    {
+        $fixturesPath = self::$kernel->getRootDir() . '/../tests/Provider/Config/Fixtures/';
+        $adminerContainer = ["content" => base64_encode(file_get_contents($fixturesPath . 'adminer.yml'))];
+
+        $this->mockContents
+            ->expects($this->once())
+            ->method('show')->willReturn($adminerContainer);
+
+        $container = $this->github->getContainer('adminer');
+
+        $this->assertSame('Adminer', $container['name']);
+        $this->assertCount(2, $container['config'][0]['fields']);
+        $this->assertCount(7, $container['config'][0]['fields'][0]);
+        $this->assertCount(2, $container['config'][0]['fields'][0]['validators']);
+    }
+
+    public function testGetTemplate()
+    {
+        $fixturesPath = self::$kernel->getRootDir() . '/../tests/Provider/Config/Fixtures/';
+        $symfonyTemplate = ["content" => base64_encode(file_get_contents($fixturesPath . 'symfony4.yml'))];
+
+        $this->mockContents
+            ->expects($this->once())
+            ->method('show')->willReturn($symfonyTemplate);
+
+        $template = $this->github->getTemplate('symfony');
+
+        $this->assertSame('Symfony 4', $template['name']);
+        $this->assertCount(4, $template['containers']);
+        $this->assertCount(7, $template['containers'][0]['config']);
+    }
+
+    public function testGetElementNotFound()
+    {
+        $exception = new RuntimeException();
+        $this->mockContents->method('show')->willThrowException($exception);
+
+        $this->expectException(ClientAware::class);
+        $this->github->getTemplate('non');
+    }
+
+    public function testGetElementsNotFound()
+    {
+        $exception = new RuntimeException();
+        $this->mockContents->method('show')->willThrowException($exception);
+
+        $this->expectException(ClientAware::class);
+        $this->github->getAllTemplates();
+    }
+
+    public function testCacheError()
+    {
+        $exception = new InvalidArgumentException();
+        $this->mockCache->method('getItem')->willThrowException($exception);
+
+        $fixturesPath = self::$kernel->getRootDir() . '/../tests/Provider/Config/Fixtures/';
+        $adminerContainer = ["content" => base64_encode(file_get_contents($fixturesPath . 'adminer.yml'))];
+
+        $this->mockContents
+            ->expects($this->once())
+            ->method('show')->willReturn($adminerContainer);
+
+        $container = $this->github->getContainer('adminer');
+
+        $this->assertSame('Adminer', $container['name']);
     }
 
     protected function tearDown()
