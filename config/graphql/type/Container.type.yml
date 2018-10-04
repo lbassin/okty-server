@@ -2,8 +2,10 @@ Container:
   type: object
   config:
     fields:
+      id:
+        type: 'String!'
       name:
-        type: 'String'
+        type: 'String!'
       image:
         type: 'String!'
       docker:
