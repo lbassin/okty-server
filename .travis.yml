@@ -13,7 +13,7 @@ install:
   - composer install
 
 script:
-  - ./bin/phpunit
+  - ./bin/phpunit --coverage-text
 
 deploy:
   provider: heroku
