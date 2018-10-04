@@ -41,5 +41,4 @@ class ContainersTest extends WebTestCase
         $this->assertSame($adminerContainer, $containers[0]);
         $this->assertSame($nginxContainer, $containers[1]);
     }
-
 }
