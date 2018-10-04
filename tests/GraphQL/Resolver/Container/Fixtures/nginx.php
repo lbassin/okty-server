@@ -9,8 +9,7 @@ return [
         'label' => 'General',
         'fields' => [
             'id' => 'name',
-            'label' => 'Container ID',
-            'validators' => [['name' => 'required', 'value' => true]]
+            'label' => 'Container ID'
         ]
     ]
 ];
