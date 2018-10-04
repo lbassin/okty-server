@@ -78,8 +78,9 @@ class Github implements ConfigProvider
     {
         $file = $path . '/' . $name;
 
-        /** @var CacheItemInterface $cacheEntry */
+        $cacheEntry = null;
         try {
+            /** @var CacheItemInterface $cacheEntry */
             $cacheEntry = $this->cache->getItem(md5($file));
             if ($cacheEntry->isHit()) {
                 return $cacheEntry->get();
@@ -100,7 +101,9 @@ class Github implements ConfigProvider
         $element = Yaml::parse($content, Yaml::PARSE_OBJECT);
         $element['id'] = pathinfo($name, PATHINFO_FILENAME);
 
-        $this->cache->save($cacheEntry->set($element)->expiresAfter(3600));
+        if ($cacheEntry) {
+            $this->cache->save($cacheEntry->set($element)->expiresAfter(3600));
+        }
 
         return $element;
     }

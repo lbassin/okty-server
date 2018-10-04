@@ -1,3 +1,0 @@
-services:
-  Github\Client:
-    public: true
