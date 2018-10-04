@@ -6,6 +6,8 @@ use App\Provider\Config\Github;
 use Github\Api\Repo;
 use Github\Api\Repository\Contents;
 use Github\Client;
+use Github\Exception\RuntimeException;
+use GraphQL\Error\ClientAware;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -161,6 +163,57 @@ class GithubTest extends WebTestCase
         $containers = $this->github->getAllTemplates();
 
         $this->assertCount(1, $containers);
+    }
+
+    public function testGetContainer()
+    {
+        $fixturesPath = self::$kernel->getRootDir() . '/../tests/Provider/Config/Fixtures/';
+        $adminerContainer = ["content" => base64_encode(file_get_contents($fixturesPath . 'adminer.yml'))];
+
+        $this->mockContents
+            ->expects($this->once())
+            ->method('show')->willReturn($adminerContainer);
+
+        $container = $this->github->getContainer('adminer');
+
+        $this->assertSame('Adminer', $container['name']);
+        $this->assertCount(2, $container['config'][0]['fields']);
+        $this->assertCount(7, $container['config'][0]['fields'][0]);
+        $this->assertCount(2, $container['config'][0]['fields'][0]['validators']);
+    }
+
+    public function testGetTemplate()
+    {
+        $fixturesPath = self::$kernel->getRootDir() . '/../tests/Provider/Config/Fixtures/';
+        $symfonyTemplate = ["content" => base64_encode(file_get_contents($fixturesPath . 'symfony4.yml'))];
+
+        $this->mockContents
+            ->expects($this->once())
+            ->method('show')->willReturn($symfonyTemplate);
+
+        $template = $this->github->getTemplate('symfony');
+
+        $this->assertSame('Symfony 4', $template['name']);
+        $this->assertCount(4, $template['containers']);
+        $this->assertCount(7, $template['containers'][0]['config']);
+    }
+
+    public function testGetElementNotFound()
+    {
+        $exception = new RuntimeException();
+        $this->mockContents->method('show')->willThrowException($exception);
+
+        $this->expectException(ClientAware::class);
+        $this->github->getTemplate('non');
+    }
+
+    public function testGetElementsNotFound()
+    {
+        $exception = new RuntimeException();
+        $this->mockContents->method('show')->willThrowException($exception);
+
+        $this->expectException(ClientAware::class);
+        $this->github->getAllTemplates();
     }
 
     protected function tearDown()
