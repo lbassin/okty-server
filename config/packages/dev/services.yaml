@@ -1,0 +1,4 @@
+services:
+  cache.adapter.null:
+    class: \Symfony\Component\Cache\Adapter\NullAdapter
+    arguments: [~]

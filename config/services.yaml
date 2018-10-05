@@ -31,8 +31,8 @@ services:
 
     App\Provider\Config\Github:
         arguments:
-            $githubUser: 'Okty-io'
-            $githubRepo: 'okty-config'
-            $githubBranch: 'master'
+            $githubUser: '%env(CONFIG_GITHUB_USER)%'
+            $githubRepo: '%env(CONFIG_GITHUB_REPO)%'
+            $githubBranch: '%env(CONFIG_GITHUB_BRANCH)%'
             $containersPath: 'config/containers'
             $templatesPath: 'config/templates'
