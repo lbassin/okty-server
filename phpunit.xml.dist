@@ -23,6 +23,10 @@
 
         <env name="REDIS_URL" value=""/>
 
+        <env name="CONFIG_GITHUB_USER" value="Okty-io"/>
+        <env name="CONFIG_GITHUB_REPO" value="okty-server"/>
+        <env name="CONFIG_GITHUB_BRANCH" value="master"/>
+
         <!-- ###+ nelmio/cors-bundle ### -->
         <env name="CORS_ALLOW_ORIGIN" value="^https?://127.0.0.1(:[0-9]+)?$"/>
         <!-- ###- nelmio/cors-bundle ### -->
