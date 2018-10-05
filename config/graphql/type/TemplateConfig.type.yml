@@ -2,9 +2,9 @@ TemplateConfig:
   type: object
   config:
     fields:
-      configPath:
+      id:
         type: 'String!'
-      containerId:
+      container:
         type: 'String!'
       config:
         type: '[TemplateConfigField!]!'
