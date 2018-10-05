@@ -10,7 +10,7 @@ before-install:
   - composer self-update
 
 install:
-  -cp .env.dist .env
+  - cp .env.dist .env
   - composer install --dev
 
 script:
