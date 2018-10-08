@@ -1,0 +1,8 @@
+Source:
+  type: object
+  config:
+    fields:
+      label:
+        type: 'String'
+      value:
+        type: 'String'
