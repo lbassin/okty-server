@@ -14,6 +14,9 @@ ContainerConfigField:
         type: 'String!'
       value:
         type: 'String!'
+      source:
+        type: '[Source!]'
+        resolve: '@=resolver("App\\GraphQL\\Resolver\\Container\\Source", [value])'
       validators:
         type: '[Validator]'
         resolve: '@=resolver("App\\GraphQL\\Resolver\\Container\\Validators", [value])'
