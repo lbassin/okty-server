@@ -2,14 +2,14 @@
 
 namespace App\GraphQL\Resolver\Template;
 
-use App\Provider\Config\ConfigProvider;
+use App\Provider\Config;
 use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
 
 class Templates implements ResolverInterface
 {
     private $configProvider;
 
-    public function __construct(ConfigProvider $configProvider)
+    public function __construct(Config $configProvider)
     {
         $this->configProvider = $configProvider;
     }
