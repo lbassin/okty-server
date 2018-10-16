@@ -50,17 +50,11 @@ class Container
         $this->version = $version;
     }
 
-    /**
-     * @return array
-     */
-    public function getConfig()
+    public function getConfig(): array
     {
         return $this->config;
     }
 
-    /**
-     * @param array $config
-     */
     public function setConfig(array $config): void
     {
         $this->config = $config;

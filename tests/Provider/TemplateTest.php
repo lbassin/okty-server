@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Tests\Provider\Config;
+namespace App\Tests\Provider;
 
-use App\Provider\Config;
+use App\Provider\Container;
 use App\Provider\Github;
 use Github\Exception\RuntimeException;
 use GraphQL\Error\ClientAware;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class ConfigTest extends WebTestCase
+class TemplateTest extends WebTestCase
 {
-    /** @var Config */
-    private $config;
+    /** @var Container */
+    private $container;
     /** @var MockObject|Github */
     private $mockGithub;
 
@@ -24,7 +24,7 @@ class ConfigTest extends WebTestCase
     protected function setUp()
     {
         $this->mockGithub = $this->createMock(Github::class);
-        $this->config = new Config($this->mockGithub, '', '');
+        $this->container = new Container($this->mockGithub, '');
     }
 
     private function getTwoContainers()
@@ -48,7 +48,7 @@ class ConfigTest extends WebTestCase
             ->method('getFile')
             ->willReturnOnConsecutiveCalls($adminerContainer, $nginxContainer);
 
-        return $this->config->getAllContainers();
+        return $this->container->getAll();
     }
 
     private function getOneTemplate()
@@ -70,15 +70,15 @@ class ConfigTest extends WebTestCase
             ->method('getFile')
             ->willReturn($symfonyTemplate);
 
-        return $this->config->getAllTemplates();
+        return $this->container->getAll();
     }
 
     public function testGetAllElementsEmpty()
     {
         $this->mockGithub->method('getTree')->willReturn([]);
 
-        $this->assertEmpty($this->config->getAllContainers());
-        $this->assertEmpty($this->config->getAllTemplates());
+        $this->assertEmpty($this->container->getAll());
+        $this->assertEmpty($this->container->getAllTemplates());
     }
 
     public function testGetAllContainersBasicData()
@@ -131,7 +131,7 @@ class ConfigTest extends WebTestCase
             ->expects($this->once())
             ->method('getFile')->willReturn($adminerContainer);
 
-        $container = $this->config->getContainer('adminer');
+        $container = $this->container->getContainer('adminer');
 
         $this->assertSame('Adminer', $container['name']);
         $this->assertCount(2, $container['config'][0]['fields']);
@@ -148,7 +148,7 @@ class ConfigTest extends WebTestCase
             ->expects($this->once())
             ->method('getFile')->willReturn($symfonyTemplate);
 
-        $template = $this->config->getTemplate('symfony');
+        $template = $this->container->getTemplate('symfony');
 
         $this->assertSame('Symfony 4', $template['name']);
         $this->assertCount(4, $template['containers']);
@@ -161,7 +161,7 @@ class ConfigTest extends WebTestCase
         $this->mockGithub->method('getFile')->willThrowException($exception);
 
         $this->expectException(ClientAware::class);
-        $this->config->getTemplate('non');
+        $this->container->getTemplate('non');
     }
 
     public function testGetElementsNotFound()
@@ -170,12 +170,12 @@ class ConfigTest extends WebTestCase
         $this->mockGithub->method('getTree')->willThrowException($exception);
 
         $this->expectException(ClientAware::class);
-        $this->config->getAllTemplates();
+        $this->container->getAllTemplates();
     }
 
     protected function tearDown()
     {
-        $this->config = null;
+        $this->container = null;
         $this->mockContents = null;
         $this->mockRepo = null;
         $this->mockClient = null;

@@ -2,20 +2,20 @@
 
 namespace App\GraphQL\Resolver\Container;
 
-use App\Provider\Config;
+use App\Provider\Container;
 use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
 
 class Containers implements ResolverInterface
 {
-    private $configProvider;
+    private $containerProvider;
 
-    public function __construct(Config $configProvider)
+    public function __construct(Container $containerProvider)
     {
-        $this->configProvider = $configProvider;
+        $this->containerProvider = $containerProvider;
     }
 
     public function __invoke(): array
     {
-        return $this->configProvider->getAllContainers();
+        return $this->containerProvider->getAll();
     }
 }

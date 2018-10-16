@@ -2,21 +2,20 @@
 
 namespace App\GraphQL\Resolver\Container;
 
-use App\Provider\Config;
 use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
 
 class Container implements ResolverInterface
 {
-    private $configProvider;
+    private $containerProvider;
 
-    public function __construct(Config $configProvider)
+    public function __construct(\App\Provider\Container $containerProvider)
     {
-        $this->configProvider = $configProvider;
+        $this->containerProvider = $containerProvider;
     }
 
     public function __invoke(string $id): array
     {
-        return $this->configProvider->getContainer($id . '.yml');
+        return $this->containerProvider->getFormConfig($id . '.yml');
     }
 
 }

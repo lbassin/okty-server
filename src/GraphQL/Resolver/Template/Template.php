@@ -2,20 +2,19 @@
 
 namespace App\GraphQL\Resolver\Template;
 
-use App\Provider\Config;
 use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
 
 class Template implements ResolverInterface
 {
-    private $configProvider;
+    private $templateProvider;
 
-    public function __construct(Config $configProvider)
+    public function __construct(\App\Provider\Template $templateProvider)
     {
-        $this->configProvider = $configProvider;
+        $this->templateProvider = $templateProvider;
     }
 
     public function __invoke(string $id): array
     {
-        return $this->configProvider->getTemplate($id . '.yml');
+        return $this->templateProvider->getOne($id . '.yml');
     }
 }

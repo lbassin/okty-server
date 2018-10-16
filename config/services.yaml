@@ -37,8 +37,11 @@ services:
             $containersPath: 'config/containers'
             $templatesPath: 'config/templates'
 
-    App\Provider\Config:
+    App\Provider\Container:
         arguments:
-            $containersPath: 'config/containers'
-            $templatesPath: 'config/templates'
+            $path: 'config/containers'
+
+    App\Provider\Template:
+        arguments:
+            $path: 'config/templates'
 
