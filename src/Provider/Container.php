@@ -64,19 +64,4 @@ class Container
 
         return $element;
     }
-
-    public function getAllFilenames($container): array
-    {
-        return [];
-    }
-
-    public function getAllFileConfig($container): array
-    {
-        return [];
-    }
-
-    public function getFileConfig($container, $file): array
-    {
-        return [];
-    }
 }

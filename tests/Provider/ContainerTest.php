@@ -114,6 +114,22 @@ class ContainerTest extends TestCase
         $this->provider->getAll();
     }
 
+    public function testGetManifest()
+    {
+        $manifestTest = file_get_contents($this->fixturesPath . 'manifest.yml');
+
+        $this->mockGithub
+            ->expects($this->once())
+            ->method('getFile')
+            ->willReturn($manifestTest);
+
+        $manifest = $this->provider->getManifest('nginx');
+
+        $this->assertCount(2, $manifest['files']);
+        $this->assertCount(2, $manifest['config']);
+        $this->assertCount(3, $manifest['config']['default.conf']['args']);
+    }
+
     protected function tearDown()
     {
         $this->mockGithub = null;
