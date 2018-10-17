@@ -4,6 +4,8 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    containers_path: 'containers'
+    templates_path: 'templates'
 
 services:
     # default configuration for services in *this* file
@@ -37,9 +39,10 @@ services:
 
     App\Provider\Container:
         arguments:
-            $path: 'containers'
+            $path: '%containers_path%'
 
     App\Provider\Template:
         arguments:
-            $path: 'templates'
+            $path: '%templates_path%'
+
 

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Builder\ContainerBuilder;
 use App\Provider\Container;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,15 +13,15 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class IndexController extends AbstractController
 {
-    private $provider;
+    private $containerBuilder;
 
     /**
      * IndexController constructor.
      * @param Container $provider
      */
-    public function __construct(Container $provider)
+    public function __construct(ContainerBuilder $containerBuilder)
     {
-        $this->provider = $provider;
+        $this->containerBuilder = $containerBuilder;
     }
 
 
@@ -37,9 +38,11 @@ class IndexController extends AbstractController
      */
     public function dev()
     {
-        $manifest = $this->provider->getManifest('nginx');
+        $name = 'nginx';
+        $args = ['php_container_link' => 'php'];
 
-        print_r($manifest);
+        $container = $this->containerBuilder->build($name, $args);
+        print_r($container);
 
         return new Response('', Response::HTTP_OK);
     }

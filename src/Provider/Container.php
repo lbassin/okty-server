@@ -55,7 +55,7 @@ class Container
     public function getManifest($container)
     {
         try {
-            $content = $this->github->getFile($this->path . '/' . $container . '/manifest.yml');
+            $content = $this->github->getFile($this->getPath($container) . 'manifest.yml');
         } catch (RuntimeException $exception) {
             throw new UserError('Element not found');
         }
@@ -63,5 +63,21 @@ class Container
         $element = Yaml::parse($content, Yaml::PARSE_OBJECT);
 
         return $element;
+    }
+
+    public function getResolvers(string $container): string
+    {
+        try {
+            $content = $this->github->getFile($this->getPath($container) . 'resolvers.php');
+
+            return substr($content, 6); // Remove <?php
+        } catch (RuntimeException $ex) {
+            return '';
+        }
+    }
+
+    public function getPath(string $container)
+    {
+        return $this->path . '/' . $container . '/';
     }
 }
