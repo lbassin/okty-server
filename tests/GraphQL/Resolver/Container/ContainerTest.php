@@ -3,14 +3,13 @@
 namespace App\Tests\GraphQL\Resolver\Container;
 
 use App\GraphQL\Resolver\Container\Container;
-use App\Provider\Config\ConfigProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class ContainerTest extends WebTestCase
 {
-    /** @var ConfigProvider|MockObject */
-    private $mockConfig;
+    /** @var \App\Provider\Container|MockObject */
+    private $mockProvider;
     private $resolver;
     private $fixturesPath;
 
@@ -21,8 +20,8 @@ class ContainerTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->mockConfig = $this->createMock(ConfigProvider::class);
-        $this->resolver = new Container($this->mockConfig);
+        $this->mockProvider = $this->createMock(\App\Provider\Container::class);
+        $this->resolver = new Container($this->mockProvider);
         $this->fixturesPath = self::$kernel->getRootDir() . '/../tests/GraphQL/Resolver/Container/Fixtures/';
     }
 
@@ -30,7 +29,7 @@ class ContainerTest extends WebTestCase
     {
         /** @noinspection PhpIncludeInspection */
         $adminerContainer = include $this->fixturesPath . 'adminer.php';
-        $this->mockConfig->method('getContainer')->willReturn($adminerContainer);
+        $this->mockProvider->method('getFormConfig')->willReturn($adminerContainer);
 
         $container = call_user_func($this->resolver, 'adminer');
         $this->assertSame($adminerContainer, $container);

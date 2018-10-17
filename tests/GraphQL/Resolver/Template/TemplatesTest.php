@@ -3,14 +3,14 @@
 namespace App\Tests\Provider\Config;
 
 use App\GraphQL\Resolver\Template\Templates;
-use App\Provider\Config\ConfigProvider;
+use App\Provider\Template;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class TemplatesTest extends WebTestCase
 {
-    /** @var ConfigProvider|MockObject */
-    private $mockConfig;
+    /** @var Template|MockObject */
+    private $mockProvider;
     private $resolver;
     private $fixturesPath;
 
@@ -21,8 +21,8 @@ class TemplatesTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->mockConfig = $this->createMock(ConfigProvider::class);
-        $this->resolver = new Templates($this->mockConfig);
+        $this->mockProvider = $this->createMock(Template::class);
+        $this->resolver = new Templates($this->mockProvider);
         $this->fixturesPath = self::$kernel->getRootDir() . '/../tests/GraphQL/Resolver/Template/Fixtures/';
     }
 
@@ -33,7 +33,7 @@ class TemplatesTest extends WebTestCase
         /** @noinspection PhpIncludeInspection */
         $laravelTemplate = include $this->fixturesPath . 'laravel5.php';
 
-        $this->mockConfig->method('getAllTemplates')->willReturn([$symfonyTemplate, $laravelTemplate]);
+        $this->mockProvider->method('getAll')->willReturn([$symfonyTemplate, $laravelTemplate]);
 
         $containers = call_user_func($this->resolver);
 
