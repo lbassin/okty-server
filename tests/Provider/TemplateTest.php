@@ -36,7 +36,7 @@ class TemplateTest extends WebTestCase
             ["name" => "symfony4.yml", "path" => "config/templates/adminer.yml", "size" => "749", "type" => "file"],
         ];
 
-        $symfonyTemplate = ["content" => file_get_contents($this->fixturesPath . 'symfony4.yml')];
+        $symfonyTemplate = file_get_contents($this->fixturesPath . 'symfony4.yml');
 
         $this->mockGithub
             ->expects($this->once())
@@ -79,7 +79,7 @@ class TemplateTest extends WebTestCase
 
     public function testGetTemplate()
     {
-        $symfonyTemplate = ["content" => file_get_contents($this->fixturesPath . 'symfony4.yml')];
+        $symfonyTemplate = file_get_contents($this->fixturesPath . 'symfony4.yml');
 
         $this->mockGithub
             ->expects($this->once())
