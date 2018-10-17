@@ -2,7 +2,6 @@
 
 namespace App\Provider;
 
-use App\Entity\Manifest;
 use Github\Exception\RuntimeException;
 use GraphQL\Error\UserError;
 use Symfony\Component\Yaml\Yaml;
@@ -37,7 +36,7 @@ class Container
         return $elements;
     }
 
-    public function getFormConfig($container)
+    public function getFormConfig($container): array
     {
         $file = $this->path . '/' . $container;
 
@@ -51,20 +50,13 @@ class Container
         $element = Yaml::parse($content, Yaml::PARSE_OBJECT);
         $element['id'] = pathinfo($container, PATHINFO_FILENAME);
 
-        $container = new \App\Entity\Container();
-        $container->setName((string)$element['name'] ?? '');
-        $container->setImage((string)$element['image'] ?? '');
-        $container->setDocker((string)$element['docker'] ?? '');
-        $container->setVersion((string)$element['version'] ?? '');
-        $container->setConfig((array)$element['config'] ?? []);
-
-        return $container;
+        return $element;
     }
 
-    public function getManifest($container): Manifest
+    public function getManifest($container): array
     {
         //$content = $this->getContent()->download($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
-        return new Manifest();
+        return [];
     }
 
     public function getAllFilenames($container): array
@@ -81,5 +73,4 @@ class Container
     {
         return [];
     }
-
 }

@@ -56,3 +56,4 @@ config:
     base: INDEX_SUBFOLDER
     destination: environment
     value: ""
+

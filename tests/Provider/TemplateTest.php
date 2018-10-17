@@ -2,8 +2,8 @@
 
 namespace App\Tests\Provider;
 
-use App\Provider\Container;
 use App\Provider\Github;
+use App\Provider\Template;
 use Github\Exception\RuntimeException;
 use GraphQL\Error\ClientAware;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -11,10 +11,12 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class TemplateTest extends WebTestCase
 {
-    /** @var Container */
-    private $container;
+    /** @var Template */
+    private $provider;
     /** @var MockObject|Github */
     private $mockGithub;
+
+    private $fixturesPath;
 
     public static function setUpBeforeClass()
     {
@@ -24,31 +26,8 @@ class TemplateTest extends WebTestCase
     protected function setUp()
     {
         $this->mockGithub = $this->createMock(Github::class);
-        $this->container = new Container($this->mockGithub, '');
-    }
-
-    private function getTwoContainers()
-    {
-        $apiResponse = [
-            ["name" => "adminer.yml", "path" => "config/containers/adminer.yml", "size" => "634", "type" => "file"],
-            ["name" => "nginx.yml", "path" => "config/containers/nginx.yml", "size" => "1527", "type" => "file"],
-        ];
-
-        $fixturesPath = self::$kernel->getRootDir() . '/../tests/Provider/Fixtures/';
-        $adminerContainer = ["content" => base64_encode(file_get_contents($fixturesPath . 'adminer.yml'))];
-        $nginxContainer = ["content" => base64_encode(file_get_contents($fixturesPath . 'nginx.yml'))];
-
-        $this->mockGithub
-            ->expects($this->once())
-            ->method('getTree')
-            ->willReturn($apiResponse);
-
-        $this->mockGithub
-            ->expects($this->exactly(2))
-            ->method('getFile')
-            ->willReturnOnConsecutiveCalls($adminerContainer, $nginxContainer);
-
-        return $this->container->getAll();
+        $this->provider = new Template($this->mockGithub, '');
+        $this->fixturesPath = __DIR__ . '/Fixtures/';
     }
 
     private function getOneTemplate()
@@ -57,8 +36,7 @@ class TemplateTest extends WebTestCase
             ["name" => "symfony4.yml", "path" => "config/templates/adminer.yml", "size" => "749", "type" => "file"],
         ];
 
-        $fixturesPath = self::$kernel->getRootDir() . '/../tests/Provider/Fixtures/';
-        $symfonyTemplate = ["content" => base64_encode(file_get_contents($fixturesPath . 'symfony4.yml'))];
+        $symfonyTemplate = ["content" => base64_encode(file_get_contents($this->fixturesPath . 'symfony4.yml'))];
 
         $this->mockGithub
             ->expects($this->once())
@@ -70,26 +48,14 @@ class TemplateTest extends WebTestCase
             ->method('getFile')
             ->willReturn($symfonyTemplate);
 
-        return $this->container->getAll();
+        return $this->provider->getAll();
     }
 
     public function testGetAllElementsEmpty()
     {
         $this->mockGithub->method('getTree')->willReturn([]);
 
-        $this->assertEmpty($this->container->getAll());
-        $this->assertEmpty($this->container->getAllTemplates());
-    }
-
-    public function testGetAllContainersBasicData()
-    {
-        $containers = $this->getTwoContainers();
-
-        $this->assertSame('Adminer', $containers[0]['name']);
-        $this->assertSame('latest', $containers[0]['version']);
-
-        $this->assertSame('okty/nginx', $containers[1]['docker']);
-        $this->assertSame('https://cdn.worldvectorlogo.com/logos/nginx.svg', $containers[1]['image']);
+        $this->assertEmpty($this->provider->getAll());
     }
 
     public function testGetAllTemplatesBasicData()
@@ -98,17 +64,6 @@ class TemplateTest extends WebTestCase
 
         $this->assertSame('Symfony 4', $templates[0]['name']);
         $this->assertSame('https://cdn.worldvectorlogo.com/logos/symfony.svg', $templates[0]['image']);
-    }
-
-    public function testGetAllContainersConfig()
-    {
-        $containers = $this->getTwoContainers();
-
-        $this->assertCount(1, $containers[0]['config']);
-        $this->assertCount(2, $containers[0]['config'][0]['fields']);
-
-        $this->assertSame('container_id', $containers[1]['config'][0]['fields'][0]['base']);
-        $this->assertCount(2, $containers[1]['config'][1]['fields'][0]['validators']);
     }
 
     public function testGetAllTemplatesContainers()
@@ -122,33 +77,15 @@ class TemplateTest extends WebTestCase
         $this->assertSame('adminer', $templates[0]['containers'][1]['containerId']);
     }
 
-    public function testGetContainer()
-    {
-        $fixturesPath = self::$kernel->getRootDir() . '/../tests/Provider/Fixtures/';
-        $adminerContainer = ["content" => base64_encode(file_get_contents($fixturesPath . 'adminer.yml'))];
-
-        $this->mockGithub
-            ->expects($this->once())
-            ->method('getFile')->willReturn($adminerContainer);
-
-        $container = $this->container->getContainer('adminer');
-
-        $this->assertSame('Adminer', $container['name']);
-        $this->assertCount(2, $container['config'][0]['fields']);
-        $this->assertCount(7, $container['config'][0]['fields'][0]);
-        $this->assertCount(2, $container['config'][0]['fields'][0]['validators']);
-    }
-
     public function testGetTemplate()
     {
-        $fixturesPath = self::$kernel->getRootDir() . '/../tests/Provider/Fixtures/';
-        $symfonyTemplate = ["content" => base64_encode(file_get_contents($fixturesPath . 'symfony4.yml'))];
+        $symfonyTemplate = ["content" => base64_encode(file_get_contents($this->fixturesPath . 'symfony4.yml'))];
 
         $this->mockGithub
             ->expects($this->once())
             ->method('getFile')->willReturn($symfonyTemplate);
 
-        $template = $this->container->getTemplate('symfony');
+        $template = $this->provider->getOne('symfony');
 
         $this->assertSame('Symfony 4', $template['name']);
         $this->assertCount(4, $template['containers']);
@@ -161,7 +98,7 @@ class TemplateTest extends WebTestCase
         $this->mockGithub->method('getFile')->willThrowException($exception);
 
         $this->expectException(ClientAware::class);
-        $this->container->getTemplate('non');
+        $this->provider->getOne('non');
     }
 
     public function testGetElementsNotFound()
@@ -170,14 +107,11 @@ class TemplateTest extends WebTestCase
         $this->mockGithub->method('getTree')->willThrowException($exception);
 
         $this->expectException(ClientAware::class);
-        $this->container->getAllTemplates();
+        $this->provider->getAll();
     }
 
     protected function tearDown()
     {
-        $this->container = null;
-        $this->mockContents = null;
-        $this->mockRepo = null;
-        $this->mockClient = null;
+        $this->mockGithub = null;
     }
 }

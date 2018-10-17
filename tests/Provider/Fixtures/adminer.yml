@@ -24,3 +24,12 @@ config:
     validators:
       required: true
       numbers: { min: 0, max: 65535 }
+  - id: test
+    label: "For test only"
+    type: multi-select
+    source:
+      "value1": "Label1"
+      "value2": "Label2"
+    base: PHP_EXTENSIONS
+    destination: environment
+    value: ""
