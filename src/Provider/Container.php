@@ -54,8 +54,15 @@ class Container
 
     public function getManifest($container)
     {
-        $content = $this->github->download('containers/nginx/manifest.yml');
-        return $content;
+        try {
+            $content = $this->github->getFile($this->path . '/' . $container . '/manifest.yml');
+        } catch (RuntimeException $exception) {
+            throw new UserError('Element not found');
+        }
+
+        $element = Yaml::parse($content, Yaml::PARSE_OBJECT);
+
+        return $element;
     }
 
     public function getAllFilenames($container): array

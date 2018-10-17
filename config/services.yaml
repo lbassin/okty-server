@@ -34,14 +34,12 @@ services:
             $githubUser: '%env(CONFIG_GITHUB_USER)%'
             $githubRepo: '%env(CONFIG_GITHUB_REPO)%'
             $githubBranch: '%env(CONFIG_GITHUB_BRANCH)%'
-            $containersPath: 'config/containers'
-            $templatesPath: 'config/templates'
 
     App\Provider\Container:
         arguments:
-            $path: 'config/containers'
+            $path: 'containers'
 
     App\Provider\Template:
         arguments:
-            $path: 'config/templates'
+            $path: 'templates'
 

@@ -4,6 +4,8 @@ namespace App\Provider;
 
 use Github\Api\Repo;
 use Github\Client;
+use Github\Exception\ErrorException;
+use Github\Exception\RuntimeException;
 use Psr\Cache\CacheItemPoolInterface;
 
 /**
@@ -15,8 +17,6 @@ class Github
     private $githubUser;
     private $githubRepo;
     private $githubBranch;
-    private $containersPath;
-    private $templatesPath;
     private $cacheItemPool;
 
     public function __construct(
@@ -24,8 +24,6 @@ class Github
         string $githubUser,
         string $githubRepo,
         string $githubBranch,
-        string $containersPath,
-        string $templatesPath,
         CacheItemPoolInterface $cacheItemPool
     )
     {
@@ -33,8 +31,6 @@ class Github
         $this->githubUser = $githubUser;
         $this->githubRepo = $githubRepo;
         $this->githubBranch = $githubBranch;
-        $this->containersPath = $containersPath;
-        $this->templatesPath = $templatesPath;
         $this->cacheItemPool = $cacheItemPool;
 
         $this->client->addCache($cacheItemPool);
@@ -50,16 +46,15 @@ class Github
 
     public function getFile(string $path): string
     {
-        return $this->getRepo()->contents()->download($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
+        try {
+            return $this->getRepo()->contents()->download($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
+        } catch (ErrorException $e) {
+            throw new RuntimeException($e->getMessage());
+        }
     }
 
     public function getTree(string $path): array
     {
         return $this->getRepo()->contents()->show($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
-    }
-
-    public function download(string $path)
-    {
-        return $this->getRepo()->contents()->download($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
     }
 }
