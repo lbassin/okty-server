@@ -32,8 +32,8 @@ class ContainerTest extends TestCase
             ["name" => "nginx.yml", "path" => "config/containers/nginx.yml", "size" => "1527", "type" => "file"],
         ];
 
-        $adminerContainer = ["content" => base64_encode(file_get_contents($this->fixturesPath . 'adminer.yml'))];
-        $nginxContainer = ["content" => base64_encode(file_get_contents($this->fixturesPath . 'nginx.yml'))];
+        $adminerContainer = ["content" => file_get_contents($this->fixturesPath . 'adminer.yml')];
+        $nginxContainer = ["content" => file_get_contents($this->fixturesPath . 'nginx.yml')];
 
         $this->mockGithub
             ->expects($this->once())
@@ -81,7 +81,7 @@ class ContainerTest extends TestCase
 
     public function testGetContainer()
     {
-        $adminerContainer = ["content" => base64_encode(file_get_contents($this->fixturesPath . 'adminer.yml'))];
+        $adminerContainer = ["content" => file_get_contents($this->fixturesPath . 'adminer.yml')];
 
         $this->mockGithub
             ->expects($this->once())

@@ -41,22 +41,21 @@ class Container
         $file = $this->path . '/' . $container;
 
         try {
-            $data = $this->github->getFile($file);
+            $content = $this->github->getFile($file);
         } catch (RuntimeException $exception) {
             throw new UserError('Element not found');
         }
 
-        $content = base64_decode($data['content'] ?? '');
         $element = Yaml::parse($content, Yaml::PARSE_OBJECT);
         $element['id'] = pathinfo($container, PATHINFO_FILENAME);
 
         return $element;
     }
 
-    public function getManifest($container): array
+    public function getManifest($container)
     {
-        //$content = $this->getContent()->download($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
-        return [];
+        $content = $this->github->download('containers/nginx/manifest.yml');
+        return $content;
     }
 
     public function getAllFilenames($container): array

@@ -48,13 +48,18 @@ class Github
         return $repo;
     }
 
-    public function getFile(string $path): array
+    public function getFile(string $path): string
     {
-        return $this->getRepo()->contents()->show($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
+        return $this->getRepo()->contents()->download($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
     }
 
     public function getTree(string $path): array
     {
         return $this->getRepo()->contents()->show($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
+    }
+
+    public function download(string $path)
+    {
+        return $this->getRepo()->contents()->download($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
     }
 }

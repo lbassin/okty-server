@@ -41,12 +41,11 @@ class Template
         $file = $this->path . '/' . $template;
 
         try {
-            $data = $this->github->getFile($file);
+            $content = $this->github->getFile($file);
         } catch (RuntimeException $exception) {
             throw new UserError('Element not found');
         }
 
-        $content = base64_decode($data['content'] ?? '');
         $element = Yaml::parse($content, Yaml::PARSE_OBJECT);
         $element['id'] = pathinfo($template, PATHINFO_FILENAME);
 
