@@ -96,7 +96,7 @@ class ContainerTest extends TestCase
         $this->assertCount(2, $container['config'][0]['fields'][2]['source']);
     }
 
-    public function testGetElementNotFound()
+    public function testGetContainerNotFound()
     {
         $exception = new RuntimeException();
         $this->mockGithub->method('getFile')->willThrowException($exception);
@@ -105,7 +105,7 @@ class ContainerTest extends TestCase
         $this->provider->getFormConfig('non');
     }
 
-    public function testGetElementsNotFound()
+    public function testGetContainersNotFound()
     {
         $exception = new RuntimeException();
         $this->mockGithub->method('getTree')->willThrowException($exception);
@@ -128,6 +128,40 @@ class ContainerTest extends TestCase
         $this->assertCount(2, $manifest['files']);
         $this->assertCount(2, $manifest['config']);
         $this->assertCount(3, $manifest['config']['default.conf']['args']);
+    }
+
+    public function testGetManifestNotFound()
+    {
+        $exception = new RuntimeException();
+        $this->mockGithub->method('getFile')->willThrowException($exception);
+
+        $this->expectException(ClientAware::class);
+        $this->provider->getManifest('non');
+    }
+
+    public function testGetResolvers()
+    {
+        $resolvers = file_get_contents($this->fixturesPath . 'resolvers.php');
+        $this->mockGithub
+            ->expects($this->once())
+            ->method('getFile')
+            ->willReturn($resolvers);
+
+        $content = $this->provider->getResolvers('nginx');
+
+        $headerRemoved = preg_match('/^<?php/', $content) ? false : true;
+        $this->assertTrue($headerRemoved);
+        $this->assertGreaterThan(1, strlen($content));
+    }
+
+    public function testGetResolversNotFound()
+    {
+        $exception = new RuntimeException();
+        $this->mockGithub->method('getFile')->willThrowException($exception);
+
+        $content = $this->provider->getResolvers('nginx');
+
+        $this->assertEmpty($content);
     }
 
     protected function tearDown()
