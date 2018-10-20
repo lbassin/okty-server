@@ -3,26 +3,23 @@
 namespace App\Tests\GraphQL\Resolver\Container;
 
 use App\GraphQL\Resolver\Container\Container;
+use GraphQL\Error\ClientAware;
 use PHPUnit\Framework\MockObject\MockObject;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
-class ContainerTest extends WebTestCase
+class ContainerTest extends TestCase
 {
-    /** @var \App\Provider\Container|MockObject */
+    /** @var \App\Provider\ContainerProvider|MockObject */
     private $mockProvider;
     private $resolver;
     private $fixturesPath;
 
-    public static function setUpBeforeClass()
-    {
-        self::bootKernel();
-    }
-
     protected function setUp()
     {
-        $this->mockProvider = $this->createMock(\App\Provider\Container::class);
+        $this->mockProvider = $this->createMock(\App\Provider\ContainerProvider::class);
         $this->resolver = new Container($this->mockProvider);
-        $this->fixturesPath = self::$kernel->getRootDir() . '/../tests/GraphQL/Resolver/Container/Fixtures/';
+        $this->fixturesPath = __DIR__ . '/Fixtures/';
     }
 
     public function testInvoke()
@@ -33,5 +30,15 @@ class ContainerTest extends WebTestCase
 
         $container = call_user_func($this->resolver, 'adminer');
         $this->assertSame($adminerContainer, $container);
+    }
+
+    public function testNotFound()
+    {
+        $exception = new FileNotFoundException('');
+        $this->mockProvider->method('getFormConfig')->willThrowException($exception);
+
+        $this->expectException(ClientAware::class);
+
+        call_user_func($this->resolver, '');
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Builder;
 
-use App\Provider\Container;
+use App\Provider\ContainerProvider;
 use App\Provider\Github;
 
 /**
@@ -13,7 +13,7 @@ class ContainerBuilder
     private $github;
     private $container;
 
-    public function __construct(Github $github, Container $container)
+    public function __construct(Github $github, ContainerProvider $container)
     {
         $this->github = $github;
         $this->container = $container;

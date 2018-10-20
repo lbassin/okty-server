@@ -4,9 +4,9 @@ namespace App\Provider;
 
 use Github\Api\Repo;
 use Github\Client;
-use Github\Exception\ErrorException;
 use Github\Exception\RuntimeException;
 use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
@@ -48,13 +48,17 @@ class Github
     {
         try {
             return $this->getRepo()->contents()->download($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
-        } catch (ErrorException $e) {
-            throw new RuntimeException($e->getMessage());
+        } catch (\Exception $e) {
+            throw new FileNotFoundException($e->getMessage());
         }
     }
 
     public function getTree(string $path): array
     {
-        return $this->getRepo()->contents()->show($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
+        try {
+            return $this->getRepo()->contents()->show($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
+        } catch (RuntimeException $e) {
+            throw new FileNotFoundException($path);
+        }
     }
 }

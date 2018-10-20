@@ -2,16 +2,15 @@
 
 namespace App\Tests\Provider;
 
-use App\Provider\Container;
+use App\Provider\ContainerProvider;
 use App\Provider\Github;
-use Github\Exception\RuntimeException;
-use GraphQL\Error\ClientAware;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
-class ContainerTest extends TestCase
+class ContainerProviderTest extends TestCase
 {
-    /** @var Container */
+    /** @var ContainerProvider */
     private $provider;
     /** @var MockObject|Github */
     private $mockGithub;
@@ -21,7 +20,7 @@ class ContainerTest extends TestCase
     protected function setUp()
     {
         $this->mockGithub = $this->createMock(Github::class);
-        $this->provider = new Container($this->mockGithub, '');
+        $this->provider = new ContainerProvider($this->mockGithub, '');
         $this->fixturesPath = __DIR__ . '/Fixtures/';
     }
 
@@ -98,19 +97,19 @@ class ContainerTest extends TestCase
 
     public function testGetContainerNotFound()
     {
-        $exception = new RuntimeException();
+        $exception = new FileNotFoundException('');
         $this->mockGithub->method('getFile')->willThrowException($exception);
 
-        $this->expectException(ClientAware::class);
+        $this->expectException(FileNotFoundException::class);
         $this->provider->getFormConfig('non');
     }
 
     public function testGetContainersNotFound()
     {
-        $exception = new RuntimeException();
+        $exception = new FileNotFoundException('');
         $this->mockGithub->method('getTree')->willThrowException($exception);
 
-        $this->expectException(ClientAware::class);
+        $this->expectException(FileNotFoundException::class);
         $this->provider->getAll();
     }
 
@@ -132,10 +131,10 @@ class ContainerTest extends TestCase
 
     public function testGetManifestNotFound()
     {
-        $exception = new RuntimeException();
+        $exception = new FileNotFoundException('');
         $this->mockGithub->method('getFile')->willThrowException($exception);
 
-        $this->expectException(ClientAware::class);
+        $this->expectException(FileNotFoundException::class);
         $this->provider->getManifest('non');
     }
 
@@ -156,7 +155,7 @@ class ContainerTest extends TestCase
 
     public function testGetResolversNotFound()
     {
-        $exception = new RuntimeException();
+        $exception = new FileNotFoundException('');
         $this->mockGithub->method('getFile')->willThrowException($exception);
 
         $content = $this->provider->getResolvers('nginx');

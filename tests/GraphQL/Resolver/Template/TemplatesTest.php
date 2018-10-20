@@ -1,29 +1,26 @@
 <?php
 
-namespace App\Tests\Provider\Config;
+namespace App\Tests\GraphQL\Resolver\Template;
 
 use App\GraphQL\Resolver\Template\Templates;
-use App\Provider\Template;
+use App\Provider\TemplateProvider;
+use GraphQL\Error\ClientAware;
 use PHPUnit\Framework\MockObject\MockObject;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
-class TemplatesTest extends WebTestCase
+class TemplatesTest extends TestCase
 {
-    /** @var Template|MockObject */
+    /** @var TemplateProvider|MockObject */
     private $mockProvider;
     private $resolver;
     private $fixturesPath;
 
-    public static function setUpBeforeClass()
-    {
-        self::bootKernel();
-    }
-
     protected function setUp()
     {
-        $this->mockProvider = $this->createMock(Template::class);
+        $this->mockProvider = $this->createMock(TemplateProvider::class);
         $this->resolver = new Templates($this->mockProvider);
-        $this->fixturesPath = self::$kernel->getRootDir() . '/../tests/GraphQL/Resolver/Template/Fixtures/';
+        $this->fixturesPath = __DIR__ . '/Fixtures/';
     }
 
     public function testInvoke()
@@ -40,5 +37,15 @@ class TemplatesTest extends WebTestCase
         $this->assertCount(2, $containers);
         $this->assertSame($symfonyTemplate, $containers[0]);
         $this->assertSame($laravelTemplate, $containers[1]);
+    }
+
+    public function testNotFound()
+    {
+        $exception = new FileNotFoundException('');
+        $this->mockProvider->method('getAll')->willThrowException($exception);
+
+        $this->expectException(ClientAware::class);
+
+        call_user_func($this->resolver, '');
     }
 }

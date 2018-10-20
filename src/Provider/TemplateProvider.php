@@ -2,14 +2,12 @@
 
 namespace App\Provider;
 
-use Github\Exception\RuntimeException;
-use GraphQL\Error\UserError;
 use Symfony\Component\Yaml\Yaml;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
-class Template
+class TemplateProvider
 {
     private $github;
     private $path;
@@ -22,13 +20,9 @@ class Template
 
     public function getAll()
     {
-        try {
-            $list = $this->github->getTree($this->path);
-        } catch (RuntimeException $exception) {
-            throw new UserError('Element not found');
-        }
-
         $elements = [];
+
+        $list = $this->github->getTree($this->path);
         foreach ($list as $data) {
             $elements[] = $this->getOne($data['name']);
         }
@@ -40,11 +34,7 @@ class Template
     {
         $file = $this->path . '/' . $template;
 
-        try {
-            $content = $this->github->getFile($file);
-        } catch (RuntimeException $exception) {
-            throw new UserError('Element not found');
-        }
+        $content = $this->github->getFile($file);
 
         $element = Yaml::parse($content, Yaml::PARSE_OBJECT);
         $element['id'] = pathinfo($template, PATHINFO_FILENAME);

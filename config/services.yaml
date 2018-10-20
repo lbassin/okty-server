@@ -37,11 +37,11 @@ services:
             $githubRepo: '%env(CONFIG_GITHUB_REPO)%'
             $githubBranch: '%env(CONFIG_GITHUB_BRANCH)%'
 
-    App\Provider\Container:
+    App\Provider\ContainerProvider:
         arguments:
             $path: '%containers_path%'
 
-    App\Provider\Template:
+    App\Provider\TemplateProvider:
         arguments:
             $path: '%templates_path%'
 

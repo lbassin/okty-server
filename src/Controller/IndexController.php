@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Builder\ContainerBuilder;
-use App\Provider\Container;
+use App\Provider\ContainerProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,7 +17,7 @@ class IndexController extends AbstractController
 
     /**
      * IndexController constructor.
-     * @param Container $provider
+     * @param ContainerProvider $provider
      */
     public function __construct(ContainerBuilder $containerBuilder)
     {

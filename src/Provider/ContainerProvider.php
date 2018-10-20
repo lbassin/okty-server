@@ -2,14 +2,13 @@
 
 namespace App\Provider;
 
-use Github\Exception\RuntimeException;
-use GraphQL\Error\UserError;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\Yaml\Yaml;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
-class Container
+class ContainerProvider
 {
     private $github;
     private $path;
@@ -22,13 +21,9 @@ class Container
 
     public function getAll()
     {
-        try {
-            $list = $this->github->getTree($this->path);
-        } catch (RuntimeException $exception) {
-            throw new UserError('Element not found');
-        }
-
         $elements = [];
+
+        $list = $this->github->getTree($this->path);
         foreach ($list as $data) {
             $elements[] = $this->getFormConfig($data['name']);
         }
@@ -40,11 +35,7 @@ class Container
     {
         $file = $this->path . '/' . $container;
 
-        try {
-            $content = $this->github->getFile($file);
-        } catch (RuntimeException $exception) {
-            throw new UserError('Element not found');
-        }
+        $content = $this->github->getFile($file);
 
         $element = Yaml::parse($content, Yaml::PARSE_OBJECT);
         $element['id'] = pathinfo($container, PATHINFO_FILENAME);
@@ -54,12 +45,7 @@ class Container
 
     public function getManifest($container)
     {
-        try {
-            $content = $this->github->getFile($this->getPath($container) . 'manifest.yml');
-        } catch (RuntimeException $exception) {
-            throw new UserError('Element not found');
-        }
-
+        $content = $this->github->getFile($this->getPath($container) . 'manifest.yml');
         $element = Yaml::parse($content, Yaml::PARSE_OBJECT);
 
         return $element;
@@ -71,7 +57,7 @@ class Container
             $content = $this->github->getFile($this->getPath($container) . 'resolvers.php');
 
             return substr($content, 6); // Remove <?php
-        } catch (RuntimeException $ex) {
+        } catch (FileNotFoundException $ex) {
             return '';
         }
     }

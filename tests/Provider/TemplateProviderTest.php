@@ -3,15 +3,14 @@
 namespace App\Tests\Provider;
 
 use App\Provider\Github;
-use App\Provider\Template;
-use Github\Exception\RuntimeException;
-use GraphQL\Error\ClientAware;
+use App\Provider\TemplateProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
-class TemplateTest extends WebTestCase
+class TemplateProviderTest extends WebTestCase
 {
-    /** @var Template */
+    /** @var TemplateProvider */
     private $provider;
     /** @var MockObject|Github */
     private $mockGithub;
@@ -26,7 +25,7 @@ class TemplateTest extends WebTestCase
     protected function setUp()
     {
         $this->mockGithub = $this->createMock(Github::class);
-        $this->provider = new Template($this->mockGithub, '');
+        $this->provider = new TemplateProvider($this->mockGithub, '');
         $this->fixturesPath = __DIR__ . '/Fixtures/';
     }
 
@@ -94,19 +93,19 @@ class TemplateTest extends WebTestCase
 
     public function testGetElementNotFound()
     {
-        $exception = new RuntimeException();
+        $exception = new FileNotFoundException('');
         $this->mockGithub->method('getFile')->willThrowException($exception);
 
-        $this->expectException(ClientAware::class);
+        $this->expectException(FileNotFoundException::class);
         $this->provider->getOne('non');
     }
 
     public function testGetElementsNotFound()
     {
-        $exception = new RuntimeException();
+        $exception = new FileNotFoundException('');
         $this->mockGithub->method('getTree')->willThrowException($exception);
 
-        $this->expectException(ClientAware::class);
+        $this->expectException(FileNotFoundException::class);
         $this->provider->getAll();
     }
 
