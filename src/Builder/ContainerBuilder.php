@@ -48,12 +48,6 @@ TXT
                 continue;
             }
 
-            if (!class_exists($resolverFullClassname)) {
-                continue;
-            }
-            /** @noinspection PhpUndefinedClassInspection */
-            /** @noinspection PhpUndefinedNamespaceInspection */
-            /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
             $resolver = new $resolverFullClassname();
 
             preg_match_all('/{{(?P<name>\w+)}}/', $content, $data);
