@@ -31,11 +31,7 @@ class ContainerBuilder
         $resolverClassname = 'IsolatedResolver_' . uniqid();
         $resolverFullClassname = '\App\Builder\Tmp\\' . $resolverClassname;
 
-        eval(<<<TXT
-            namespace App\Builder\Tmp;
-            class $resolverClassname { $resolvers }
-TXT
-        );
+        eval("namespace App\Builder\Tmp; class $resolverClassname { $resolvers }");
 
         $files = [];
         $warnings = [];
