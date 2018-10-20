@@ -28,9 +28,12 @@ class ContainerBuilder
         }
 
         $resolvers = $this->container->getResolvers($name);
+        $resolverClassname = 'IsolatedResolver_' . uniqid();
+        $resolverFullClassname = '\App\Builder\Tmp\\' . $resolverClassname;
+
         eval(<<<TXT
             namespace App\Builder\Tmp;
-            class IsolatedResolver { $resolvers }
+            class $resolverClassname { $resolvers }
 TXT
         );
 
@@ -45,17 +48,18 @@ TXT
                 continue;
             }
 
-            if (!class_exists('\App\Builder\Tmp\IsolatedResolver')) {
+            if (!class_exists($resolverFullClassname)) {
                 continue;
             }
             /** @noinspection PhpUndefinedClassInspection */
             /** @noinspection PhpUndefinedNamespaceInspection */
             /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
-            $resolver = new \App\Builder\Tmp\IsolatedResolver();
+            $resolver = new $resolverFullClassname();
 
             preg_match_all('/{{(?P<name>\w+)}}/', $content, $data);
             foreach ($data['name'] as $arg) {
-                $value = $manifest['config'][$file]['args'][$arg]['default'] ?? '';
+                $defaultValue = $manifest['config'][$file]['args'][$arg]['default'] ?? '';
+                $value = $args[$arg] ?? $defaultValue;
 
                 if (method_exists($resolver, $arg)) {
                     $value = $resolver->{$arg}($args[$arg] ?? $value);
@@ -65,7 +69,7 @@ TXT
             }
 
             $files[] = [
-                'output' => ($manifest['config'][$file]['output'] ?? '') . $file,
+                'name' => ($manifest['config'][$file]['output'] ?? '') . $file,
                 'content' => $content
             ];
         }

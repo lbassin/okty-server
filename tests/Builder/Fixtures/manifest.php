@@ -6,7 +6,7 @@ return [
             'output' => './'
         ],
         'default.conf' => [
-            'output' => './',
+            'output' => './nginx/',
             'args' => [
                 'root_folder' => [
                     'default' => ''
@@ -14,8 +14,8 @@ return [
                 'max_upload_size' => [
                     'default' => '2M'
                 ],
-                'php_container_id' => [
-                    'default' => ''
+                'php_container_link' => [
+                    'default' => 'php'
                 ]
             ]
         ]
