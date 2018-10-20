@@ -4,6 +4,7 @@ namespace App\Builder;
 
 use App\Provider\ContainerProvider;
 use App\Provider\Github;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
@@ -34,8 +35,15 @@ TXT
         );
 
         $files = [];
+        $warnings = [];
         foreach ($manifest['files'] as $file) {
-            $content = $this->github->getFile($this->container->getPath($name) . 'sources/' . $file);
+            try {
+                $content = $this->github->getFile($this->container->getPath($name) . 'sources/' . $file);
+            } catch (FileNotFoundException $ex) {
+                $warnings[] = $ex->getMessage();
+
+                continue;
+            }
 
             if (!class_exists('\App\Builder\Tmp\IsolatedResolver')) {
                 continue;
@@ -49,7 +57,7 @@ TXT
             foreach ($data['name'] as $arg) {
                 $value = $manifest['config'][$file]['args'][$arg]['default'] ?? '';
 
-                if(method_exists($resolver, $arg)){
+                if (method_exists($resolver, $arg)) {
                     $value = $resolver->{$arg}($args[$arg] ?? $value);
                 }
 
