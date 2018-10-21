@@ -2,7 +2,7 @@
 
 namespace App\Tests\GraphQL\Resolver\Container;
 
-use App\GraphQL\Resolver\Container\Container;
+use App\GraphQL\Resolver\Container\Form;
 use GraphQL\Error\ClientAware;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -18,7 +18,7 @@ class ContainerTest extends TestCase
     protected function setUp()
     {
         $this->mockProvider = $this->createMock(\App\Provider\ContainerProvider::class);
-        $this->resolver = new Container($this->mockProvider);
+        $this->resolver = new Form($this->mockProvider);
         $this->fixturesPath = __DIR__ . '/Fixtures/';
     }
 

@@ -7,7 +7,7 @@ use GraphQL\Error\UserError;
 use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
-class Templates implements ResolverInterface
+class All implements ResolverInterface
 {
     private $templateProvider;
 

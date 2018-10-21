@@ -2,7 +2,7 @@
 
 namespace App\Tests\GraphQL\Resolver\Template;
 
-use App\GraphQL\Resolver\Template\Templates;
+use App\GraphQL\Resolver\Template\All;
 use App\Provider\TemplateProvider;
 use GraphQL\Error\ClientAware;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -19,7 +19,7 @@ class TemplatesTest extends TestCase
     protected function setUp()
     {
         $this->mockProvider = $this->createMock(TemplateProvider::class);
-        $this->resolver = new Templates($this->mockProvider);
+        $this->resolver = new All($this->mockProvider);
         $this->fixturesPath = __DIR__ . '/Fixtures/';
     }
 
