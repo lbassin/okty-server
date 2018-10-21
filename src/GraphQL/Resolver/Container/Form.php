@@ -18,7 +18,7 @@ class Form implements ResolverInterface
     public function __invoke(string $id): array
     {
         try {
-            return $this->containerProvider->getFormConfig($id . '.yml');
+            return $this->containerProvider->getFormConfig($id);
         } catch (FileNotFoundException $ex) {
             throw new UserError('Container not found');
         }

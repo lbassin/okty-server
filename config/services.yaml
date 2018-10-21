@@ -6,6 +6,7 @@
 parameters:
     containers_path: 'containers'
     templates_path: 'templates'
+    locale: 'en'
 
 services:
     # default configuration for services in *this* file

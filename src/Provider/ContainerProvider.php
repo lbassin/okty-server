@@ -33,7 +33,7 @@ class ContainerProvider
 
     public function getFormConfig($container): array
     {
-        $file = $this->path . '/' . $container;
+        $file = $this->path . '/' . $container . '/' . 'form.yml';
 
         $content = $this->github->getFile($file);
 
