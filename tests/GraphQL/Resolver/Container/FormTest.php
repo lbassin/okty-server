@@ -8,7 +8,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
-class ContainerTest extends TestCase
+class FormTest extends TestCase
 {
     /** @var \App\Provider\ContainerProvider|MockObject */
     private $mockProvider;

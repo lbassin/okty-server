@@ -9,7 +9,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
-class TemplatesTest extends TestCase
+class AllTest extends TestCase
 {
     /** @var TemplateProvider|MockObject */
     private $mockProvider;
