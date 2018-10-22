@@ -32,26 +32,26 @@ class ContainerBuilder
         $this->validator = $validator;
     }
 
-    public function build(string $name, array $args = []): array
+    public function build(string $name, array $args = [], &$warnings = []): array
     {
-        $warnings = [];
-
         $compose = $this->generateDockerCompose($name, $args, $warnings);
         $files = $this->generateFiles($name, $args['files'] ?? [], $warnings);
-        
+
+        if (count($warnings) > 0) {
+            return [];
+        }
+
         return array_merge([$compose], $files);
     }
 
     private function generateDockerCompose(string $name, array $args, array &$warnings): array
     {
         if (!isset($args['id'])) {
-            $warnings[] = 'Container ID is required';
-
-            return ['name' => '', 'content' => ''];
+            $args['id'] = $name;
         }
 
         $container = [];
-        $container = $this->resolveImage($container, $name, $args['version'] ?? '');
+        $container = $this->resolveImage($container, $name, $args['version'] ?? '', $warnings);
         $container = $this->resolvePorts($container, $args['ports'] ?? [], $warnings);
         $container = $this->resolveVolumes($container, $args['volumes'] ?? [], $warnings);
         $container = $this->resolveEnvironment($container, $args['environment'] ?? [], $warnings);
@@ -60,14 +60,21 @@ class ContainerBuilder
         $output['services'][$args['id']] = $container;
 
         return [
-            'name' => 'docker-compose',
-            'content' => Yaml::dump($output)
+            'name' => './docker-compose.yml',
+            'content' => Yaml::dump($output, 5)
         ];
     }
 
-    private function resolveImage(array $container, string $name, string $version): array
+    private function resolveImage(array $container, string $name, string $version, &$warnings): array
     {
-        $manifest = $this->container->getManifest($name);
+        try {
+            $manifest = $this->container->getManifest($name);
+        } catch (FileNotFoundException $ex) {
+            $warnings[] = $ex->getMessage();
+
+            return $container;
+        }
+
         if (!isset($manifest['docker'])) {
             return $container;
         }
@@ -136,7 +143,14 @@ class ContainerBuilder
 
     private function generateFiles(string $name, array $args, array &$warnings): array
     {
-        $manifest = $this->container->getManifest($name);
+        try {
+            $manifest = $this->container->getManifest($name);
+        } catch (FileNotFoundException $ex) {
+            $warnings[] = $ex->getMessage();
+
+            return [];
+        }
+
         if (!isset($manifest['files'])) {
             return [];
         }

@@ -8,6 +8,8 @@ use App\Provider\Github;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Yaml\Yaml;
 
 class ContainerBuilderTest extends TestCase
 {
@@ -15,6 +17,8 @@ class ContainerBuilderTest extends TestCase
     private $mockGithub;
     /** @var MockObject|ContainerProvider */
     private $mockProvider;
+    /** @var MockObject|ValidatorInterface */
+    private $mockValidator;
     /** @var ContainerBuilder */
     private $builder;
 
@@ -24,8 +28,9 @@ class ContainerBuilderTest extends TestCase
     {
         $this->mockGithub = $this->createMock(Github::class);
         $this->mockProvider = $this->createMock(ContainerProvider::class);
+        $this->mockValidator = $this->createMock(ValidatorInterface::class);
 
-        $this->builder = new ContainerBuilder($this->mockGithub, $this->mockProvider);
+        $this->builder = new ContainerBuilder($this->mockGithub, $this->mockProvider, $this->mockValidator);
 
         $this->fixturePath = __DIR__ . '/Fixtures/';
     }
@@ -33,27 +38,34 @@ class ContainerBuilderTest extends TestCase
     public function testManifestWithoutFiles()
     {
         $this->mockProvider->method('getManifest')->willReturn([]);
-        $files = $this->builder->build('name', []);
+        $files = $this->builder->build('ngninx', []);
 
-        $this->assertEmpty($files);
+        $this->assertCount(1, $files);
+        $this->assertSame('./docker-compose.yml', $files[0]['name']);
     }
 
     public function testManifestNotFound()
     {
-        $exception = new FileNotFoundException('');
+        $exception = new FileNotFoundException('manifest.yml');
         $this->mockProvider->method('getManifest')->willThrowException($exception);
 
-        $this->expectException(FileNotFoundException::class);
+        $warnings = [];
+        $files = $this->builder->build('', [], $warnings);
 
-        $this->builder->build('', []);
+        $this->assertEmpty($files);
+        $this->assertCount(2, $warnings);
+        $this->assertSame('The file "manifest.yml" does not exist', $warnings[0]);
     }
 
     public function testWithoutResolvers()
     {
         $this->mockProvider->method('getResolvers')->willReturn('');
-        $files = $this->builder->build('', []);
 
-        $this->assertEmpty($files);
+        $warnings = [];
+        $files = $this->builder->build('', [], $warnings);
+
+        $this->assertCount(1, $files);
+        $this->assertCount(0, $warnings);
     }
 
     public function testSourceNotFound()
@@ -62,16 +74,19 @@ class ContainerBuilderTest extends TestCase
         $manifest = include $this->fixturePath . 'manifest.php';
         $this->mockProvider->method('getManifest')->willReturn($manifest);
 
-        $exception = new FileNotFoundException('');
+        $exception = new FileNotFoundException('file');
 
         $this->mockGithub
             ->expects($this->exactly(2))
             ->method('getFile')
             ->willThrowException($exception);
 
-        $files = $this->builder->build('', []);
+        $warnings = [];
+        $files = $this->builder->build('', [], $warnings);
 
         $this->assertEmpty($files);
+        $this->assertCount(2, $warnings);
+        $this->assertSame('The file "file" does not exist', $warnings[0]);
     }
 
     public function testNoResolversNoArgs()
@@ -83,6 +98,7 @@ class ContainerBuilderTest extends TestCase
 
         $dockerfile = file_get_contents($this->fixturePath . 'Dockerfile');
         $defaultConf = file_get_contents($this->fixturePath . 'default.conf');
+        $dockerCompose = YAML::parse(file_get_contents($this->fixturePath . 'docker-compose.yml'));
 
         $this->mockGithub
             ->expects($this->exactly(2))
@@ -93,13 +109,16 @@ class ContainerBuilderTest extends TestCase
 
         $defaultConfProcessed = file_get_contents($this->fixturePath . 'noResolversNoArgs.default.conf');
 
-        $this->assertCount(2, $files);
+        $this->assertCount(3, $files);
 
-        $this->assertSame('./Dockerfile', $files[0]['name']);
-        $this->assertSame($dockerfile, $files[0]['content']);
+        $this->assertSame('./docker-compose.yml', $files[0]['name']);
+        $this->assertSame($dockerCompose, YAML::parse($files[0]['content']));
 
-        $this->assertSame('./nginx/default.conf', $files[1]['name']);
-        $this->assertSame($defaultConfProcessed, $files[1]['content']);
+        $this->assertSame('./docker/nginx/Dockerfile', $files[1]['name']);
+        $this->assertSame($dockerfile, $files[1]['content']);
+
+        $this->assertSame('./docker/nginx/default.conf', $files[2]['name']);
+        $this->assertSame($defaultConfProcessed, $files[2]['content']);
     }
 
     public function testNoResolversWithArgs()
@@ -118,19 +137,21 @@ class ContainerBuilderTest extends TestCase
             ->willReturnOnConsecutiveCalls($dockerfile, $defaultConf);
 
         $files = $this->builder->build('nginx', [
-            'root_folder' => 'public',
-            'php_container_link' => 'mon_container_php'
+            'files' => [
+                'root_folder' => 'public',
+                'php_container_link' => 'mon_container_php'
+            ]
         ]);
 
         $defaultConfProcessed = file_get_contents($this->fixturePath . 'noResolversWithArgs.default.conf');
 
-        $this->assertCount(2, $files);
+        $this->assertCount(3, $files);
 
-        $this->assertSame('./Dockerfile', $files[0]['name']);
-        $this->assertSame($dockerfile, $files[0]['content']);
+        $this->assertSame('./docker/nginx/Dockerfile', $files[1]['name']);
+        $this->assertSame($dockerfile, $files[1]['content']);
 
-        $this->assertSame('./nginx/default.conf', $files[1]['name']);
-        $this->assertSame($defaultConfProcessed, $files[1]['content']);
+        $this->assertSame('./docker/nginx/default.conf', $files[2]['name']);
+        $this->assertSame($defaultConfProcessed, $files[2]['content']);
     }
 
     public function testWithResolversWithArgs()
@@ -151,19 +172,21 @@ class ContainerBuilderTest extends TestCase
             ->willReturnOnConsecutiveCalls($dockerfile, $defaultConf);
 
         $files = $this->builder->build('nginx', [
-            'root_folder' => 'public',
-            'php_container_link' => 'php_id'
+            'files' => [
+                'root_folder' => 'public',
+                'php_container_link' => 'php_id'
+            ]
         ]);
 
         $defaultConfProcessed = file_get_contents($this->fixturePath . 'withResolversWithArgs.default.conf');
 
-        $this->assertCount(2, $files);
+        $this->assertCount(3, $files);
 
-        $this->assertSame('./Dockerfile', $files[0]['name']);
-        $this->assertSame($dockerfile, $files[0]['content']);
+        $this->assertSame('./docker/nginx/Dockerfile', $files[1]['name']);
+        $this->assertSame($dockerfile, $files[1]['content']);
 
-        $this->assertSame('./nginx/default.conf', $files[1]['name']);
-        $this->assertSame($defaultConfProcessed, $files[1]['content']);
+        $this->assertSame('./docker/nginx/default.conf', $files[2]['name']);
+        $this->assertSame($defaultConfProcessed, $files[2]['content']);
     }
 
     protected function tearDown()

@@ -1,12 +1,15 @@
 <?php
 return [
+    'docker' => [
+      'build' => './docker/nginx/'
+    ],
     'files' => ['Dockerfile', 'default.conf'],
     'config' => [
         'Dockerfile' => [
-            'output' => './'
+            'output' => './docker/nginx/'
         ],
         'default.conf' => [
-            'output' => './nginx/',
+            'output' => './docker/nginx/',
             'args' => [
                 'root_folder' => [
                     'default' => ''

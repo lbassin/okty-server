@@ -49,7 +49,7 @@ class Github
         try {
             return $this->getRepo()->contents()->download($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
         } catch (\Exception $e) {
-            throw new FileNotFoundException($e->getMessage());
+            throw new FileNotFoundException($path);
         }
     }
 
