@@ -301,6 +301,82 @@ class ContainerBuilderTest extends TestCase
         $this->assertCount(2, $warnings);
     }
 
+    public function testDockerComposeVolumes()
+    {
+        /** @noinspection PhpIncludeInspection */
+        $manifest = include $this->fixturePath . 'manifest-image-tag.php';
+        $this->mockProvider->method('getManifest')->willReturn($manifest);
+
+        $this->mockValidator
+            ->expects($this->once())
+            ->method('validate')
+            ->willReturn([]);
+
+        $files = $this->builder->build('nginx', ['volumes' => ['./:/app']]);
+        $content = YAML::parse($files[0]['content']);
+
+        $this->assertCount(1, $files);
+        $this->assertSame(['./:/app'], $content['services']['nginx']['volumes']);
+    }
+
+
+    public function testDockerComposeVolumesInvalid()
+    {
+        /** @noinspection PhpIncludeInspection */
+        $manifest = include $this->fixturePath . 'manifest-image-tag.php';
+        $this->mockProvider->method('getManifest')->willReturn($manifest);
+
+        $mockConstraint = $this->createMock(ConstraintViolation::class);
+        $this->mockValidator
+            ->expects($this->exactly(1))
+            ->method('validate')
+            ->willReturn([$mockConstraint]);
+
+        $warnings = [];
+        $files = $this->builder->build('nginx', ['volumes' => ['./:/app']], $warnings);
+
+        $this->assertCount(0, $files);
+        $this->assertCount(1, $warnings);
+    }
+
+    public function testDockerComposeEnvironments()
+    {
+        /** @noinspection PhpIncludeInspection */
+        $manifest = include $this->fixturePath . 'manifest-image-tag.php';
+        $this->mockProvider->method('getManifest')->willReturn($manifest);
+
+        $this->mockValidator
+            ->expects($this->once())
+            ->method('validate')
+            ->willReturn([]);
+
+        $files = $this->builder->build('nginx', ['environments' => ['TEST=12']]);
+        $content = YAML::parse($files[0]['content']);
+
+        $this->assertCount(1, $files);
+        $this->assertSame(['TEST=12'], $content['services']['nginx']['environments']);
+    }
+
+
+    public function testDockerComposeEnvironmentsInvalid()
+    {
+        /** @noinspection PhpIncludeInspection */
+        $manifest = include $this->fixturePath . 'manifest-image-tag.php';
+        $this->mockProvider->method('getManifest')->willReturn($manifest);
+
+        $mockConstraint = $this->createMock(ConstraintViolation::class);
+        $this->mockValidator
+            ->expects($this->once())
+            ->method('validate')
+            ->willReturn([$mockConstraint]);
+
+        $warnings = [];
+        $files = $this->builder->build('nginx', ['environments' => ['TEST=12']], $warnings);
+
+        $this->assertCount(0, $files);
+        $this->assertCount(1, $warnings);
+    }
+
     protected function tearDown()
     {
         $this->builder = null;

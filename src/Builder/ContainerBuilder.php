@@ -54,7 +54,7 @@ class ContainerBuilder
         $container = $this->resolveImage($container, $name, $args['version'] ?? '', $warnings);
         $container = $this->resolvePorts($container, $args['ports'] ?? [], $warnings);
         $container = $this->resolveVolumes($container, $args['volumes'] ?? [], $warnings);
-        $container = $this->resolveEnvironment($container, $args['environment'] ?? [], $warnings);
+        $container = $this->resolveEnvironment($container, $args['environments'] ?? [], $warnings);
 
         $output = ['version' => '3', 'services' => []];
         $output['services'][$args['id']] = $container;
