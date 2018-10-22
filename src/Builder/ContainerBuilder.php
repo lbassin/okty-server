@@ -2,6 +2,7 @@
 
 namespace App\Builder;
 
+use App\Builder\Validator\Environment;
 use App\Builder\Validator\Port;
 use App\Builder\Validator\Volume;
 use App\Provider\ContainerProvider;
@@ -31,45 +32,31 @@ class ContainerBuilder
         $this->validator = $validator;
     }
 
-    private function getArgsDevData(): array
-    {
-        // To remove
-        return [
-            'id' => 'nginx',
-            'ports' => [
-                '8080:80'
-            ],
-            'volumes' => [
-                './:/app'
-            ],
-            'environment' => [
-                'MYSQL_PASSWORD=ok'
-            ],
-            'files' => [
-                'root_folder' => 'public',
-                'php_container_link' => 'php'
-            ]
-        ];
-    }
-
     public function build(string $name, array $args = []): array
     {
-        $args = $this->getArgsDevData();
+        $warnings = [];
 
-        $compose = $this->generateDockerCompose($args);
-        $files = $this->generateFiles($name, $args['files'] ?? []);
-
+        $compose = $this->generateDockerCompose($name, $args, $warnings);
+        $files = $this->generateFiles($name, $args['files'] ?? [], $warnings);
+        
         return array_merge([$compose], $files);
     }
 
-    private function generateDockerCompose(array $args): array
+    private function generateDockerCompose(string $name, array $args, array &$warnings): array
     {
-        $output = ['version' => '3', 'services' => []];
+        if (!isset($args['id'])) {
+            $warnings[] = 'Container ID is required';
+
+            return ['name' => '', 'content' => ''];
+        }
 
         $container = [];
-        $container['ports'] = $this->validateData($args['ports'], new Port());
-        $container['volumes'] = $this->validateData($args['volumes'], new Volume());
+        $container = $this->resolveImage($container, $name, $args['version'] ?? '');
+        $container = $this->resolvePorts($container, $args['ports'] ?? [], $warnings);
+        $container = $this->resolveVolumes($container, $args['volumes'] ?? [], $warnings);
+        $container = $this->resolveEnvironment($container, $args['environment'] ?? [], $warnings);
 
+        $output = ['version' => '3', 'services' => []];
         $output['services'][$args['id']] = $container;
 
         return [
@@ -78,11 +65,65 @@ class ContainerBuilder
         ];
     }
 
-    private function validateData(array $data, Constraint $constraint): array
+    private function resolveImage(array $container, string $name, string $version): array
+    {
+        $manifest = $this->container->getManifest($name);
+        if (!isset($manifest['docker'])) {
+            return $container;
+        }
+
+        if (!empty($manifest['docker']['build'])) {
+            $container['build'] = $manifest['docker']['build'];
+
+            return $container;
+        }
+
+        $container['image'] = $manifest['docker']['image'] ?? '';
+
+        $tag = 'latest';
+        if (!empty($manifest['docker']['tag'])) {
+            $tag = $manifest['docker']['tag'];
+        }
+
+        if (!empty($version)) {
+            $tag = $version;
+        }
+
+        $container['image'] .= ':' . $tag;
+
+        return $container;
+    }
+
+    private function resolvePorts(array $container, array $ports, array &$warnings): array
+    {
+        $container['ports'] = $this->validateData($ports, new Port(), $warnings);
+
+        return $container;
+    }
+
+    private function resolveVolumes(array $container, array $volumes, array &$warnings): array
+    {
+        $container['volumes'] = $this->validateData($volumes, new Volume(), $warnings);
+
+        return $container;
+    }
+
+    private function resolveEnvironment(array $container, array $environments, array &$warnings): array
+    {
+        $container['environments'] = $this->validateData($environments, new Environment(), $warnings);
+
+        return $container;
+    }
+
+    private function validateData(array $data, Constraint $constraint, &$warnings): array
     {
         $config = [];
         foreach ($data as $value) {
             $errors = $this->validator->validate($value, $constraint);
+            foreach ($errors as $error) {
+                $warnings[] = $error->getMessage();
+            }
+
             if (count($errors) > 0) {
                 continue;
             }
@@ -93,7 +134,7 @@ class ContainerBuilder
         return $config;
     }
 
-    private function generateFiles(string $name, array $args): array
+    private function generateFiles(string $name, array $args, array &$warnings): array
     {
         $manifest = $this->container->getManifest($name);
         if (!isset($manifest['files'])) {
@@ -107,7 +148,6 @@ class ContainerBuilder
         eval("namespace App\Builder\Tmp; class $resolverClassname { $resolvers }");
 
         $files = [];
-        $warnings = [];
         foreach ($manifest['files'] as $file) {
             try {
                 $content = $this->github->getFile($this->container->getPath($name) . 'sources/' . $file);

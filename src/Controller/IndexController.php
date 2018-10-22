@@ -38,7 +38,7 @@ class IndexController extends AbstractController
     public function dev()
     {
         $name = 'nginx';
-        $args = ['php_container_link' => 'php'];
+        $args = ['id' => 'nginx'];
 
         $files = $this->containerBuilder->build($name, $args);
 
