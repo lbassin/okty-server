@@ -8,6 +8,7 @@ use App\Provider\Github;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
+use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Yaml\Yaml;
 
@@ -238,6 +239,66 @@ class ContainerBuilderTest extends TestCase
 
         $this->assertCount(1, $files);
         $this->assertSame('test:3', $content['services']['nginx']['image']);
+    }
+
+    public function testImageWithTagWithArg()
+    {
+        /** @noinspection PhpIncludeInspection */
+        $manifest = include $this->fixturePath . 'manifest-image-tag.php';
+        $this->mockProvider->method('getManifest')->willReturn($manifest);
+
+        $files = $this->builder->build('nginx', ['version' => '2']);
+        $content = YAML::parse($files[0]['content']);
+
+        $this->assertCount(1, $files);
+        $this->assertSame('test:2', $content['services']['nginx']['image']);
+    }
+
+    public function testDockerComposePorts()
+    {
+        /** @noinspection PhpIncludeInspection */
+        $manifest = include $this->fixturePath . 'manifest-image-tag.php';
+        $this->mockProvider->method('getManifest')->willReturn($manifest);
+
+        $this->mockValidator
+            ->expects($this->exactly(2))
+            ->method('validate')
+            ->willReturn([]);
+
+        $files = $this->builder->build('nginx', [
+            'ports' => [
+                '8080:80',
+                '9000:22'
+            ]
+        ]);
+        $content = YAML::parse($files[0]['content']);
+
+        $this->assertCount(1, $files);
+        $this->assertSame(['8080:80', '9000:22'], $content['services']['nginx']['ports']);
+    }
+
+    public function testDockerComposePortsInvalid()
+    {
+        /** @noinspection PhpIncludeInspection */
+        $manifest = include $this->fixturePath . 'manifest-image-tag.php';
+        $this->mockProvider->method('getManifest')->willReturn($manifest);
+
+        $mockConstraint = $this->createMock(ConstraintViolation::class);
+        $this->mockValidator
+            ->expects($this->exactly(2))
+            ->method('validate')
+            ->willReturn([$mockConstraint]);
+
+        $warnings = [];
+        $files = $this->builder->build('nginx', [
+            'ports' => [
+                '8080:80',
+                '9000:22'
+            ]
+        ], $warnings);
+
+        $this->assertCount(0, $files);
+        $this->assertCount(2, $warnings);
     }
 
     protected function tearDown()
