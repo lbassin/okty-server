@@ -8,26 +8,19 @@ use Symfony\Component\Validator\ConstraintValidator;
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
-class PortValidator extends ConstraintValidator
+class VolumeValidator extends ConstraintValidator
 {
-    const MIN_PORT = 0;
-    const MAX_PORT = 65536;
-
     public function validate($value, Constraint $constraint): void
     {
-        $ports = explode(':', $value);
+        $volumes = explode(':', $value);
 
-        $ports[0] = $ports[0] ?? -1;
-        $ports[1] = $ports[1] ?? -1;
+        $volumes[0] = $volumes[0] ?? '';
+        $volumes[1] = $volumes[1] ?? '';
 
-        foreach ($ports as $port) {
-            if ($port > self::MIN_PORT && $port < self::MAX_PORT) {
-                continue;
-            }
-
+        if (empty($volumes[0]) || empty($volumes[1]) || $volumes[1][0] !== '/') {
             $this->context
                 ->buildViolation($constraint->message)
-                ->setParameter('{{ port }}', $port)
+                ->setParameter('{{ path }}', $value)
                 ->addViolation();
         }
     }

@@ -24,7 +24,6 @@ class IndexController extends AbstractController
         $this->containerBuilder = $containerBuilder;
     }
 
-
     /**
      * @Route("/", name="index")
      */
@@ -41,8 +40,13 @@ class IndexController extends AbstractController
         $name = 'nginx';
         $args = ['php_container_link' => 'php'];
 
-        $container = $this->containerBuilder->build($name, $args);
-        print_r($container);
+        $files = $this->containerBuilder->build($name, $args);
+
+        foreach ($files as $file) {
+            echo $file['name'] . PHP_EOL;
+            echo $file['content'] . PHP_EOL;
+            echo "<hr>";
+        }
 
         return new Response('', Response::HTTP_OK);
     }

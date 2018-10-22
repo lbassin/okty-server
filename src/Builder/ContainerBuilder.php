@@ -3,10 +3,13 @@
 namespace App\Builder;
 
 use App\Builder\Validator\Port;
+use App\Builder\Validator\Volume;
 use App\Provider\ContainerProvider;
 use App\Provider\Github;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
@@ -53,23 +56,41 @@ class ContainerBuilder
     {
         $args = $this->getArgsDevData();
 
-//        $files = $this->generateFiles($name, $args['files'] ?? []);
-        $compose = $this->generateDockerCompose($name, $args);
+        $compose = $this->generateDockerCompose($args);
+        $files = $this->generateFiles($name, $args['files'] ?? []);
 
-        return [];
+        return array_merge([$compose], $files);
     }
 
-    private function generateDockerCompose(string $name, array $args): string
+    private function generateDockerCompose(array $args): array
     {
-        $output = ['version' => '3', 'services' => [], 'volumes' => []];
+        $output = ['version' => '3', 'services' => []];
 
-        foreach ($args['ports'] as $port) {
-            $errors = $this->validator->validate($port, new Port());
-            print_r($errors);
+        $container = [];
+        $container['ports'] = $this->validateData($args['ports'], new Port());
+        $container['volumes'] = $this->validateData($args['volumes'], new Volume());
+
+        $output['services'][$args['id']] = $container;
+
+        return [
+            'name' => 'docker-compose',
+            'content' => Yaml::dump($output)
+        ];
+    }
+
+    private function validateData(array $data, Constraint $constraint): array
+    {
+        $config = [];
+        foreach ($data as $value) {
+            $errors = $this->validator->validate($value, $constraint);
+            if (count($errors) > 0) {
+                continue;
+            }
+
+            $config[] = $value;
         }
 
-        print_r($output);
-        return '';
+        return $config;
     }
 
     private function generateFiles(string $name, array $args): array
