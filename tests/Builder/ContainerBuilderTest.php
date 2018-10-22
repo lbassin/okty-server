@@ -189,6 +189,57 @@ class ContainerBuilderTest extends TestCase
         $this->assertSame($defaultConfProcessed, $files[2]['content']);
     }
 
+    public function testManifestNoFiles()
+    {
+        /** @noinspection PhpIncludeInspection */
+        $manifest = include $this->fixturePath . 'manifest-no-files.php';
+        $this->mockProvider->method('getManifest')->willReturn($manifest);
+
+        $files = $this->builder->build('nginx');
+
+        $this->assertCount(1, $files);
+    }
+
+    public function testImageBuild()
+    {
+        /** @noinspection PhpIncludeInspection */
+        $manifest = include $this->fixturePath . 'manifest-build.php';
+        $this->mockProvider->method('getManifest')->willReturn($manifest);
+
+        $files = $this->builder->build('nginx');
+        $content = YAML::parse($files[0]['content']);
+
+
+        $this->assertCount(1, $files);
+        $this->assertSame('./docker/nginx/', $content['services']['nginx']['build']);
+    }
+
+    public function testImageNoTag()
+    {
+        /** @noinspection PhpIncludeInspection */
+        $manifest = include $this->fixturePath . 'manifest-image-no-tag.php';
+        $this->mockProvider->method('getManifest')->willReturn($manifest);
+
+        $files = $this->builder->build('nginx');
+        $content = YAML::parse($files[0]['content']);
+
+        $this->assertCount(1, $files);
+        $this->assertSame('test:latest', $content['services']['nginx']['image']);
+    }
+
+    public function testImageWithTag()
+    {
+        /** @noinspection PhpIncludeInspection */
+        $manifest = include $this->fixturePath . 'manifest-image-tag.php';
+        $this->mockProvider->method('getManifest')->willReturn($manifest);
+
+        $files = $this->builder->build('nginx');
+        $content = YAML::parse($files[0]['content']);
+
+        $this->assertCount(1, $files);
+        $this->assertSame('test:3', $content['services']['nginx']['image']);
+    }
+
     protected function tearDown()
     {
         $this->builder = null;
