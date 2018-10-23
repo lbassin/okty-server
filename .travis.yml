@@ -4,7 +4,7 @@ php:
 
 sudo: false
 env:
-  - APP_ENV=test
+  - APP_ENV=prod
 
 before-install:
   - composer self-update
