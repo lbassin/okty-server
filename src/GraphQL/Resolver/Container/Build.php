@@ -25,16 +25,6 @@ class Build implements ResolverInterface
             die('json format error');
         }
 
-        foreach ($containers as $container) {
-            if (!isset($container['name']) || !isset($container['args'])) {
-                continue;
-            }
-
-            $files = $this->containerBuilder->build($container['name'], $container['args']);
-
-            print_r($files);
-        }
-
         return 'yes';
     }
 }

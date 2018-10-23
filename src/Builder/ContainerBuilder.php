@@ -21,6 +21,8 @@ class ContainerBuilder
     private $container;
     private $validator;
 
+    private $warnings;
+
     public function __construct(
         Github $github,
         ContainerProvider $container,
@@ -30,6 +32,7 @@ class ContainerBuilder
         $this->github = $github;
         $this->container = $container;
         $this->validator = $validator;
+        $this->warnings = [];
     }
 
     public function buildAll(array $data): array
@@ -57,16 +60,21 @@ class ContainerBuilder
         return $output;
     }
 
-    public function build(string $name, array $args = [], &$warnings = []): array
+    public function build(string $name, array $args = []): array
     {
-        $compose = $this->generateDockerCompose($name, $args, $warnings);
-        $files = $this->generateFiles($name, $args['files'] ?? [], $warnings);
+        $compose = $this->generateDockerCompose($name, $args);
+        $files = $this->generateFiles($name, $args['files'] ?? []);
 
-        if (count($warnings) > 0) {
+        if (count($this->warnings) > 0) {
             return [];
         }
 
         return array_merge([$compose], $files);
+    }
+
+    public function getWarnings(): array
+    {
+        return $this->warnings ?? [];
     }
 
     private function mergeCompose(array $old, array $new): array
@@ -93,17 +101,17 @@ class ContainerBuilder
         return $old;
     }
 
-    private function generateDockerCompose(string $name, array $args, array &$warnings): array
+    private function generateDockerCompose(string $name, array $args): array
     {
         if (!isset($args['id'])) {
             $args['id'] = $name;
         }
 
         $container = [];
-        $container = $this->resolveImage($container, $name, $args['version'] ?? '', $warnings);
-        $container = $this->resolvePorts($container, $args['ports'] ?? [], $warnings);
-        $container = $this->resolveVolumes($container, $args['volumes'] ?? [], $warnings);
-        $container = $this->resolveEnvironment($container, $args['environments'] ?? [], $warnings);
+        $container = $this->resolveImage($container, $name, $args['version'] ?? '');
+        $container = $this->resolvePorts($container, $args['ports'] ?? []);
+        $container = $this->resolveVolumes($container, $args['volumes'] ?? []);
+        $container = $this->resolveEnvironment($container, $args['environments'] ?? []);
 
         $output = ['version' => '3', 'services' => []];
         $output['services'][$args['id']] = $container;
@@ -114,12 +122,12 @@ class ContainerBuilder
         ];
     }
 
-    private function resolveImage(array $container, string $name, string $version, &$warnings): array
+    private function resolveImage(array $container, string $name, string $version): array
     {
         try {
             $manifest = $this->container->getManifest($name);
         } catch (FileNotFoundException $ex) {
-            $warnings[] = $ex->getMessage();
+            $this->warnings[] = $ex->getMessage();
 
             return $container;
         }
@@ -150,34 +158,34 @@ class ContainerBuilder
         return $container;
     }
 
-    private function resolvePorts(array $container, array $ports, array &$warnings): array
+    private function resolvePorts(array $container, array $ports): array
     {
-        $container['ports'] = $this->validateData($ports, new Port(), $warnings);
+        $container['ports'] = $this->validateData($ports, new Port());
 
         return $container;
     }
 
-    private function resolveVolumes(array $container, array $volumes, array &$warnings): array
+    private function resolveVolumes(array $container, array $volumes): array
     {
-        $container['volumes'] = $this->validateData($volumes, new Volume(), $warnings);
+        $container['volumes'] = $this->validateData($volumes, new Volume());
 
         return $container;
     }
 
-    private function resolveEnvironment(array $container, array $environments, array &$warnings): array
+    private function resolveEnvironment(array $container, array $environments): array
     {
-        $container['environments'] = $this->validateData($environments, new Environment(), $warnings);
+        $container['environments'] = $this->validateData($environments, new Environment());
 
         return $container;
     }
 
-    private function validateData(array $data, Constraint $constraint, &$warnings): array
+    private function validateData(array $data, Constraint $constraint): array
     {
         $config = [];
         foreach ($data as $value) {
             $errors = $this->validator->validate($value, $constraint);
             foreach ($errors as $error) {
-                $warnings[] = $error->getMessage();
+                $this->warnings[] = $error->getMessage();
             }
 
             if (count($errors) > 0) {
@@ -190,12 +198,12 @@ class ContainerBuilder
         return $config;
     }
 
-    private function generateFiles(string $name, array $args, array &$warnings): array
+    private function generateFiles(string $name, array $args): array
     {
         try {
             $manifest = $this->container->getManifest($name);
         } catch (FileNotFoundException $ex) {
-            $warnings[] = $ex->getMessage();
+            $this->warnings[] = $ex->getMessage();
 
             return [];
         }
@@ -215,7 +223,7 @@ class ContainerBuilder
             try {
                 $content = $this->github->getFile($this->container->getPath($name) . 'sources/' . $file);
             } catch (FileNotFoundException $ex) {
-                $warnings[] = $ex->getMessage();
+                $this->warnings[] = $ex->getMessage();
 
                 continue;
             }

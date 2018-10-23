@@ -50,8 +50,8 @@ class ContainerBuilderTest extends TestCase
         $exception = new FileNotFoundException('manifest.yml');
         $this->mockProvider->method('getManifest')->willThrowException($exception);
 
-        $warnings = [];
-        $files = $this->builder->build('', [], $warnings);
+        $files = $this->builder->build('', []);
+        $warnings = $this->builder->getWarnings();
 
         $this->assertEmpty($files);
         $this->assertCount(2, $warnings);
@@ -62,8 +62,8 @@ class ContainerBuilderTest extends TestCase
     {
         $this->mockProvider->method('getResolvers')->willReturn('');
 
-        $warnings = [];
-        $files = $this->builder->build('', [], $warnings);
+        $files = $this->builder->build('', []);
+        $warnings = $this->builder->getWarnings();
 
         $this->assertCount(1, $files);
         $this->assertCount(0, $warnings);
@@ -82,8 +82,8 @@ class ContainerBuilderTest extends TestCase
             ->method('getFile')
             ->willThrowException($exception);
 
-        $warnings = [];
-        $files = $this->builder->build('', [], $warnings);
+        $files = $this->builder->build('', []);
+        $warnings = $this->builder->getWarnings();
 
         $this->assertEmpty($files);
         $this->assertCount(2, $warnings);
@@ -289,13 +289,13 @@ class ContainerBuilderTest extends TestCase
             ->method('validate')
             ->willReturn([$mockConstraint]);
 
-        $warnings = [];
         $files = $this->builder->build('nginx', [
             'ports' => [
                 '8080:80',
                 '9000:22'
             ]
-        ], $warnings);
+        ]);
+        $warnings = $this->builder->getWarnings();
 
         $this->assertCount(0, $files);
         $this->assertCount(2, $warnings);
@@ -332,8 +332,8 @@ class ContainerBuilderTest extends TestCase
             ->method('validate')
             ->willReturn([$mockConstraint]);
 
-        $warnings = [];
-        $files = $this->builder->build('nginx', ['volumes' => ['./:/app']], $warnings);
+        $files = $this->builder->build('nginx', ['volumes' => ['./:/app']]);
+        $warnings = $this->builder->getWarnings();
 
         $this->assertCount(0, $files);
         $this->assertCount(1, $warnings);
@@ -370,8 +370,8 @@ class ContainerBuilderTest extends TestCase
             ->method('validate')
             ->willReturn([$mockConstraint]);
 
-        $warnings = [];
-        $files = $this->builder->build('nginx', ['environments' => ['TEST=12']], $warnings);
+        $files = $this->builder->build('nginx', ['environments' => ['TEST=12']]);
+        $warnings = $this->builder->getWarnings();
 
         $this->assertCount(0, $files);
         $this->assertCount(1, $warnings);
