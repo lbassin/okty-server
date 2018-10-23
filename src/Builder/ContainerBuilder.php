@@ -32,6 +32,31 @@ class ContainerBuilder
         $this->validator = $validator;
     }
 
+    public function buildAll(array $data): array
+    {
+        $output = [];
+        $compose = [];
+
+        foreach ($data as $config) {
+            if (empty($config['image']) || empty($config['args'])) {
+                continue;
+            }
+
+            $files = $this->build($config['image'], $config['args']);
+            $compose = $this->mergeCompose($compose, array_shift($files));
+
+            if (count($files) > 0) {
+                array_push($output, ...$files);
+            }
+        }
+
+        $output = array_merge([$compose], $output);
+
+        dump($output);
+
+        return $output;
+    }
+
     public function build(string $name, array $args = [], &$warnings = []): array
     {
         $compose = $this->generateDockerCompose($name, $args, $warnings);
@@ -42,6 +67,30 @@ class ContainerBuilder
         }
 
         return array_merge([$compose], $files);
+    }
+
+    private function mergeCompose(array $old, array $new): array
+    {
+        $oldContent = Yaml::parse($old['content'] ?? '') ?? [];
+        $newContent = Yaml::parse($new['content'] ?? '') ?? [];
+
+        $keys = array_merge(array_keys($oldContent), array_keys($newContent));
+
+        $output = [];
+        foreach ($keys as $key) {
+            if (is_array($newContent[$key])) {
+                $output[$key] = array_merge($oldContent[$key] ?? [], $newContent[$key] ?? []);
+
+                continue;
+            }
+
+            $output[$key] = $oldContent[$key] ?? $newContent[$key];
+        }
+
+        $old['name'] = $old['name'] ?? $new['name'] ?? '';
+        $old['content'] = Yaml::dump($output, 5);
+
+        return $old;
     }
 
     private function generateDockerCompose(string $name, array $args, array &$warnings): array

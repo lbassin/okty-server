@@ -37,23 +37,17 @@ class IndexController extends AbstractController
      */
     public function dev()
     {
-        $name = 'nginx';
-        $args = ['id' => 'nginx'];
+        $data = [
+            [
+                'image' => 'php',
+                'args' => ['id' => 'php', 'version' => '7.1']
+            ],[
+                'image' => 'nginx',
+                'args' => ['id' => 'nginx', 'ports' => ['8080:80'], 'files' => ['max_upload_size' => '4M']]
+            ],
+        ];
 
-        $files = $this->containerBuilder->build($name, $args);
-
-        $zip = new \ZipArchive();
-        $filename = tempnam(sys_get_temp_dir(), 'okty');
-        echo $filename;
-        if($zip->open($filename, \ZipArchive::CREATE) !== true){
-            die('NOPE');
-        }
-
-        foreach ($files as $file) {
-            $zip->addFromString($file['name'], $file['content']);
-        }
-
-        $zip->close();
+        $files = $this->containerBuilder->buildAll($data);
 
         foreach ($files as $file) {
             echo $file['name'] . PHP_EOL;
