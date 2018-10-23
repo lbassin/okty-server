@@ -26,7 +26,8 @@
         "symfony/dotenv": "*",
         "symfony/maker-bundle": "^1.7",
         "symfony/phpunit-bridge": "*",
-        "symfony/twig-bundle": "*"
+        "symfony/twig-bundle": "*",
+        "symfony/var-dumper": "*"
     },
     "config": {
         "preferred-install": {
