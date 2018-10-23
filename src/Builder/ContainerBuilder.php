@@ -60,7 +60,7 @@ class ContainerBuilder
         $output['services'][$args['id']] = $container;
 
         return [
-            'name' => './docker-compose.yml',
+            'name' => 'docker-compose.yml',
             'content' => Yaml::dump($output, 5)
         ];
     }

@@ -1,7 +1,7 @@
 version: '3'
 services:
   nginx:
-    build: ./docker/nginx/
+    build: docker/nginx/
     ports: { }
     volumes: { }
     environments: { }

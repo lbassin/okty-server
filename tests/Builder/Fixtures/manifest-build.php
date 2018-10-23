@@ -1,6 +1,6 @@
 <?php
 return [
     'docker' => [
-      'build' => './docker/nginx/'
+      'build' => 'docker/nginx/'
     ]
 ];

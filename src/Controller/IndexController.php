@@ -42,6 +42,19 @@ class IndexController extends AbstractController
 
         $files = $this->containerBuilder->build($name, $args);
 
+        $zip = new \ZipArchive();
+        $filename = tempnam(sys_get_temp_dir(), 'okty');
+        echo $filename;
+        if($zip->open($filename, \ZipArchive::CREATE) !== true){
+            die('NOPE');
+        }
+
+        foreach ($files as $file) {
+            $zip->addFromString($file['name'], $file['content']);
+        }
+
+        $zip->close();
+
         foreach ($files as $file) {
             echo $file['name'] . PHP_EOL;
             echo $file['content'] . PHP_EOL;

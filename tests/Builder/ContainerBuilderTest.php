@@ -42,7 +42,7 @@ class ContainerBuilderTest extends TestCase
         $files = $this->builder->build('ngninx', []);
 
         $this->assertCount(1, $files);
-        $this->assertSame('./docker-compose.yml', $files[0]['name']);
+        $this->assertSame('docker-compose.yml', $files[0]['name']);
     }
 
     public function testManifestNotFound()
@@ -112,13 +112,13 @@ class ContainerBuilderTest extends TestCase
 
         $this->assertCount(3, $files);
 
-        $this->assertSame('./docker-compose.yml', $files[0]['name']);
+        $this->assertSame('docker-compose.yml', $files[0]['name']);
         $this->assertSame($dockerCompose, YAML::parse($files[0]['content']));
 
-        $this->assertSame('./docker/nginx/Dockerfile', $files[1]['name']);
+        $this->assertSame('docker/nginx/Dockerfile', $files[1]['name']);
         $this->assertSame($dockerfile, $files[1]['content']);
 
-        $this->assertSame('./docker/nginx/default.conf', $files[2]['name']);
+        $this->assertSame('docker/nginx/default.conf', $files[2]['name']);
         $this->assertSame($defaultConfProcessed, $files[2]['content']);
     }
 
@@ -148,10 +148,10 @@ class ContainerBuilderTest extends TestCase
 
         $this->assertCount(3, $files);
 
-        $this->assertSame('./docker/nginx/Dockerfile', $files[1]['name']);
+        $this->assertSame('docker/nginx/Dockerfile', $files[1]['name']);
         $this->assertSame($dockerfile, $files[1]['content']);
 
-        $this->assertSame('./docker/nginx/default.conf', $files[2]['name']);
+        $this->assertSame('docker/nginx/default.conf', $files[2]['name']);
         $this->assertSame($defaultConfProcessed, $files[2]['content']);
     }
 
@@ -183,10 +183,10 @@ class ContainerBuilderTest extends TestCase
 
         $this->assertCount(3, $files);
 
-        $this->assertSame('./docker/nginx/Dockerfile', $files[1]['name']);
+        $this->assertSame('docker/nginx/Dockerfile', $files[1]['name']);
         $this->assertSame($dockerfile, $files[1]['content']);
 
-        $this->assertSame('./docker/nginx/default.conf', $files[2]['name']);
+        $this->assertSame('docker/nginx/default.conf', $files[2]['name']);
         $this->assertSame($defaultConfProcessed, $files[2]['content']);
     }
 
@@ -212,7 +212,7 @@ class ContainerBuilderTest extends TestCase
 
 
         $this->assertCount(1, $files);
-        $this->assertSame('./docker/nginx/', $content['services']['nginx']['build']);
+        $this->assertSame('docker/nginx/', $content['services']['nginx']['build']);
     }
 
     public function testImageNoTag()
