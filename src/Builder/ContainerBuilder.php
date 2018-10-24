@@ -55,7 +55,7 @@ class ContainerBuilder
 
         $output = array_merge([$compose], $output);
 
-        return $output;
+        return array_filter($output);
     }
 
     public function build(string $name, array $args = []): array

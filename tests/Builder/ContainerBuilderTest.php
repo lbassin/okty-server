@@ -386,7 +386,7 @@ class ContainerBuilderTest extends TestCase
 
         $this->mockProvider
             ->method('getManifest')
-            ->willReturnMap([['nginx', $manifestNginx],['php', $manifestPhp]]);
+            ->willReturnMap([['nginx', $manifestNginx], ['php', $manifestPhp]]);
 
         $resolvers = file_get_contents($this->fixturePath . 'resolvers.php');
         $this->mockProvider->method('getResolvers')->willReturn($resolvers);
@@ -414,6 +414,44 @@ class ContainerBuilderTest extends TestCase
         ]);
 
         $this->assertCount(3, $files);
+    }
+
+    public function testBuildAllWrongArgs()
+    {
+        /** @noinspection PhpIncludeInspection */
+        $manifestPhp = include $this->fixturePath . 'manifest-php.php';
+
+        $this->mockProvider
+            ->method('getManifest')
+            ->willReturnMap([['php', $manifestPhp]]);
+
+        $resolvers = file_get_contents($this->fixturePath . 'resolvers.php');
+        $this->mockProvider->method('getResolvers')->willReturn($resolvers);
+
+        $this->mockValidator
+            ->method('validate')
+            ->willReturn([]);
+
+        $files = $this->builder->buildAll([
+            [
+                'image' => 'php',
+                'args' => ['id' => 'php', 'version' => '7.1']
+            ], [
+                'docker' => 'nginx',
+                'args' => ['id' => 'nginx']
+            ]
+        ]);
+
+        $this->assertCount(1, $files);
+
+        $files = $this->builder->buildAll([
+            [
+                'image' => 'php',
+                'data' => ['id' => 'php', 'version' => '7.1']
+            ]
+        ]);
+
+        $this->assertCount(0, $files);
     }
 
     protected function tearDown()
