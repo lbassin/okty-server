@@ -377,6 +377,45 @@ class ContainerBuilderTest extends TestCase
         $this->assertCount(1, $warnings);
     }
 
+    public function testBuildAllValid()
+    {
+        /** @noinspection PhpIncludeInspection */
+        $manifestNginx = include $this->fixturePath . 'manifest.php';
+        /** @noinspection PhpIncludeInspection */
+        $manifestPhp = include $this->fixturePath . 'manifest-php.php';
+
+        $this->mockProvider
+            ->method('getManifest')
+            ->willReturnMap([['nginx', $manifestNginx],['php', $manifestPhp]]);
+
+        $resolvers = file_get_contents($this->fixturePath . 'resolvers.php');
+        $this->mockProvider->method('getResolvers')->willReturn($resolvers);
+
+        $dockerfile = file_get_contents($this->fixturePath . 'Dockerfile');
+        $defaultConf = file_get_contents($this->fixturePath . 'default.conf');
+
+        $this->mockGithub
+            ->expects($this->exactly(2))
+            ->method('getFile')
+            ->willReturnOnConsecutiveCalls($dockerfile, $defaultConf);
+
+        $this->mockValidator
+            ->method('validate')
+            ->willReturn([]);
+
+        $files = $this->builder->buildAll([
+            [
+                'image' => 'php',
+                'args' => ['id' => 'php', 'version' => '7.1']
+            ], [
+                'image' => 'nginx',
+                'args' => ['id' => 'nginx', 'ports' => ['8080:80'], 'files' => ['max_upload_size' => '4M']]
+            ]
+        ]);
+
+        $this->assertCount(3, $files);
+    }
+
     protected function tearDown()
     {
         $this->builder = null;

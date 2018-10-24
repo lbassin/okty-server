@@ -55,8 +55,6 @@ class ContainerBuilder
 
         $output = array_merge([$compose], $output);
 
-        dump($output);
-
         return $output;
     }
 
