@@ -414,6 +414,10 @@ class ContainerBuilderTest extends TestCase
         ]);
 
         $this->assertCount(3, $files);
+
+        $dockerCompose = Yaml::parse($files[0]['content']);
+
+        $this->assertCount(2, $dockerCompose['services']);
     }
 
     public function testBuildAllWrongArgs()
