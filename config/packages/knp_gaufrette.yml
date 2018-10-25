@@ -1,0 +1,9 @@
+knp_gaufrette:
+  adapters:
+    firebase:
+      google_cloud_storage:
+        service_id: 'Google_Service_Storage'
+        bucket_name: '%bucket_name%'
+  filesystems:
+    firebase:
+      adapter: firebase

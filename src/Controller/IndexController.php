@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Builder\ContainerBuilder;
+use App\Helper\ZipHelper;
+use App\Provider\Cloud;
 use App\Provider\ContainerProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,14 +16,22 @@ use Symfony\Component\Routing\Annotation\Route;
 class IndexController extends AbstractController
 {
     private $containerBuilder;
+    private $zipHelper;
+    private $cloud;
 
     /**
      * IndexController constructor.
      * @param ContainerProvider $provider
      */
-    public function __construct(ContainerBuilder $containerBuilder)
+    public function __construct(
+        ContainerBuilder $containerBuilder,
+        ZipHelper $zipHelper,
+        Cloud $cloud
+    )
     {
         $this->containerBuilder = $containerBuilder;
+        $this->zipHelper = $zipHelper;
+        $this->cloud = $cloud;
     }
 
     /**
@@ -41,7 +51,7 @@ class IndexController extends AbstractController
             [
                 'image' => 'php',
                 'args' => ['id' => 'php', 'version' => '7.1']
-            ],[
+            ], [
                 'image' => 'nginx',
                 'args' => ['id' => 'nginx', 'ports' => ['8080:80'], 'files' => ['max_upload_size' => '4M']]
             ],
@@ -49,12 +59,9 @@ class IndexController extends AbstractController
 
         $files = $this->containerBuilder->buildAll($data);
 
-        foreach ($files as $file) {
-            echo $file['name'] . PHP_EOL;
-            echo $file['content'] . PHP_EOL;
-            echo "<hr>";
-        }
+        $zip = $this->zipHelper->zip($files);
+        $url = $this->cloud->upload('oui', $zip);
 
-        return new Response('', Response::HTTP_OK);
+        return new Response($url, Response::HTTP_OK);
     }
 }
