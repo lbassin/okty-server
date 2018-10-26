@@ -66,10 +66,10 @@ class ZipHelperTest extends TestCase
         $zip->close();
     }
 
-    public function testCloseFailed()
+    public function testExceptionThrown()
     {
         $exception = new \Exception('error');
-        $this->mockZipArchive->method('close')->willThrowException($exception);
+        $this->mockZipArchive->method('open')->willThrowException($exception);
 
         $files = [['name' => 'file.txt', 'content' => 'Hello'], ['name' => 'data/config.json', 'content' => '{a: 2}']];
 
@@ -78,4 +78,14 @@ class ZipHelperTest extends TestCase
         $this->helper->zip($files);
     }
 
+    public function testCloseFailed()
+    {
+        $this->mockZipArchive->method('close')->willReturn(false);
+
+        $files = [['name' => 'file.txt', 'content' => 'Hello'], ['name' => 'data/config.json', 'content' => '{a: 2}']];
+
+        $this->expectException(\RuntimeException::class);
+
+        $this->helper->zip($files);
+    }
 }
