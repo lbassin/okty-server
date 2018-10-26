@@ -1,9 +1,11 @@
 knp_gaufrette:
   adapters:
-    firebase:
+    firebase_docker_compose:
       google_cloud_storage:
         service_id: 'Google_Service_Storage'
         bucket_name: '%bucket_name%'
+        options:
+          directory: 'docker-compose'
   filesystems:
-    firebase:
-      adapter: firebase
+    docker_compose:
+      adapter: firebase_docker_compose

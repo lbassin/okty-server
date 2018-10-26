@@ -50,8 +50,13 @@ services:
 
     App\Provider\Cloud:
         arguments:
-            $filesystem: '@gaufrette.firebase_filesystem'
+            $filesystem: '@gaufrette.docker_compose_filesystem'
+            $urlPrefix: 'https://storage.cloud.google.com'
+
+    ZipArchive:
+        class: \ZipArchive
+        factory: [App\Factory\ZipArchiveFactory, 'createService']
 
     Google_Service_Storage:
         class: \Google_Service_Storage
-        factory: [App\Factory\GoogleCloudStorageFactory, 'createService']
+        factory: [App\Factory\GoogleServiceStorageFactory, 'createService']

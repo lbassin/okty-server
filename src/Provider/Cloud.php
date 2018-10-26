@@ -2,7 +2,7 @@
 
 namespace App\Provider;
 
-use Gaufrette\File;
+use Gaufrette\Adapter\GoogleCloudStorage;
 use Gaufrette\Filesystem;
 
 /**
@@ -11,21 +11,23 @@ use Gaufrette\Filesystem;
 class Cloud
 {
     private $filesystem;
+    private $urlPrefix;
 
-    public function __construct(Filesystem $filesystem)
+    public function __construct(Filesystem $filesystem, string $urlPrefix)
     {
         $this->filesystem = $filesystem;
+        $this->urlPrefix = $urlPrefix;
     }
 
-    public function upload($name, $path): string
+    public function upload($path): string
     {
-        $data = $this->filesystem->write($name, file_get_contents($path), true);
-        dump($data);
+        /** @var GoogleCloudStorage $adapter */
+        $adapter = $this->filesystem->getAdapter();
 
-        /** @var File $data */
-        $file = $this->filesystem->get($name);
-        dump($file);
+        $name = $id = uniqid('okty-');
+        $this->filesystem->write($name, file_get_contents($path), true);
 
-        return 'https://storage.cloud.google.com/okty-7e60c.appspot.com/' . $file->getName();
+        return sprintf('%s/%s/%s/%s',
+            $this->urlPrefix, $adapter->getBucket(), $adapter->getOptions()['directory'] ?? '', $name);
     }
 }

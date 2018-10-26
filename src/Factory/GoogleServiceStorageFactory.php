@@ -5,7 +5,7 @@ namespace App\Factory;
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
-class GoogleCloudStorageFactory
+class GoogleServiceStorageFactory
 {
 
     public static function createService()
