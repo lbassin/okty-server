@@ -7,6 +7,7 @@ use App\Helper\ZipHelper;
 use App\Provider\Cloud;
 use GraphQL\Error\UserError;
 use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
@@ -40,6 +41,8 @@ class Build implements ResolverInterface
 
             $zip = $this->zipHelper->zip($files);
             $url = $this->cloud->upload($zip);
+        } catch (AccessDeniedException $exception) {
+            throw new UserError('Cannot generate output file');
         } catch (\RuntimeException $exception) {
             throw new UserError($exception->getMessage());
         }
