@@ -4,7 +4,6 @@ namespace App\Provider;
 
 use Github\Api\Repo;
 use Github\Client;
-use Github\Exception\RuntimeException;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
@@ -21,17 +20,17 @@ class Github
 
     public function __construct(
         Client $client,
+        CacheItemPoolInterface $cacheItemPool,
         string $githubUser,
         string $githubRepo,
-        string $githubBranch,
-        CacheItemPoolInterface $cacheItemPool
+        string $githubBranch
     )
     {
         $this->client = $client;
+        $this->cacheItemPool = $cacheItemPool;
         $this->githubUser = $githubUser;
         $this->githubRepo = $githubRepo;
         $this->githubBranch = $githubBranch;
-        $this->cacheItemPool = $cacheItemPool;
 
         $this->client->addCache($cacheItemPool);
     }
@@ -57,7 +56,7 @@ class Github
     {
         try {
             return $this->getRepo()->contents()->show($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
-        } catch (RuntimeException $e) {
+        } catch (\Exception $e) {
             throw new FileNotFoundException($path);
         }
     }
