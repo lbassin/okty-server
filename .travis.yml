@@ -21,9 +21,17 @@ after_success:
   - travis_retry php vendor/bin/php-coveralls -v
 
 deploy:
-  provider: heroku
-  api_key:
-    secure: JPw6LuChPcek+2TlgEhH6FLKO+xuNxsuFMSTOw86wzPRRtthv8kNE+RpVbD/87aNaqkuRRBI/U2VedLRMXtnHuX9n+0i7UmxeAKbqOt+/kTAX1EZOclC8HuIS1UlORd9l1GPt79x/cgCL5EGVkXEfAvcj+wVAZFNau03j0/X+7V8auExuWbnSLt7NXzG9iH9CWUIkDymA5YouKxSlNzpMDZQ3A+sl2tqsuPdeagryQWm+LQSIYmwQU2SbmJlaI7DMFQHWXVQSpCpxg6OLoJfDhWqV2zSgOaz88Hb2OvGOEvmlEPGRPN3YlOvEVDIz6HlpV7EJWdTJHdlgnx41Phb7YPE6GwUQRTOp62Zs6IUN84qvHn5DAsS/h/wAhQdeo9bJfCmlzPIiVPYue2ls4WQWDVVwYH2zx5YC1IYVwK70QE2uk4gug5v7w1neaLnAMa28cRdxXs1hUvFVJlttJ7dQq2O7n768XufZaD40FflpEOA7QreX4hk5xgwx5VqFNU5UIYH01NQtJatBCpRT0FmR8SoAa+qUnHJX2NVyMArsfDsu9YnmdKMdUOwgY0k2x3c848PVL7W+Q03eSQ+mshwYJp61bnY14jI0VuhDXQjJ+2wHyGtn2uFCVM116MarN+9NgS3SGuoL4Ov1ffTigKwIbM9tmbXXFQioXoFxbIAzbQ=
-  app: okty-server
-  on:
-    repo: Okty-io/okty-server
+  - provider: heroku
+    api_key:
+      secure: JPw6LuChPcek+2TlgEhH6FLKO+xuNxsuFMSTOw86wzPRRtthv8kNE+RpVbD/87aNaqkuRRBI/U2VedLRMXtnHuX9n+0i7UmxeAKbqOt+/kTAX1EZOclC8HuIS1UlORd9l1GPt79x/cgCL5EGVkXEfAvcj+wVAZFNau03j0/X+7V8auExuWbnSLt7NXzG9iH9CWUIkDymA5YouKxSlNzpMDZQ3A+sl2tqsuPdeagryQWm+LQSIYmwQU2SbmJlaI7DMFQHWXVQSpCpxg6OLoJfDhWqV2zSgOaz88Hb2OvGOEvmlEPGRPN3YlOvEVDIz6HlpV7EJWdTJHdlgnx41Phb7YPE6GwUQRTOp62Zs6IUN84qvHn5DAsS/h/wAhQdeo9bJfCmlzPIiVPYue2ls4WQWDVVwYH2zx5YC1IYVwK70QE2uk4gug5v7w1neaLnAMa28cRdxXs1hUvFVJlttJ7dQq2O7n768XufZaD40FflpEOA7QreX4hk5xgwx5VqFNU5UIYH01NQtJatBCpRT0FmR8SoAa+qUnHJX2NVyMArsfDsu9YnmdKMdUOwgY0k2x3c848PVL7W+Q03eSQ+mshwYJp61bnY14jI0VuhDXQjJ+2wHyGtn2uFCVM116MarN+9NgS3SGuoL4Ov1ffTigKwIbM9tmbXXFQioXoFxbIAzbQ=
+    app: okty-server
+    on:
+      repo: Okty-io/okty-server
+      branch: master
+  - provider: heroku
+    api_key:
+      secure: ZiK3AV2Zivl3HCAku7+SUvlh5WpUXCyKAuUAnr5nL/TVG72dD8Zdv9IrCy/6bgZTvGicIv9CEaP3zWtBey6vftxOIp1OLTJqNkPsCTS7wBI8me0scCGfseb7si4uRtQ06BH2K9ojTice+9yYChUid6qUY1jiyhYzPFrysgZd97BSiOJNAA7+P1CLgx97LOrcFKwZDrmQdfOol/pO92PNh5lpivLA7lA6r8XaDDX9a+V1WuRCqald5s2pYuBmdsHjYCE50R90h6aDnlJP6ECsciiTQndaOnB+zP+/iu58u3427BS+CirAgQjnDoodIebaTF6TUC1ctQqpPMwMbBQCwF0PNo0oBp5hxLfDqrQ0tcJr3l4zj13PQ70YmdDcoU+ZjcbUmMuMXMdYAXUXCh/vmolVn7pvK5c3RRTueeoWhfRkNqCADanVpUPeGQWp9k9RaOKaD0TB0FFLU4jy5z6FlRtuCDn/lUWnAun0SXikNYoJeljF3Ghhf61Dy1eb5LJtdN1QB2Uuapok/aVjC7V6C3yCiF0an8sYLdSQQnmMMnGi9PuYAr88rlW1Mh6jjWktkN1tLFmGo61VR4evIXDxxG+YJPVVQcTwX+lj6A//s3X9UJ0AdlN96M9rp5uiVWuO+4h2KHHjJ8lGjjMNDwRA8K3mNHqA0/yEvI9dDn26BE8=
+    app: okty-server-dev
+    on:
+      repo: Okty-io/okty-server
+      branch: dev
