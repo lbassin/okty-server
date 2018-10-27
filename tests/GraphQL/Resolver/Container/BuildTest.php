@@ -9,6 +9,7 @@ use App\Provider\Cloud;
 use GraphQL\Error\ClientAware;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
@@ -53,6 +54,21 @@ class BuildTest extends TestCase
         $args = json_encode([
             ['name' => 'ok', 'data' => ['ok' => 1]]
         ]);
+        $this->expectException(ClientAware::class);
+
+        call_user_func($this->resolver, $args);
+    }
+
+    public function testUploadFail()
+    {
+        $args = json_encode([
+            ['image' => 'nginx', 'args' => ['id' => 'web']]
+        ]);
+
+        $this->mockCloud
+            ->method('upload')
+            ->willThrowException(new AccessDeniedException('test'));
+
         $this->expectException(ClientAware::class);
 
         call_user_func($this->resolver, $args);
