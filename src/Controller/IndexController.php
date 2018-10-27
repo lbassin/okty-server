@@ -47,12 +47,6 @@ class IndexController extends AbstractController
      */
     public function dev()
     {
-        $data = [['image' => 'php', 'args' => ['id' => 'php']], ['image' => 'nginx','args' => ['id' => 'nginx']]];
 
-        $files = $this->containerBuilder->buildAll($data);
-        $zip = $this->zipHelper->zip($files);
-        $url = $this->cloud->upload($zip);
-
-        return new Response($url, Response::HTTP_OK);
     }
 }
