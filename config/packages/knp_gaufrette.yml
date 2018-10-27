@@ -3,7 +3,7 @@ knp_gaufrette:
     firebase_docker_compose:
       google_cloud_storage:
         service_id: 'Google_Service_Storage'
-        bucket_name: '%bucket_name%'
+        bucket_name: '%env(BUCKET_NAME)%'
         options:
           directory: 'docker-compose'
   filesystems:
