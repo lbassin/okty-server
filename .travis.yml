@@ -11,7 +11,7 @@ before-install:
 
 install:
   - cp .env.dist .env
-  - composer install --dev
+  - composer install
 
 script:
   - mkdir -p build/logs
