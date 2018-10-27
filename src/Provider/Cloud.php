@@ -32,7 +32,7 @@ class Cloud
         try {
             $this->filesystem->write($name, file_get_contents($path), true);
         } catch (\Exception $ex) {
-            throw new AccessDeniedException($ex->getMessage());
+            throw new AccessDeniedException($name);
         }
 
         return sprintf('%s/%s/%s/%s',
