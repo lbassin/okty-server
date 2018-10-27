@@ -6,7 +6,10 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-json": "*",
+        "ext-zip": "*",
+        "google/apiclient": "^2.2",
         "knplabs/github-api": "^2.10",
+        "knplabs/knp-gaufrette-bundle": "^0.5.3",
         "nelmio/cors-bundle": "^1.5",
         "overblog/graphql-bundle": "^0.11.7",
         "php-http/guzzle6-adapter": "^1.1",
@@ -17,6 +20,7 @@
         "symfony/flex": "^1.1",
         "symfony/framework-bundle": "*",
         "symfony/monolog-bundle": "^3.3",
+        "symfony/validator": "*",
         "symfony/yaml": "*"
     },
     "require-dev": {
@@ -25,7 +29,8 @@
         "symfony/dotenv": "*",
         "symfony/maker-bundle": "^1.7",
         "symfony/phpunit-bridge": "*",
-        "symfony/twig-bundle": "*"
+        "symfony/twig-bundle": "*",
+        "symfony/var-dumper": "*"
     },
     "config": {
         "preferred-install": {

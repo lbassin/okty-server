@@ -2,21 +2,29 @@ Query:
   type: object
   config:
     fields:
-      containers:
+      container_forms:
         type: '[Container!]!'
         description: 'Get list of availables containers'
-        resolve: '@=resolver("App\\GraphQL\\Resolver\\Container\\Containers", [])'
-      container:
-        type: 'Container'
+        resolve: '@=resolver("App\\GraphQL\\Resolver\\Container\\Forms", [])'
+      container_form:
+        type: 'Container!'
         description: 'Get container'
-        resolve: '@=resolver("App\\GraphQL\\Resolver\\Container\\Container", [args["id"]])'
+        resolve: '@=resolver("App\\GraphQL\\Resolver\\Container\\Form", [args["id"]])'
         args:
           id:
             type: 'String!'
-      templates:
+      container_build:
+        type: 'String'
+        description: 'Return a zip file with containers data'
+        resolve: '@=resolver("App\\GraphQL\\Resolver\\Container\\Build", [args["containers"]])'
+        args:
+          containers:
+            type: 'String!'
+            description: 'JSON with all containers : [{id: "nginx", args: {...}}, {id: "php", args: {...}}]'
+      template_all:
         type: '[Template!]!'
         description: 'Get list of availables templates'
-        resolve: '@=resolver("App\\GraphQL\\Resolver\\Template\\Templates", [])'
+        resolve: '@=resolver("App\\GraphQL\\Resolver\\Template\\All", [])'
       template:
         type: 'Template!'
         description: 'Get a template'
