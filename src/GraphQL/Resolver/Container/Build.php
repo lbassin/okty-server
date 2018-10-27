@@ -34,6 +34,10 @@ class Build implements ResolverInterface
 
         try {
             $files = $this->containerBuilder->buildAll($containers);
+            if (empty($files)) {
+                throw new UserError('No files generated');
+            }
+
             $zip = $this->zipHelper->zip($files);
             $url = $this->cloud->upload($zip);
         } catch (\RuntimeException $exception) {
