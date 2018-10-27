@@ -59,4 +59,6 @@ services:
 
     Google_Service_Storage:
         class: \Google_Service_Storage
-        factory: [App\Factory\GoogleServiceStorageFactory, 'createService']
+        factory: 'App\Factory\GoogleServiceStorageFactory:createService'
+        arguments:
+            - '%env(json:GOOGLE_STORAGE_CREDENTIALS)%'

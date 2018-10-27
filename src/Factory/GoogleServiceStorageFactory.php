@@ -7,14 +7,17 @@ namespace App\Factory;
  */
 class GoogleServiceStorageFactory
 {
-
-    public static function createService()
+    public static function createService($credentials)
     {
         $client = new \Google_Client();
         $client->addScope(\Google_Service_Storage::CLOUD_PLATFORM);
-        $client->useApplicationDefaultCredentials();
+
+        try {
+            $client->setAuthConfig($credentials);
+        } catch (\Exception $e) {
+            throw new \RuntimeException('Google Service Storage credentials missing');
+        }
 
         return new \Google_Service_Storage($client);
     }
-
 }
