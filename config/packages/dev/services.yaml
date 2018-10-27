@@ -1,3 +1,6 @@
+parameters:
+  bucket_name: 'okty-dev.appspot.com'
+
 services:
   cache.adapter.null:
     class: \Symfony\Component\Cache\Adapter\NullAdapter
