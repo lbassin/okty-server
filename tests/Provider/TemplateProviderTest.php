@@ -62,18 +62,18 @@ class TemplateProviderTest extends WebTestCase
         $templates = $this->getOneTemplate();
 
         $this->assertSame('Symfony 4', $templates[0]['name']);
-        $this->assertSame('https://cdn.worldvectorlogo.com/logos/symfony.svg', $templates[0]['image']);
+        $this->assertSame('https://cdn.worldvectorlogo.com/logos/symfony.svg', $templates[0]['logo']);
     }
 
     public function testGetAllTemplatesContainers()
     {
         $templates = $this->getOneTemplate();
 
-        $this->assertCount(4, $templates[0]['containers']);
-        $this->assertCount(7, $templates[0]['containers'][0]['config']);
+        $this->assertCount(5, $templates[0]['containers']);
+        $this->assertCount(4, $templates[0]['containers'][0]['args']);
 
-        $this->assertSame('adminer', $templates[0]['containers'][1]['configPath']);
-        $this->assertSame('adminer', $templates[0]['containers'][1]['containerId']);
+        $this->assertSame('php', $templates[0]['containers'][1]['args']['id']);
+        $this->assertSame('public', $templates[0]['containers'][0]['args']['files']['root_folder']);
     }
 
     public function testGetTemplate()
@@ -87,8 +87,9 @@ class TemplateProviderTest extends WebTestCase
         $template = $this->provider->getOne('symfony');
 
         $this->assertSame('Symfony 4', $template['name']);
-        $this->assertCount(4, $template['containers']);
-        $this->assertCount(7, $template['containers'][0]['config']);
+        $this->assertCount(5, $template['containers']);
+        $this->assertCount(4, $template['containers'][0]['args']);
+        $this->assertCount(4, $template['containers'][3]['args']['environments']);
     }
 
     public function testGetElementNotFound()
