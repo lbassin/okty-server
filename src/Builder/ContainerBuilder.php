@@ -111,6 +111,8 @@ class ContainerBuilder
         $container = $this->resolveVolumes($container, $args['volumes'] ?? []);
         $container = $this->resolveEnvironment($container, $args['environments'] ?? []);
 
+        $container = array_filter($container);
+
         $output = ['version' => '3', 'services' => []];
         $output['services'][$args['id']] = $container;
 
