@@ -35,4 +35,47 @@ class FormWebTest extends WebTestCase
         $this->assertEmpty($containerForms['errors'] ?? [], 'Errors entry not empty');
         $this->assertNotEmpty($containerForms['data']['container_form'] ?? [], 'No container found');
     }
+
+    public function testGetAllFieldContainerForm()
+    {
+        /** @var Client $client */
+        $this->client = static::createClient();
+
+        $this->client->request(
+            'POST',
+            '/graphql/',
+            ['query' => '{
+                container_form(id: "nginx"){
+                  id
+                  name
+                  logo
+                  config {
+                    id
+                    label
+                    fields {
+                      id
+                      label
+                      type
+                      base
+                      destination
+                      value
+                      source {
+                        label
+                        value
+                      }
+                      validators {
+                        name
+                        constraint
+                      }
+                    }
+                  }
+                }
+            }']);
+
+        $containerForms = json_decode($this->client->getResponse()->getContent(), true);
+
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
+        $this->assertEmpty($containerForms['errors'] ?? [], 'Errors entry not empty');
+        $this->assertNotEmpty($containerForms['data']['container_form'] ?? [], 'No container found');
+    }
 }
