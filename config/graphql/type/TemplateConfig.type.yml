@@ -4,8 +4,11 @@ TemplateConfig:
     fields:
       id:
         type: 'String!'
-      container:
+      version:
         type: 'String!'
-      config:
-        type: '[TemplateConfigField!]!'
-        resolve: '@=resolver("App\\GraphQL\\Resolver\\Template\\Config", [value])'
+      volumes:
+        type: '[String!]'
+      ports:
+        type: '[String!]'
+      environments:
+        type: '[String!]'

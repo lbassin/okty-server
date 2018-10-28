@@ -6,7 +6,7 @@ Template:
         type: 'String!'
       name:
         type: 'String!'
-      image:
+      logo:
         type: 'String!'
       containers:
         type: '[TemplateConfig!]!'
