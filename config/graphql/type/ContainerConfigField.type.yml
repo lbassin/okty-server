@@ -9,11 +9,11 @@ ContainerConfigField:
       type:
         type: 'String!'
       base:
-        type: 'String!'
+        type: 'String'
       destination:
         type: 'String!'
       value:
-        type: 'String!'
+        type: 'String'
       source:
         type: '[Source!]'
         resolve: '@=resolver("App\\GraphQL\\Resolver\\Container\\Source", [value])'
