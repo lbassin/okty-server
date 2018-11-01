@@ -11,7 +11,6 @@
         "knplabs/github-api": "^2.10",
         "knplabs/knp-gaufrette-bundle": "^0.5.3",
         "nelmio/cors-bundle": "^1.5",
-        "overblog/graphql-bundle": "^0.11.7",
         "php-http/guzzle6-adapter": "^1.1",
         "predis/predis": "^1.1",
         "sensio/framework-extra-bundle": "^5.2",
@@ -24,13 +23,10 @@
         "symfony/yaml": "*"
     },
     "require-dev": {
-        "overblog/graphiql-bundle": "^0.1.1",
         "php-coveralls/php-coveralls": "^2.1",
         "symfony/browser-kit": "*",
         "symfony/dotenv": "*",
-        "symfony/maker-bundle": "^1.7",
         "symfony/phpunit-bridge": "*",
-        "symfony/twig-bundle": "*",
         "symfony/var-dumper": "*"
     },
     "config": {
