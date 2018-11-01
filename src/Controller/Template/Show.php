@@ -2,6 +2,10 @@
 
 namespace App\Controller\Template;
 
+use App\Provider\TemplateProvider;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -9,8 +13,23 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Show
 {
-    public function handle(): Response
+    private $templateProvider;
+
+    public function __construct(TemplateProvider $templateProvider)
     {
-        return new Response('Template Show');
+        $this->templateProvider = $templateProvider;
+    }
+
+    public function handle(Request $request): Response
+    {
+        $id = $request->attributes->get('id');
+
+        try {
+            $templates = $this->templateProvider->getOne($id);
+        } catch (FileNotFoundException $exception) {
+            return new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_NOT_FOUND);
+        }
+
+        return new JsonResponse($templates);
     }
 }

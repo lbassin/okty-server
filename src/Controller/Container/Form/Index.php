@@ -2,6 +2,9 @@
 
 namespace App\Controller\Container\Form;
 
+use App\Provider\ContainerProvider;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -9,8 +12,21 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Index
 {
+    private $containerProvider;
+
+    public function __construct(ContainerProvider $containerProvider)
+    {
+        $this->containerProvider = $containerProvider;
+    }
+
     public function handle(): Response
     {
-        return new Response('Container Form Index');
+        try {
+            $containers = $this->containerProvider->getAll();
+        } catch (FileNotFoundException $exception) {
+            return new JsonResponse(['error' => 'Container form not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        return new JsonResponse($containers);
     }
 }
