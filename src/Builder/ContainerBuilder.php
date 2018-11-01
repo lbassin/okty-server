@@ -27,8 +27,7 @@ class ContainerBuilder
         Github $github,
         ContainerProvider $container,
         ValidatorInterface $validator
-    )
-    {
+    ) {
         $this->github = $github;
         $this->container = $container;
         $this->validator = $validator;
@@ -242,8 +241,11 @@ class ContainerBuilder
                 $content = str_replace('{{' . $arg . '}}', $value, $content);
             }
 
+            $outputPath = $manifest['config'][$file]['output'] ?? '';
+            $outputPath = rtrim($outputPath, '/') . '/';
+
             $files[] = [
-                'name' => ($manifest['config'][$file]['output'] ?? '') . $file,
+                'name' => $outputPath . $file,
                 'content' => $content
             ];
         }
