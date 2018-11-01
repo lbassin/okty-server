@@ -33,6 +33,9 @@ class TemplateProvider
     public function getOne($template)
     {
         $file = $this->path . '/' . $template;
+        if (substr_compare($file, '.yml', strlen($file) - 4, 4) !== 0) {
+            $file .= '.yml';
+        }
 
         $content = $this->github->getFile($file);
 
