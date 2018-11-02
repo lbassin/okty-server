@@ -27,8 +27,7 @@ class ContainerBuilder
         Github $github,
         ContainerProvider $container,
         ValidatorInterface $validator
-    )
-    {
+    ) {
         $this->github = $github;
         $this->container = $container;
         $this->validator = $validator;
@@ -110,6 +109,8 @@ class ContainerBuilder
         $container = $this->resolvePorts($container, $args['ports'] ?? []);
         $container = $this->resolveVolumes($container, $args['volumes'] ?? []);
         $container = $this->resolveEnvironment($container, $args['environments'] ?? []);
+
+        $container = array_filter($container);
 
         $output = ['version' => '3', 'services' => []];
         $output['services'][$args['id']] = $container;
@@ -240,8 +241,11 @@ class ContainerBuilder
                 $content = str_replace('{{' . $arg . '}}', $value, $content);
             }
 
+            $outputPath = $manifest['config'][$file]['output'] ?? '';
+            $outputPath = rtrim($outputPath, '/') . '/';
+
             $files[] = [
-                'name' => ($manifest['config'][$file]['output'] ?? '') . $file,
+                'name' => $outputPath . $file,
                 'content' => $content
             ];
         }

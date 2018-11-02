@@ -61,10 +61,7 @@ class ContainerProviderTest extends TestCase
         $nginx = $containers[1];
 
         $this->assertSame('Adminer', $adminer['name']);
-        $this->assertSame('latest', $adminer['version']);
-
-        $this->assertSame('okty/nginx', $nginx['docker']);
-        $this->assertSame('https://cdn.worldvectorlogo.com/logos/nginx.svg', $nginx['image']);
+        $this->assertSame('https://cdn.worldvectorlogo.com/logos/nginx.svg', $nginx['logo']);
     }
 
     public function testGetAllContainersConfig()

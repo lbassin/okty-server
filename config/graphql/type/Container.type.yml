@@ -6,11 +6,7 @@ Container:
         type: 'String!'
       name:
         type: 'String!'
-      image:
-        type: 'String!'
-      docker:
-        type: 'String!'
-      version:
+      logo:
         type: 'String!'
       config:
         type: '[ContainerConfig!]!'
