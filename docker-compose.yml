@@ -17,7 +17,7 @@ services:
             - './:/usr/share/nginx/html'
         working_dir: '/usr/share/nginx/html'
     nginx:
-        image: 'okty/nginx:1.14'
+        build: 'docker/nginx'
         environment:
             - MAX_UPLOAD_SIZE=2M
             - PHP_CONTAINER_ID=php
