@@ -2,8 +2,8 @@
 
 namespace App\Tests\Builder\Validator;
 
-use App\Builder\Validator\Volume;
-use App\Builder\Validator\VolumeValidator;
+use App\Builder\Validator\VolumeConstraint;
+use App\Builder\Validator\VolumeConstraintValidator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Constraint;
@@ -27,8 +27,8 @@ class VolumeValidatorTest extends TestCase
         $this->mockViolationBuilder = $this->createMock(ConstraintViolationBuilderInterface::class);
         $this->mockContext = $this->createMock(ExecutionContextInterface::class);
 
-        $this->constraint = new Volume();
-        $this->validator = new VolumeValidator();
+        $this->constraint = new VolumeConstraint();
+        $this->validator = new VolumeConstraintValidator();
 
         $this->mockContext
             ->method('buildViolation')

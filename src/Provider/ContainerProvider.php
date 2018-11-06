@@ -62,6 +62,11 @@ class ContainerProvider
         }
     }
 
+    public function getSource(string $container, string $file)
+    {
+        return $this->github->getFile($this->getPath($container) . 'sources/' . $file);
+    }
+
     public function getPath(string $container)
     {
         return $this->path . '/' . $container . '/';

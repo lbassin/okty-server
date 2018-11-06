@@ -2,8 +2,8 @@
 
 namespace App\Tests\Builder\Validator;
 
-use App\Builder\Validator\Port;
-use App\Builder\Validator\PortValidator;
+use App\Builder\Validator\PortConstraint;
+use App\Builder\Validator\PortConstraintValidator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Constraint;
@@ -27,8 +27,8 @@ class PortValidatorTest extends TestCase
         $this->mockViolationBuilder = $this->createMock(ConstraintViolationBuilderInterface::class);
         $this->mockContext = $this->createMock(ExecutionContextInterface::class);
 
-        $this->constraint = new Port();
-        $this->validator = new PortValidator();
+        $this->constraint = new PortConstraint();
+        $this->validator = new PortConstraintValidator();
 
         $this->mockContext
             ->method('buildViolation')

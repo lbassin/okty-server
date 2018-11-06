@@ -7,7 +7,7 @@ use Symfony\Component\Validator\Constraint;
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
-class Environment extends Constraint
+class PortConstraint extends Constraint
 {
-    public $message = "The env '{{ name }}' is not valid.";
+    public $message = "The port '{{ port }}' is not valid.";
 }

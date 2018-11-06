@@ -2,7 +2,7 @@
 
 namespace App\Tests\Builder;
 
-use App\Builder\ContainerBuilder;
+use App\Builder\ProjectBuilder;
 use App\Provider\ContainerProvider;
 use App\Provider\Github;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -20,7 +20,7 @@ class ContainerBuilderTest extends TestCase
     private $mockProvider;
     /** @var MockObject|ValidatorInterface */
     private $mockValidator;
-    /** @var ContainerBuilder */
+    /** @var ProjectBuilder */
     private $builder;
 
     private $fixturePath;
@@ -31,7 +31,7 @@ class ContainerBuilderTest extends TestCase
         $this->mockProvider = $this->createMock(ContainerProvider::class);
         $this->mockValidator = $this->createMock(ValidatorInterface::class);
 
-        $this->builder = new ContainerBuilder($this->mockGithub, $this->mockProvider, $this->mockValidator);
+        $this->builder = new ProjectBuilder($this->mockGithub, $this->mockProvider, $this->mockValidator);
 
         $this->fixturePath = __DIR__ . '/Fixtures/';
     }

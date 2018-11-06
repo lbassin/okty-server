@@ -8,7 +8,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
-class VolumeValidator extends ConstraintValidator
+class VolumeConstraintValidator extends ConstraintValidator
 {
     public function validate($value, Constraint $constraint): void
     {

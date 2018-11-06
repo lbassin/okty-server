@@ -7,7 +7,7 @@ use Symfony\Component\Validator\Constraint;
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
-class Port extends Constraint
+class VolumeConstraint extends Constraint
 {
-    public $message = "The port '{{ port }}' is not valid.";
+    public $message = "The volume '{{ path }}' is not valid.";
 }

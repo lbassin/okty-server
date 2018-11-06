@@ -7,7 +7,7 @@ use Symfony\Component\Validator\Constraint;
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
-class Volume extends Constraint
+class EnvironmentConstraint extends Constraint
 {
-    public $message = "The volume '{{ path }}' is not valid.";
+    public $message = "The env '{{ name }}' is not valid.";
 }

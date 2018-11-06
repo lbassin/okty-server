@@ -2,8 +2,8 @@
 
 namespace App\Tests\Builder\Validator;
 
-use App\Builder\Validator\Environment;
-use App\Builder\Validator\EnvironmentValidator;
+use App\Builder\Validator\EnvironmentConstraint;
+use App\Builder\Validator\EnvironmentConstraintValidator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Constraint;
@@ -27,8 +27,8 @@ class EnvironmentValidatorTest extends TestCase
         $this->mockViolationBuilder = $this->createMock(ConstraintViolationBuilderInterface::class);
         $this->mockContext = $this->createMock(ExecutionContextInterface::class);
 
-        $this->constraint = new Environment();
-        $this->validator = new EnvironmentValidator();
+        $this->constraint = new EnvironmentConstraint();
+        $this->validator = new EnvironmentConstraintValidator();
 
         $this->mockContext
             ->method('buildViolation')

@@ -8,7 +8,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
-class PortValidator extends ConstraintValidator
+class PortConstraintValidator extends ConstraintValidator
 {
     const MIN_PORT = 0;
     const MAX_PORT = 65536;
