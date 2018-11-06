@@ -2,6 +2,7 @@
 
 namespace App\Builder\Resolver;
 
+use App\Helper\LambdaHelper;
 use App\Provider\ContainerProvider;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
@@ -9,10 +10,12 @@ class FileResolver
 {
     private $warnings = [];
     private $containerProvider;
+    private $lambdaHelper;
 
-    public function __construct(ContainerProvider $containerProvider)
+    public function __construct(ContainerProvider $containerProvider, LambdaHelper $lambdaHelper)
     {
         $this->containerProvider = $containerProvider;
+        $this->lambdaHelper = $lambdaHelper;
     }
 
     public function resolve(string $image, array $manifest, string $file, array $userConfig): array
@@ -37,7 +40,7 @@ class FileResolver
             $value = $userConfig[$configName] ?? $defaultValue;
 
             // Apply resolver on output value
-            // $value = ''; // Call resolver
+            $value = $this->lambdaHelper->invoke($image, $configName, $value); // Call resolver
 
             // Write value in file
             $content = str_replace('{{' . $configName . '}}', $value, $content);

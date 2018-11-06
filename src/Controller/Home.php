@@ -21,7 +21,6 @@ class Home
     {
         $args = [
             ['image' => 'nginx', 'args' => ['id' => 'nginx', 'files' => ['root_folder' => 'public'], 'environments' => ['test=43']]],
-            ['image' => 'nginx', 'args' => ['id' => 'coucou', 'files' => ['root_folder' => 'test'], 'environments' => ['test=43']]],
             ['image' => 'composer', 'args' => ['id' => 'composer', 'ports' => ['8080:80']]]
         ];
 
