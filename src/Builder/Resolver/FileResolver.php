@@ -39,12 +39,20 @@ class FileResolver
             // If no value provided by user => Default value
             $value = $userConfig[$configName] ?? $defaultValue;
 
-            // Apply resolver on output value
-            $value = $this->lambdaHelper->invoke($image, $configName, $value); // Call resolver
+            try {
+                // Apply resolver on output value
+                $value = $this->lambdaHelper->invoke($image, $configName, $value); // Call resolver
+            } catch (\RuntimeException $exception) {
+                $this->warnings[] = $exception->getMessage();
+            }
+
+            dump($value);
 
             // Write value in file
             $content = str_replace('{{' . $configName . '}}', $value, $content);
         }
+
+        dump($this->warnings);
 
         // Get output path and ensure it end with a /
         $outputPath = rtrim($fileConfig['output'] ?? '', '/') . '/';

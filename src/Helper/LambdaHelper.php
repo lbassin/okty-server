@@ -2,6 +2,7 @@
 
 namespace App\Helper;
 
+use Aws\Lambda\Exception\LambdaException;
 use Aws\Lambda\LambdaClient;
 use GuzzleHttp\Psr7\Stream;
 
@@ -19,13 +20,21 @@ class LambdaHelper
 
     public function invoke($function, $resolver, $arg)
     {
-        /** @var \Aws\Result $response */
-        $response = $this->lambdaClient->invoke([
-            'FunctionName' => $function,
-            'Payload' => json_encode(['name' => $resolver, 'value' => $arg])
-        ]);
+        try {
+            /** @var \Aws\Result $response */
+            $response = $this->lambdaClient->invoke([
+                'FunctionName' => $function,
+                'Payload' => json_encode(['name' => $resolver, 'value' => $arg])
+            ]);
+        } catch (LambdaException $exception) {
+            if ($exception->getStatusCode() == 404) {
+                throw new \RuntimeException("Function $function not found");
+            }
 
-        if (!$response->get('FunctionError')) {
+            throw new \RuntimeException($exception->getMessage());
+        }
+
+        if ($response->get('FunctionError')) {
             return $arg;
         }
 
