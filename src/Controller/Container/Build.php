@@ -36,11 +36,11 @@ class Build
             if (empty($files)) {
                 throw new \RuntimeException('No files generated');
             }
+
+            $file = $this->zipHelper->zip($files);
         } catch (\RuntimeException $exception) {
             return new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        $file = $this->zipHelper->zip($files);
 
         $response = new BinaryFileResponse($file);
         $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'okty.zip');

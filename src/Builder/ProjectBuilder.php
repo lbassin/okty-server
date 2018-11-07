@@ -2,6 +2,8 @@
 
 namespace App\Builder;
 
+use Symfony\Component\Yaml\Yaml;
+
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
@@ -38,6 +40,8 @@ class ProjectBuilder
             $output = array_merge($output, $files);
         }
 
-        return array_merge([$compose], $output);
+        return array_merge([
+            ['name' => 'docker-compose.yaml', 'content' => YAML::dump($compose, 5)]
+        ], $output);
     }
 }

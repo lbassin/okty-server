@@ -46,18 +46,14 @@ class FileResolver
                 $this->warnings[] = $exception->getMessage();
             }
 
-            dump($value);
-
             // Write value in file
             $content = str_replace('{{' . $configName . '}}', $value, $content);
         }
 
-        dump($this->warnings);
-
         // Get output path and ensure it end with a /
         $outputPath = rtrim($fileConfig['output'] ?? '', '/') . '/';
 
-        $files[] = [
+        $files = [
             'name' => $outputPath . $file,
             'content' => $content
         ];
