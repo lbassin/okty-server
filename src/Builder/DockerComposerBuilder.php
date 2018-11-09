@@ -4,6 +4,7 @@ namespace App\Builder;
 
 use App\Builder\Resolver\EnvironmentsResolver;
 use App\Builder\Resolver\ImageResolver;
+use App\Builder\Resolver\OptionsResolver;
 use App\Builder\Resolver\PortsResolver;
 use App\Builder\Resolver\VolumesResolver;
 
@@ -13,17 +14,20 @@ class DockerComposerBuilder
     private $portsResolver;
     private $volumesResolver;
     private $environmentsResolver;
+    private $optionsResolver;
 
     public function __construct(
         ImageResolver $imageResolver,
         PortsResolver $portsResolver,
         VolumesResolver $volumesResolver,
-        EnvironmentsResolver $environmentsResolver
+        EnvironmentsResolver $environmentsResolver,
+        OptionsResolver $optionsResolver
     ) {
         $this->imageResolver = $imageResolver;
         $this->portsResolver = $portsResolver;
         $this->volumesResolver = $volumesResolver;
         $this->environmentsResolver = $environmentsResolver;
+        $this->optionsResolver = $optionsResolver;
     }
 
     /**
@@ -33,7 +37,14 @@ class DockerComposerBuilder
     {
         $id = $args['id'] ?? $name;
 
-        $container = $this->imageResolver->resolve($name, $args['version'] ?? '');
+        $container = [];
+
+        $image = $this->imageResolver->resolve($name, $args['version'] ?? '');
+        $container = array_merge($container, $image);
+
+        $options = $this->optionsResolver->resolve($args);
+        $container = array_merge($container, $options);
+
         $container['ports'] = $this->portsResolver->resolve($args['ports'] ?? []);
         $container['volumes'] = $this->volumesResolver->resolve($args['volumes'] ?? []);
         $container['environments'] = $this->environmentsResolver->resolve($args['environments'] ?? []);
