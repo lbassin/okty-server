@@ -46,6 +46,8 @@ class LambdaHelper
             $output .= $stream->read(255);
         }
 
+        $output = trim($output, '"');
+
         return $output;
     }
 }
