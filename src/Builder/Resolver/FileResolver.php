@@ -53,6 +53,9 @@ class FileResolver
         // Get output path and ensure it end with a /
         $outputPath = rtrim($fileConfig['output'] ?? '', '/') . '/';
 
+        // Replace \n by a real new line character
+        $content = str_replace('\n', PHP_EOL, $content);
+
         $files = [
             'name' => $outputPath . $file,
             'content' => $content
