@@ -1,8 +1,0 @@
-Validator:
-  type: object
-  config:
-    fields:
-      name:
-        type: 'String'
-      constraint:
-        type: 'String'

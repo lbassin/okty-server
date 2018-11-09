@@ -1,5 +1,0 @@
-services:
-  Github\Client:
-    public: true
-  Psr\Cache\CacheItemPoolInterface:
-    public: true

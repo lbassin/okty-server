@@ -6,26 +6,26 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-json": "*",
+        "ext-zip": "*",
+        "aws/aws-sdk-php-symfony": "^2.0",
         "knplabs/github-api": "^2.10",
         "nelmio/cors-bundle": "^1.5",
-        "overblog/graphql-bundle": "^0.11.7",
         "php-http/guzzle6-adapter": "^1.1",
         "predis/predis": "^1.1",
-        "sensio/framework-extra-bundle": "^5.2",
         "symfony/cache": "*",
         "symfony/console": "*",
         "symfony/flex": "^1.1",
         "symfony/framework-bundle": "*",
         "symfony/monolog-bundle": "^3.3",
+        "symfony/validator": "*",
         "symfony/yaml": "*"
     },
     "require-dev": {
-        "overblog/graphiql-bundle": "^0.1.1",
         "php-coveralls/php-coveralls": "^2.1",
+        "symfony/browser-kit": "*",
         "symfony/dotenv": "*",
-        "symfony/maker-bundle": "^1.7",
         "symfony/phpunit-bridge": "*",
-        "symfony/twig-bundle": "*"
+        "symfony/var-dumper": "*"
     },
     "config": {
         "preferred-install": {

@@ -4,6 +4,10 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    containers_path: 'containers'
+    templates_path: 'templates'
+    locale: 'en'
+    google_cloud_credentials: '%env(json:GOOGLE_APPLICATION_CREDENTIALS)%'
 
 services:
     # default configuration for services in *this* file
@@ -29,10 +33,20 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    App\Provider\Config\Github:
+    App\Provider\Github:
         arguments:
             $githubUser: '%env(CONFIG_GITHUB_USER)%'
             $githubRepo: '%env(CONFIG_GITHUB_REPO)%'
             $githubBranch: '%env(CONFIG_GITHUB_BRANCH)%'
-            $containersPath: 'config/containers'
-            $templatesPath: 'config/templates'
+
+    App\Provider\ContainerProvider:
+        arguments:
+            $path: '%containers_path%'
+
+    App\Provider\TemplateProvider:
+        arguments:
+            $path: '%templates_path%'
+
+    ZipArchive:
+        class: \ZipArchive
+        factory: [App\Factory\ZipArchiveFactory, 'createService']

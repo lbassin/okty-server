@@ -14,13 +14,6 @@
         <env name="APP_SECRET" value="s$cretf0rt3st" />
         <env name="SHELL_VERBOSITY" value="-1" />
         <!-- define your env variables for the test env here -->
-
-        <!-- ###+ knplabs/github-api ### -->
-        <env name="GITHUB_AUTH_METHOD" value="http_password"/>
-        <env name="GITHUB_USERNAME" value="username"/>
-        <env name="GITHUB_SECRET" value="password_or_token"/>
-        <!-- ###- knplabs/github-api ### -->
-
         <env name="REDIS_URL" value=""/>
 
         <env name="CONFIG_GITHUB_USER" value="Okty-io"/>
@@ -30,6 +23,17 @@
         <!-- ###+ nelmio/cors-bundle ### -->
         <env name="CORS_ALLOW_ORIGIN" value="^https?://127.0.0.1(:[0-9]+)?$"/>
         <!-- ###- nelmio/cors-bundle ### -->
+
+        <!-- ###+ knplabs/github-api ### -->
+        <env name="GITHUB_AUTH_METHOD" value="http_password"/>
+        <env name="GITHUB_USERNAME" value="username"/>
+        <env name="GITHUB_SECRET" value="password_or_token"/>
+        <!-- ###- knplabs/github-api ### -->
+
+        <!-- ###+ aws/aws-sdk-php-symfony ### -->
+        <env name="AWS_KEY" value="not-a-real-key"/>
+        <env name="AWS_SECRET" value="@@not-a-real-secret"/>
+        <!-- ###- aws/aws-sdk-php-symfony ### -->
     </php>
 
     <testsuites>
@@ -43,6 +47,7 @@
             <directory>src</directory>
             <exclude>
                 <directory suffix=".php">src/Entity</directory>
+                <directory suffix=".php">src/Controller</directory>
             </exclude>
         </whitelist>
     </filter>
