@@ -47,7 +47,7 @@ class DockerComposerBuilder
 
         $container['ports'] = $this->portsResolver->resolve($args['ports'] ?? []);
         $container['volumes'] = $this->volumesResolver->resolve($args['volumes'] ?? []);
-        $container['environments'] = $this->environmentsResolver->resolve($args['environments'] ?? []);
+        $container['environment'] = $this->environmentsResolver->resolve($args['environments'] ?? []);
 
         $container = array_filter($container);
 
