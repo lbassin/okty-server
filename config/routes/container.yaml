@@ -8,7 +8,7 @@ container_form_show:
     methods: [GET]
     controller: App\Controller\Container\Form\Show::handle
     requirements:
-        id: '^[a-zA-Z]+$'
+        id: '^[a-zA-Z]+(-)?[a-zA-Z]+$'
 
 container_build:
     path: /build
