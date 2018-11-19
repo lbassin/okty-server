@@ -26,6 +26,10 @@ class Index
             return new JsonResponse(['error' => 'JSON Syntax Error'], Response::HTTP_BAD_REQUEST);
         }
 
+        if (empty($config['image']) || !isset($config['args'])) {
+            return new JsonResponse(['error' => 'Missing mandatory field(s)'], Response::HTTP_BAD_REQUEST);
+        }
+
         $output = $this->builder->build($config['image'], $config['args']);
 
         return new JsonResponse(['content' => $output]);
