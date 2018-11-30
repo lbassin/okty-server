@@ -9,3 +9,7 @@ container:
 template:
     resource: routes/template.yaml
     prefix: template
+
+preview:
+    resource: routes/preview.yaml
+    prefix: preview
