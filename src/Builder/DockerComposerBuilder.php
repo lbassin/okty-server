@@ -42,7 +42,7 @@ class DockerComposerBuilder
         $image = $this->imageResolver->resolve($name, $args['version'] ?? '');
         $container = array_merge($container, $image);
 
-        $options = $this->optionsResolver->resolve($args);
+        $options = $this->optionsResolver->resolve($args['compose'] ?? []);
         $container = array_merge($container, $options);
 
         $container['ports'] = $this->portsResolver->resolve($args['ports'] ?? []);

@@ -2,29 +2,21 @@
 
 namespace App\Builder\Resolver;
 
+use App\Builder\ValueObject\Compose;
+
 class OptionsResolver
 {
-    private $ignoredKeys = [
-        'id',
-        'version',
-        'volumes',
-        'ports',
-        'files',
-        'environments',
-        'image',
-        'build'
-    ];
-
     public function resolve(array $args): array
     {
         $output = [];
 
-        foreach ($args as $key => $value) {
-            if (in_array($key, $this->ignoredKeys)) {
-                continue;
-            }
+        foreach ($args as $data) {
+            $key = $data['key'] ?? '';
+            $value = $data['value'] ?? '';
 
-            $output[$key] = $value;
+            $compose = new Compose($key, $value);
+
+            $output[$compose->getKey()] = $compose->getValue();
         }
 
         return $output;
