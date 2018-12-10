@@ -40,6 +40,8 @@ class Build
             $file = $this->zipHelper->zip($files);
         } catch (\RuntimeException $exception) {
             return new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        } catch (\LogicException $exception) {
+            return new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_BAD_REQUEST);
         }
 
         $response = new BinaryFileResponse($file);

@@ -2,13 +2,12 @@
 
 namespace App\Builder\Resolver;
 
-use App\Builder\Validator\PortConstraint;
+use App\Builder\ValueObject\Port;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PortsResolver
 {
     private $validator;
-    private $warnings = [];
 
     public function __construct(ValidatorInterface $validator)
     {
@@ -18,17 +17,13 @@ class PortsResolver
     public function resolve(array $ports): array
     {
         $output = [];
-        foreach ($ports as $value) {
-            $errors = $this->validator->validate($value, new PortConstraint());
-            foreach ($errors as $error) {
-                $this->warnings[] = $error->getMessage();
-            }
+        foreach ($ports as $data) {
+            $host = (int)$data['host'] ?? -1;
+            $container = (int)$data['container'] ?? -1;
 
-            if (count($errors) > 0) {
-                continue;
-            }
+            $port = new Port($host, $container);
 
-            $output[] = $value;
+            $output[] = sprintf('%d:%d', $port->getHost(), $port->getContainer());
         }
         return $output;
     }

@@ -2,13 +2,12 @@
 
 namespace App\Builder\Resolver;
 
-use App\Builder\Validator\EnvironmentConstraint;
+use App\Builder\ValueObject\Environment;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class EnvironmentsResolver
 {
     private $validator;
-    private $warnings = [];
 
     public function __construct(ValidatorInterface $validator)
     {
@@ -18,17 +17,13 @@ class EnvironmentsResolver
     public function resolve(array $environments): array
     {
         $output = [];
-        foreach ($environments as $value) {
-            $errors = $this->validator->validate($value, new EnvironmentConstraint());
-            foreach ($errors as $error) {
-                $this->warnings[] = $error->getMessage();
-            }
+        foreach ($environments as $data) {
+            $key = $data['key'] ?? '';
+            $value = $data['value'] ?? '';
 
-            if (count($errors) > 0) {
-                continue;
-            }
+            $env = new Environment($key, $value);
 
-            $output[] = $value;
+            $output[] = sprintf('%s=%s', $env->getKey(), $env->getValue());
         }
 
         return $output;

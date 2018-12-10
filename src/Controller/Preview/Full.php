@@ -35,7 +35,11 @@ class Full
                 );
             }
 
-            $output = $this->builder->build($config['image'], $config['args'], $output);
+            try {
+                $output = $this->builder->build($config['image'], $config['args'], $output);
+            } catch (\LogicException $exception) {
+                return new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_BAD_REQUEST);
+            }
         }
 
         return new JsonResponse(['content' => $output]);
