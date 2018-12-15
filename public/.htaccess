@@ -2,6 +2,14 @@
     Options -MultiViews
 
     RewriteEngine On
+
+    # Force HTTPS
+    RewriteCond %{HTTP:X-Forwarded-Proto} =http [OR]
+    RewriteCond %{HTTP:X-Forwarded-Proto} =""
+    RewriteCond %{HTTPS} !=on
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # Set index.php as entrypoint
     RewriteBase /
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
