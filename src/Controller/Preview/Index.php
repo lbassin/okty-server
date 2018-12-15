@@ -30,7 +30,11 @@ class Index
             return new JsonResponse(['error' => 'Missing mandatory field(s)'], Response::HTTP_BAD_REQUEST);
         }
 
-        $output = $this->builder->build($config['image'], $config['args']);
+        try {
+            $output = $this->builder->build($config['image'], $config['args']);
+        } catch (\LogicException $exception) {
+            return new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
 
         return new JsonResponse(['content' => $output]);
     }

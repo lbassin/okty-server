@@ -2,13 +2,12 @@
 
 namespace App\Builder\Resolver;
 
-use App\Builder\Validator\VolumeConstraint;
+use App\Builder\ValueObject\Volume;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class VolumesResolver
 {
     private $validator;
-    private $warnings = [];
 
     public function __construct(ValidatorInterface $validator)
     {
@@ -18,17 +17,13 @@ class VolumesResolver
     public function resolve(array $volumes): array
     {
         $output = [];
-        foreach ($volumes as $value) {
-            $errors = $this->validator->validate($value, new VolumeConstraint());
-            foreach ($errors as $error) {
-                $this->warnings[] = $error->getMessage();
-            }
+        foreach ($volumes as $data) {
+            $host = $data['host'] ?? '';
+            $container = $data['container'] ?? '';
 
-            if (count($errors) > 0) {
-                continue;
-            }
+            $volume = new Volume($host, $container);
 
-            $output[] = $value;
+            $output[] = sprintf('%s:%s', $volume->getHost(), $volume->getContainer());
         }
 
         return $output;

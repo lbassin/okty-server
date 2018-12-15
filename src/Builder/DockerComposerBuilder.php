@@ -7,6 +7,7 @@ use App\Builder\Resolver\ImageResolver;
 use App\Builder\Resolver\OptionsResolver;
 use App\Builder\Resolver\PortsResolver;
 use App\Builder\Resolver\VolumesResolver;
+use App\Builder\ValueObject\Id;
 
 class DockerComposerBuilder
 {
@@ -31,18 +32,18 @@ class DockerComposerBuilder
     }
 
     /**
-     * If $output provided, if will merge new config with $output
+     * If $output provided, it will merge new config with $output
      */
     public function build(string $name, array $args, array $output = []): array
     {
-        $id = $args['id'] ?? $name;
+        $id = new Id($args['id'] ?? $name);
 
         $container = [];
 
         $image = $this->imageResolver->resolve($name, $args['version'] ?? '');
         $container = array_merge($container, $image);
 
-        $options = $this->optionsResolver->resolve($args);
+        $options = $this->optionsResolver->resolve($args['compose'] ?? []);
         $container = array_merge($container, $options);
 
         $container['ports'] = $this->portsResolver->resolve($args['ports'] ?? []);
@@ -53,7 +54,7 @@ class DockerComposerBuilder
 
         $output['version'] = $output['version'] ?? '3';
         $output['services'] = $output['services'] ?? [];
-        $output['services'][$id] = $container;
+        $output['services'][$id->getValue()] = $container;
 
         return $output;
     }
