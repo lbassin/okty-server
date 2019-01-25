@@ -29,6 +29,11 @@
         <env name="GITHUB_USERNAME" value="username"/>
         <env name="GITHUB_SECRET" value="password_or_token"/>
         <!-- ###- knplabs/github-api ### -->
+
+        <!-- ###+ aws/aws-sdk-php-symfony ### -->
+        <env name="AWS_KEY" value="not-a-real-key"/>
+        <env name="AWS_SECRET" value="@@not-a-real-secret"/>
+        <!-- ###- aws/aws-sdk-php-symfony ### -->
     </php>
 
     <testsuites>
