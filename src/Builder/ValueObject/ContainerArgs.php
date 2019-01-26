@@ -55,8 +55,8 @@ class ContainerArgs
 
         $this->ports = [];
         foreach ($args['ports'] ?? [] as $port) {
-            $host = (int)$port['host'] ?? -1;
-            $container = (int)$port['container'] ?? -1;
+            $host = $port['host'] ?? '';
+            $container = $port['container'] ?? '';
 
             $this->ports[] = new Port($host, $container);
         }
