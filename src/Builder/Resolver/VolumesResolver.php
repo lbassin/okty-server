@@ -2,27 +2,20 @@
 
 namespace App\Builder\Resolver;
 
-use App\Builder\ValueObject\Volume;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use App\Builder\ValueObject\ContainerArgs;
+use App\Builder\ValueObject\Project\Volume;
 
+/**
+ * @author Laurent Bassin <laurent@bassin.info>
+ */
 class VolumesResolver
 {
-    private $validator;
-
-    public function __construct(ValidatorInterface $validator)
-    {
-        $this->validator = $validator;
-    }
-
-    public function resolve(array $volumes): array
+    public function resolve(ContainerArgs $args): array
     {
         $output = [];
-        foreach ($volumes as $data) {
-            $host = $data['host'] ?? '';
-            $container = $data['container'] ?? '';
 
-            $volume = new Volume($host, $container);
-
+        /** @var Volume $volume */
+        foreach ($args->getVolumes() as $volume) {
             $output[] = sprintf('%s:%s', $volume->getHost(), $volume->getContainer());
         }
 

@@ -2,27 +2,20 @@
 
 namespace App\Builder\Resolver;
 
-use App\Builder\ValueObject\Environment;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use App\Builder\ValueObject\ContainerArgs;
+use App\Builder\ValueObject\Project\Environment;
 
+/**
+ * @author Laurent Bassin <laurent@bassin.info>
+ */
 class EnvironmentsResolver
 {
-    private $validator;
-
-    public function __construct(ValidatorInterface $validator)
-    {
-        $this->validator = $validator;
-    }
-
-    public function resolve(array $environments): array
+    public function resolve(ContainerArgs $args): array
     {
         $output = [];
-        foreach ($environments as $data) {
-            $key = $data['key'] ?? '';
-            $value = $data['value'] ?? '';
 
-            $env = new Environment($key, $value);
-
+        /** @var Environment $env */
+        foreach ($args->getEnvironments() as $env) {
             $output[] = sprintf('%s=%s', $env->getKey(), $env->getValue());
         }
 

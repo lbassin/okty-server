@@ -2,6 +2,8 @@
 
 namespace App\Provider;
 
+use App\Exception\BadCredentialsException;
+use App\Exception\FileNotFoundException;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -18,21 +20,35 @@ class TemplateProvider
         $this->path = $path;
     }
 
-    public function getAll()
+    /**
+     * @throws BadCredentialsException
+     * @throws FileNotFoundException
+     */
+    public function getList()
     {
         $elements = [];
 
         $list = $this->github->getTree($this->path);
         foreach ($list as $data) {
-            $elements[] = $this->getOne($data['name']);
+            $config = $this->getOne($data['name']);
+
+            $elements[] = [
+                'id' => $config['id'],
+                'name' => $config['name'],
+                'logo' => $config['logo'],
+            ];
         }
 
         return $elements;
     }
 
+    /**
+     * @throws BadCredentialsException
+     * @throws FileNotFoundException
+     */
     public function getOne($template)
     {
-        $file = $this->path . '/' . $template;
+        $file = $this->path.'/'.$template;
         if (substr_compare($file, '.yml', strlen($file) - 4, 4) !== 0) {
             $file .= '.yml';
         }

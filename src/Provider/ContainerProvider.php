@@ -2,6 +2,7 @@
 
 namespace App\Provider;
 
+use App\Builder\ValueObject\Container\Manifest;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\Yaml\Yaml;
 
@@ -19,13 +20,19 @@ class ContainerProvider
         $this->path = $path;
     }
 
-    public function getAll()
+    public function getList(): array
     {
         $elements = [];
 
         $list = $this->github->getTree($this->path);
         foreach ($list as $data) {
-            $elements[] = $this->getFormConfig($data['name']);
+            $config = $this->getFormConfig($data['name']);
+
+            $elements[] = [
+                'id' => $config['id'],
+                'name' => $config['name'],
+                'logo' => $config['logo']
+            ];
         }
 
         return $elements;
@@ -33,7 +40,7 @@ class ContainerProvider
 
     public function getFormConfig($container): array
     {
-        $file = $this->path . '/' . $container . '/' . 'form.yml';
+        $file = $this->path.'/'.$container.'/'.'form.yml';
 
         $content = $this->github->getFile($file);
 
@@ -43,18 +50,18 @@ class ContainerProvider
         return $element;
     }
 
-    public function getManifest($container)
+    public function getManifest(string $container): Manifest
     {
-        $content = $this->github->getFile($this->getPath($container) . 'manifest.yml');
+        $content = $this->github->getFile($this->getPath($container).'manifest.yml');
         $element = Yaml::parse($content, Yaml::PARSE_OBJECT);
 
-        return $element;
+        return new Manifest($element);
     }
 
     public function getResolvers(string $container): string
     {
         try {
-            $content = $this->github->getFile($this->getPath($container) . 'resolvers.php');
+            $content = $this->github->getFile($this->getPath($container).'resolvers.php');
 
             return substr($content, 6); // Remove <?php
         } catch (FileNotFoundException $ex) {
@@ -64,11 +71,11 @@ class ContainerProvider
 
     public function getSource(string $container, string $file)
     {
-        return $this->github->getFile($this->getPath($container) . 'sources/' . $file);
+        return $this->github->getFile($this->getPath($container).'sources/'.$file);
     }
 
     public function getPath(string $container)
     {
-        return $this->path . '/' . $container . '/';
+        return $this->path.'/'.$container.'/';
     }
 }

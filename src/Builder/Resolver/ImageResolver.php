@@ -2,12 +2,14 @@
 
 namespace App\Builder\Resolver;
 
+use App\Builder\ValueObject\ContainerArgs;
 use App\Provider\ContainerProvider;
-use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
+/**
+ * @author Laurent Bassin <laurent@bassin.info>
+ */
 class ImageResolver
 {
-    private $warnings = [];
     private $containerProvider;
 
     public function __construct(ContainerProvider $containerProvider)
@@ -15,40 +17,25 @@ class ImageResolver
         $this->containerProvider = $containerProvider;
     }
 
-    public function resolve(string $name, string $version): array
+    public function resolve(ContainerArgs $args): array
     {
         $output = [];
 
-        try {
-            $manifest = $this->containerProvider->getManifest($name);
-        } catch (FileNotFoundException $ex) {
-            $this->warnings[] = $ex->getMessage();
+        $manifest = $this->containerProvider->getManifest($args->getImage());
 
-            return [];
+        if ($manifest->hasBuild()) {
+            return ['build' => $manifest->getBuild()];
         }
+        $output['image'] = $manifest->getImage();
 
-        if (!isset($manifest['docker'])) {
-            $this->warnings[] = 'Image configuration missing';
-
-            return [];
-        }
-
-        if (!empty($manifest['docker']['build'])) {
-            return ['build' => $manifest['docker']['build']];
-        }
-
-        $output['image'] = $manifest['docker']['image'] ?? '';
-
-        $tag = 'latest';
-        if (!empty($manifest['docker']['tag'])) {
-            $tag = $manifest['docker']['tag'];
-        }
+        $tag = $manifest->getTag();
+        $version = $args->getVersion();
 
         if (!empty($version)) {
             $tag = $version;
         }
 
-        $output['image'] .= ':' . $tag;
+        $output['image'] .= ':'.$tag;
 
         return $output;
     }

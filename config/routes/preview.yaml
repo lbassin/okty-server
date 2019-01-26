@@ -1,9 +1,0 @@
-preview_index:
-    path: /
-    methods: [POST]
-    controller: App\Controller\Preview\Index::handle
-
-preview_full:
-    path: /full/
-    methods: [POST]
-    controller: App\Controller\Preview\Full::handle

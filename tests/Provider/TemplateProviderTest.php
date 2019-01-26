@@ -47,14 +47,14 @@ class TemplateProviderTest extends WebTestCase
             ->method('getFile')
             ->willReturn($symfonyTemplate);
 
-        return $this->provider->getAll();
+        return $this->provider->getList();
     }
 
     public function testGetAllElementsEmpty()
     {
         $this->mockGithub->method('getTree')->willReturn([]);
 
-        $this->assertEmpty($this->provider->getAll());
+        $this->assertEmpty($this->provider->getList());
     }
 
     public function testGetAllTemplatesBasicData()
@@ -107,7 +107,7 @@ class TemplateProviderTest extends WebTestCase
         $this->mockGithub->method('getTree')->willThrowException($exception);
 
         $this->expectException(FileNotFoundException::class);
-        $this->provider->getAll();
+        $this->provider->getList();
     }
 
     protected function tearDown()

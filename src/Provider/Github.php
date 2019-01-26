@@ -2,10 +2,11 @@
 
 namespace App\Provider;
 
+use App\Exception\BadCredentialsException;
+use App\Exception\FileNotFoundException;
 use Github\Api\Repo;
 use Github\Client;
 use Psr\Cache\CacheItemPoolInterface;
-use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
@@ -24,8 +25,7 @@ class Github
         string $githubUser,
         string $githubRepo,
         string $githubBranch
-    )
-    {
+    ) {
         $this->client = $client;
         $this->cacheItemPool = $cacheItemPool;
         $this->githubUser = $githubUser;
@@ -43,21 +43,46 @@ class Github
         return $repo;
     }
 
+    /**
+     * @throws BadCredentialsException
+     * @throws FileNotFoundException
+     */
     public function getFile(string $path): string
     {
         try {
             return $this->getRepo()->contents()->download($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
-        } catch (\Exception $e) {
+        } catch (\RuntimeException $exception) {
+            if ($exception->getCode() == 401 || $exception->getCode() == 403) {
+                throw new BadCredentialsException('Github API');
+            }
+
+            if ($exception->getCode() == 404) {
+                throw new FileNotFoundException($path);
+            }
+
+            throw $exception;
+        } catch (\ErrorException $exception) {
             throw new FileNotFoundException($path);
         }
     }
 
+    /**
+     * @throws BadCredentialsException
+     */
     public function getTree(string $path): array
     {
         try {
             return $this->getRepo()->contents()->show($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
-        } catch (\Exception $e) {
-            throw new FileNotFoundException($path);
+        } catch (\RuntimeException $exception) {
+            if ($exception->getCode() == 401 || $exception->getCode() == 403) {
+                throw new BadCredentialsException('Github API');
+            }
+
+            if ($exception->getCode() == 404) {
+                throw new FileNotFoundException($path);
+            }
+
+            throw $exception;
         }
     }
 }

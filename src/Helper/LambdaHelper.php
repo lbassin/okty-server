@@ -2,6 +2,7 @@
 
 namespace App\Helper;
 
+use App\Exception\BadCredentialsException;
 use Aws\Lambda\Exception\LambdaException;
 use Aws\Lambda\LambdaClient;
 use GuzzleHttp\Psr7\Stream;
@@ -18,7 +19,7 @@ class LambdaHelper
         $this->lambdaClient = $lambdaClient;
     }
 
-    public function invoke($function, $resolver, $arg)
+    public function invoke($function, $resolver, $arg): string
     {
         try {
             /** @var \Aws\Result $response */
@@ -29,6 +30,10 @@ class LambdaHelper
         } catch (LambdaException $exception) {
             if ($exception->getStatusCode() == 404) {
                 throw new \RuntimeException("Function $function not found");
+            }
+
+            if($exception->getStatusCode() == 403 || $exception->getStatusCode() == 401){
+                throw new BadCredentialsException('AWS Lambda');
             }
 
             throw new \RuntimeException($exception->getMessage());
