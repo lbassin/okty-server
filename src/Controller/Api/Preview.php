@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Builder\DockerComposerBuilder;
 use App\Builder\ValueObject\ContainerArgs;
+use App\Builder\ValueObject\Json;
 use App\Builder\ValueObject\Project\DockerCompose;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,13 +28,10 @@ class Preview
      */
     public function single(Request $request): Response
     {
-        $args = json_decode($request->getContent(), true);
-        if (!$args) {
-            return new JsonResponse(['error' => 'JSON Syntax Error'], Response::HTTP_BAD_REQUEST);
-        }
-
         $project = new DockerCompose();
-        $containerArgs = new ContainerArgs($args);
+
+        $args = new Json($request->getContent());
+        $containerArgs = new ContainerArgs($args->getValue());
 
         try {
             $this->builder->build($project, $containerArgs);
@@ -49,15 +47,11 @@ class Preview
      */
     public function full(Request $request): Response
     {
-        $args = json_decode($request->getContent(), true);
-        if (!$args) {
-            return new JsonResponse(['error' => 'JSON Syntax Error'], Response::HTTP_BAD_REQUEST);
-        }
-
         $project = new DockerCompose();
+        $args = new Json($request->getContent());
 
         try {
-            foreach ($args as $config) {
+            foreach ($args->getValue() as $config) {
                 $containerArgs = new ContainerArgs($config);
 
                 $this->builder->build($project, $containerArgs);

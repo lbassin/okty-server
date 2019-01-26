@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Builder\ProjectBuilder;
+use App\Builder\ValueObject\Json;
 use App\Helper\ZipHelper;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -30,13 +31,10 @@ class Build
      */
     public function handle(Request $request): Response
     {
-        $args = json_decode($request->getContent(), true);
-        if (!$args) {
-            return new JsonResponse(['error' => 'JSON Syntax Error'], Response::HTTP_BAD_REQUEST);
-        }
+        $args = new Json($request->getContent());
 
         try {
-            $project = $this->projectBuilder->build($args);
+            $project = $this->projectBuilder->build($args->getValue());
             $zip = $this->zipHelper->zip($project);
         } catch (\RuntimeException $exception) {
             return new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
