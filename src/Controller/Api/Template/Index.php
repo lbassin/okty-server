@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace App\Controller\Template;
+namespace App\Controller\Api\Template;
 
 use App\Provider\TemplateProvider;
-use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
@@ -19,13 +19,12 @@ class Index
         $this->templateProvider = $templateProvider;
     }
 
+    /**
+     * @Route("templates", methods={"GET"})
+     */
     public function handle(): Response
     {
-        try {
-            $templates = $this->templateProvider->getAll();
-        } catch (FileNotFoundException $exception) {
-            return new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_NOT_FOUND);
-        }
+        $templates = $this->templateProvider->getList();
 
         return new JsonResponse($templates);
     }

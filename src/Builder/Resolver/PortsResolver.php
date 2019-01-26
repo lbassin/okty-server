@@ -2,27 +2,20 @@
 
 namespace App\Builder\Resolver;
 
-use App\Builder\ValueObject\Port;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use App\Builder\ValueObject\ContainerArgs;
+use App\Builder\ValueObject\Project\Port;
 
+/**
+ * @author Laurent Bassin <laurent@bassin.info>
+ */
 class PortsResolver
 {
-    private $validator;
-
-    public function __construct(ValidatorInterface $validator)
-    {
-        $this->validator = $validator;
-    }
-
-    public function resolve(array $ports): array
+    public function resolve(ContainerArgs $args): array
     {
         $output = [];
-        foreach ($ports as $data) {
-            $host = (int)$data['host'] ?? -1;
-            $container = (int)$data['container'] ?? -1;
 
-            $port = new Port($host, $container);
-
+        /** @var Port $port */
+        foreach ($args->getPorts() as $port) {
             $output[] = sprintf('%d:%d', $port->getHost(), $port->getContainer());
         }
         return $output;

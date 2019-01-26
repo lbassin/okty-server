@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Builder\ValueObject;
+namespace App\Builder\ValueObject\Project;
 
-class Compose
+/**
+ * @author Laurent Bassin <laurent@bassin.info>
+ */
+class Option
 {
     private $key;
     private $value;

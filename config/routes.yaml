@@ -1,21 +1,3 @@
 index:
     path: /
     controller: App\Controller\Home::handle
-
-container:
-    resource: routes/container.yaml
-    prefix: container
-    defaults:
-        _format: json
-        
-template:
-    resource: routes/template.yaml
-    prefix: template
-    defaults:
-        _format: json
-
-preview:
-    resource: routes/preview.yaml
-    prefix: preview
-    defaults:
-        _format: json

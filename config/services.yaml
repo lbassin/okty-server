@@ -50,3 +50,8 @@ services:
     ZipArchive:
         class: \ZipArchive
         factory: [App\Factory\ZipArchiveFactory, 'createService']
+
+    App\Controller\Exception:
+        public: true
+        arguments:
+            $debug: '%kernel.debug%'

@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Controller\Container;
+namespace App\Controller\Api;
 
 use App\Builder\ProjectBuilder;
 use App\Helper\ZipHelper;
@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
@@ -24,6 +25,9 @@ class Build
         $this->zipHelper = $zipHelper;
     }
 
+    /**
+     * @Route("build", methods={"POST"})
+     */
     public function handle(Request $request): Response
     {
         $args = json_decode($request->getContent(), true);
@@ -32,19 +36,15 @@ class Build
         }
 
         try {
-            $files = $this->projectBuilder->build($args);
-            if (empty($files)) {
-                throw new \RuntimeException('No files generated');
-            }
-
-            $file = $this->zipHelper->zip($files);
+            $project = $this->projectBuilder->build($args);
+            $zip = $this->zipHelper->zip($project);
         } catch (\RuntimeException $exception) {
             return new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         } catch (\LogicException $exception) {
             return new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_BAD_REQUEST);
         }
 
-        $response = new BinaryFileResponse($file);
+        $response = new BinaryFileResponse($zip);
         $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'okty.zip');
 
         return $response;

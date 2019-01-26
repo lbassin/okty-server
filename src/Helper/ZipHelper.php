@@ -2,6 +2,8 @@
 
 namespace App\Helper;
 
+use App\Builder\ValueObject\Project\File;
+use App\Builder\ValueObject\Project\Project;
 use ZipArchive;
 
 /**
@@ -16,7 +18,7 @@ class ZipHelper
         $this->zipArchive = $zipArchive;
     }
 
-    public function zip(array $files): string
+    public function zip(Project $project): string
     {
         $path = tempnam(sys_get_temp_dir(), 'okty');
 
@@ -27,14 +29,11 @@ class ZipHelper
                 throw new \RuntimeException('Output directory not writable');
             }
 
-            foreach ($files as $file) {
-                if (!isset($file['name']) || empty($file['content'])) {
-                    continue;
-                }
-
-                $added = $zip->addFromString($file['name'], $file['content']);
+            /** @var File $file */
+            foreach ($project->getFiles() as $file) {
+                $added = $zip->addFromString($file->getName(), $file->getContent());
                 if ($added !== true) {
-                    throw new \RuntimeException("Cannot add file ${$file['name']} inside zip");
+                    throw new \RuntimeException(sprintf("Cannot add file %s inside zip", $file->getName()));
                 }
             }
 

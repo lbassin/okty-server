@@ -2,22 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Builder\ValueObject;
+namespace App\Builder\ValueObject\Project;
 
-class Environment
+/**
+ * @author Laurent Bassin <laurent@bassin.info>
+ */
+class FileArg
 {
-
     private $key;
     private $value;
 
     public function __construct(string $key, string $value)
     {
         if (empty($key)) {
-            throw new \LogicException("Environment key can't be empty");
-        }
-
-        if (empty($value)) {
-            throw new \LogicException("A value need to be set for env $key");
+            throw new \LogicException("File arg key can't be empty");
         }
 
         $this->key = $key;

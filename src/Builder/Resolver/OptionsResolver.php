@@ -2,21 +2,21 @@
 
 namespace App\Builder\Resolver;
 
-use App\Builder\ValueObject\Compose;
+use App\Builder\ValueObject\ContainerArgs;
+use App\Builder\ValueObject\Project\Option;
 
+/**
+ * @author Laurent Bassin <laurent@bassin.info>
+ */
 class OptionsResolver
 {
-    public function resolve(array $args): array
+    public function resolve(ContainerArgs $args): array
     {
         $output = [];
 
-        foreach ($args as $data) {
-            $key = $data['key'] ?? '';
-            $value = $data['value'] ?? '';
-
-            $compose = new Compose($key, $value);
-
-            $output[$compose->getKey()] = $compose->getValue();
+        /** @var Option $option */
+        foreach ($args->getComposeOptions() as $option) {
+            $output[$option->getKey()] = $option->getValue();
         }
 
         return $output;
