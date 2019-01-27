@@ -3,7 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Builder\ProjectBuilder;
-use App\Builder\ValueObject\Json;
+use App\ValueObject\Json;
 use App\Helper\ZipHelper;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;

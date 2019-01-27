@@ -5,7 +5,9 @@ namespace App\Provider;
 use App\Exception\BadCredentialsException;
 use App\Exception\FileNotFoundException;
 use Github\Api\Repo;
-use Github\Client;
+use Github\Client as GithubClient;
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
+use League\OAuth2\Client\Provider\Github as GithubOAuth;
 use Psr\Cache\CacheItemPoolInterface;
 
 /**
@@ -13,32 +15,35 @@ use Psr\Cache\CacheItemPoolInterface;
  */
 class Github
 {
-    private $client;
+    private $githubClient;
     private $githubUser;
     private $githubRepo;
     private $githubBranch;
     private $cacheItemPool;
+    private $githubOAuth;
 
     public function __construct(
-        Client $client,
+        GithubClient $githubClient,
         CacheItemPoolInterface $cacheItemPool,
         string $githubUser,
         string $githubRepo,
-        string $githubBranch
+        string $githubBranch,
+        GithubOAuth $githubOAuth
     ) {
-        $this->client = $client;
+        $this->githubClient = $githubClient;
         $this->cacheItemPool = $cacheItemPool;
         $this->githubUser = $githubUser;
         $this->githubRepo = $githubRepo;
         $this->githubBranch = $githubBranch;
 
-        $this->client->addCache($cacheItemPool);
+        $this->githubClient->addCache($cacheItemPool);
+        $this->githubOAuth = $githubOAuth;
     }
 
     private function getRepo(): Repo
     {
         /** @var Repo $repo */
-        $repo = $this->client->api('repo');
+        $repo = $this->githubClient->api('repo');
 
         return $repo;
     }
@@ -84,5 +89,23 @@ class Github
 
             throw $exception;
         }
+    }
+
+    /**
+     * @throw BadCredentialsException
+     */
+    public function auth(string $code, string $state): string
+    {
+        try {
+            $accessToken = $this->githubOAuth->getAccessToken('authorization_code', [
+                'code' => $code,
+                'state' => $state
+            ]);
+        } catch (IdentityProviderException $e) {
+            dump($e);
+            throw new BadCredentialsException('Github OAuth (Wrong auth code)');
+        }
+
+        return $accessToken->getToken();
     }
 }

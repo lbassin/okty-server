@@ -51,6 +51,12 @@ services:
         class: \ZipArchive
         factory: [App\Factory\ZipArchiveFactory, 'createService']
 
+    League\OAuth2\Client\Provider\Github:
+        factory: [App\Factory\GithubOAuthFactory, 'createService']
+        arguments:
+            $clientId: '%env(GITHUB_APP_ID)%'
+            $clientSecret: '%env(GITHUB_APP_SECRET)%'
+
     App\Controller\Exception:
         public: true
         arguments:
