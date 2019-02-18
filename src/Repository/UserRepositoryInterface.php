@@ -18,4 +18,6 @@ interface UserRepositoryInterface
     public function save(User $user): void;
 
     public function findByProvider(int $getApiId, string $string): ?User;
+
+    public function findByUsername(string $username): ?User;
 }

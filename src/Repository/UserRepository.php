@@ -49,4 +49,12 @@ class UserRepository implements UserRepositoryInterface
 
         return $user;
     }
+
+    public function findByUsername(string $username): ?User
+    {
+        /** @var User $user */
+        $user = $this->repository->findOneBy(['username' => $username]);
+
+        return $user;
+    }
 }

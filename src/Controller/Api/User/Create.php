@@ -33,7 +33,7 @@ class Create
     }
 
     /**
-     * @Route("users", methods={"POST"})
+     * @Route("user", methods={"POST"})
      */
     public function handle(Request $request): Response
     {

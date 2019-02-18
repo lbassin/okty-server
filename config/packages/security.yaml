@@ -1,11 +1,19 @@
 security:
     providers:
-        in_memory: { memory: ~ }
+        users:
+            entity:
+                class: 'App\Entity\User'
+                property: 'username'
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        main:
-            anonymous: true
+        api:
+            pattern: ^/
+            stateless: true
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
 
-    access_control: ~
+    access_control:
+        - { path: ^/user, methods: [POST], roles: IS_AUTHENTICATED_ANONYMOUSLY }
