@@ -23,13 +23,14 @@ class Github
     private $githubOAuth;
 
     public function __construct(
+        GithubOAuth $githubOAuth,
         GithubClient $githubClient,
         CacheItemPoolInterface $cacheItemPool,
         string $githubUser,
         string $githubRepo,
-        string $githubBranch,
-        GithubOAuth $githubOAuth
+        string $githubBranch
     ) {
+        $this->githubOAuth = $githubOAuth;
         $this->githubClient = $githubClient;
         $this->cacheItemPool = $cacheItemPool;
         $this->githubUser = $githubUser;
@@ -37,7 +38,6 @@ class Github
         $this->githubBranch = $githubBranch;
 
         $this->githubClient->addCache($cacheItemPool);
-        $this->githubOAuth = $githubOAuth;
     }
 
     private function getRepo(): Repo
@@ -102,10 +102,16 @@ class Github
                 'state' => $state
             ]);
         } catch (IdentityProviderException $e) {
-            dump($e);
             throw new BadCredentialsException('Github OAuth (Wrong auth code)');
         }
 
         return $accessToken->getToken();
+    }
+
+    public function getUser(string $accessToken): array
+    {
+        $this->githubClient->authenticate($accessToken, null, GithubClient::AUTH_URL_TOKEN);
+
+        return $this->githubClient->me()->show();
     }
 }

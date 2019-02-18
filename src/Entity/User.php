@@ -3,21 +3,23 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @ORM\Entity()
  */
-class User
+class User implements UserInterface
 {
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="uuid", unique=true)
+     * @ORM\GeneratedValue(strategy="CUSTOM")
+     * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, unique=true)
      */
     private $username;
 
@@ -37,72 +39,103 @@ class User
     private $email;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", name="api_id")
      */
-    private $github_id;
+    private $apiId;
 
-    public function getId(): ?int
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $provider;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $accessToken;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $roles = 'ROLE_USER';
+
+    public function __construct(
+        string $username,
+        string $email,
+        string $name,
+        string $avatar,
+        string $provider,
+        int $apiId
+    ) {
+        $this->username = $username;
+        $this->email = $email;
+        $this->name = $name;
+        $this->avatar = $avatar;
+        $this->apiId = $apiId;
+        $this->provider = $provider;
+    }
+
+    public function getId(): string
     {
         return $this->id;
     }
 
-    public function getUsername(): ?string
+    public function getUsername(): string
     {
         return $this->username;
     }
 
-    public function setUsername(string $username): self
-    {
-        $this->username = $username;
-
-        return $this;
-    }
-
-    public function getAvatar(): ?string
+    public function getAvatar(): string
     {
         return $this->avatar;
     }
 
-    public function setAvatar(string $avatar): self
-    {
-        $this->avatar = $avatar;
-
-        return $this;
-    }
-
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function getEmail(): ?string
+    public function getEmail(): string
     {
         return $this->email;
     }
 
-    public function setEmail(string $email): self
+    public function getApiId(): int
     {
-        $this->email = $email;
-
-        return $this;
+        return $this->apiId;
     }
 
-    public function getGithubId(): ?int
+    public function getProvider(): string
     {
-        return $this->github_id;
+        return $this->provider;
     }
 
-    public function setGithubId(int $github_id): self
+    public function getAccessToken(): ?string
     {
-        $this->github_id = $github_id;
+        return $this->accessToken;
+    }
 
-        return $this;
+    public function updateToken(string $accessToken): void
+    {
+        $this->accessToken = $accessToken;
+    }
+
+    public function getRoles(): array
+    {
+        return explode(',', $this->roles);
+    }
+
+    public function getPassword(): void
+    {
+        return;
+    }
+
+    public function getSalt(): void
+    {
+        return;
+    }
+
+    public function eraseCredentials(): void
+    {
+        return;
     }
 }

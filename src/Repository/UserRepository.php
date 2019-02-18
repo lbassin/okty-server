@@ -3,48 +3,50 @@
 namespace App\Repository;
 
 use App\Entity\User;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * @method User|null find($id, $lockMode = null, $lockVersion = null)
- * @method User|null findOneBy(array $criteria, array $orderBy = null)
- * @method User[]    findAll()
- * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @author Laurent Bassin <laurent@bassin.info>
  */
-class UserRepository extends ServiceEntityRepository
+class UserRepository implements UserRepositoryInterface
 {
-    public function __construct(RegistryInterface $registry)
+    private $entityManager;
+    private $repository;
+
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        parent::__construct($registry, User::class);
+        $this->entityManager = $entityManager;
+        $this->repository = $entityManager->getRepository(User::class);
     }
 
-    // /**
-    //  * @return User[] Returns an array of User objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function createFromGithub(array $data): User
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('u.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        if (empty($data['id']) || empty($data['login']) || empty($data['email'])) {
+            throw new \LogicException('Some data are missing from the API');
+        }
 
-    /*
-    public function findOneBySomeField($value): ?User
-    {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $apiId = $data['id'];
+        $username = $data['login'];
+        $email = $data['email'];
+        $name = $data['name'] ?? '';
+        $avatar = $data['avatar_url'] ?? '';
+
+        $user = new User($username, $email, $name, $avatar, self::GITHUB_PROVIDER, $apiId);
+
+        return $user;
     }
-    */
+
+    public function save(User $user): void
+    {
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+    }
+
+    public function findByProvider(int $apiId, string $provider): ?User
+    {
+        /** @var User $user */
+        $user = $this->repository->findOneBy(['apiId' => $apiId, 'provider' => $provider]);
+
+        return $user;
+    }
 }
