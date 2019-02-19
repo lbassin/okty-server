@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -58,6 +62,11 @@ class User implements UserInterface
      */
     private $roles = 'ROLE_USER';
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\History", mappedBy="user", orphanRemoval=true)
+     */
+    private $histories;
+
     public function __construct(
         int $apiId,
         string $login,
@@ -72,6 +81,8 @@ class User implements UserInterface
         $this->avatar = $avatar;
         $this->apiId = $apiId;
         $this->provider = $provider;
+
+        $this->histories = new ArrayCollection();
     }
 
     public function getId(): string
@@ -112,6 +123,11 @@ class User implements UserInterface
     public function getAccessToken(): ?string
     {
         return $this->accessToken;
+    }
+
+    public function getHistories(): Collection
+    {
+        return $this->histories;
     }
 
     public function updateToken(string $accessToken): void
