@@ -42,7 +42,7 @@ class ContainerArgs
 
         $args = $config['args'];
 
-        $this->id = new Id($args['id']);
+        $this->id = new Id($args['id'] ?? $config['image']);
         $this->version = $args['version'] ?? '';
 
         $this->compose = [];
@@ -58,7 +58,7 @@ class ContainerArgs
             $host = $port['host'] ?? '';
             $container = $port['container'] ?? '';
 
-            $this->ports[] = new Port($host, $container);
+            $this->ports[] = new Port((string)$host, (string)$container);
         }
 
         $this->volumes = [];
