@@ -21,17 +21,21 @@ class UserRepository implements UserRepositoryInterface
 
     public function createFromGithub(array $data): User
     {
-        if (empty($data['id']) || empty($data['login']) || empty($data['email'])) {
-            throw new \LogicException('Some data are missing from the API');
+        if (empty($data['id'])) {
+            throw new \LogicException('User ID is missing from Github API');
+        }
+
+        if (empty($data['login'])) {
+            throw new \LogicException('Username is missing from Github API');
         }
 
         $apiId = $data['id'];
-        $username = $data['login'];
-        $email = $data['email'];
-        $name = $data['name'] ?? '';
-        $avatar = $data['avatar_url'] ?? '';
+        $login = $data['login'];
+        $email = $data['email'] ?? null;
+        $name = $data['name'] ?? null;
+        $avatar = $data['avatar_url'] ?? null;
 
-        $user = new User($username, $email, $name, $avatar, self::GITHUB_PROVIDER, $apiId);
+        $user = new User($apiId, $login, $email, $name, $avatar, self::GITHUB_PROVIDER);
 
         return $user;
     }
