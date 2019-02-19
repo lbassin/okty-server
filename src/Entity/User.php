@@ -24,17 +24,17 @@ class User implements UserInterface
     private $login;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $avatar;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $email;
 
@@ -59,12 +59,12 @@ class User implements UserInterface
     private $roles = 'ROLE_USER';
 
     public function __construct(
+        int $apiId,
         string $login,
-        string $email,
-        string $name,
-        string $avatar,
-        string $provider,
-        int $apiId
+        ?string $email,
+        ?string $name,
+        ?string $avatar,
+        string $provider
     ) {
         $this->login = $login;
         $this->email = $email;
@@ -84,17 +84,17 @@ class User implements UserInterface
         return $this->login;
     }
 
-    public function getAvatar(): string
+    public function getAvatar(): ?string
     {
         return $this->avatar;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function getEmail(): string
+    public function getEmail(): ?string
     {
         return $this->email;
     }
