@@ -19,5 +19,5 @@ interface UserRepositoryInterface
 
     public function findByProvider(int $getApiId, string $string): ?User;
 
-    public function findByUsername(string $username): ?User;
+    public function findById(string $username): ?User;
 }

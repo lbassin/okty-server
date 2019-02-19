@@ -19,9 +19,9 @@ class User implements UserInterface
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255)
      */
-    private $username;
+    private $login;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -59,14 +59,14 @@ class User implements UserInterface
     private $roles = 'ROLE_USER';
 
     public function __construct(
-        string $username,
+        string $login,
         string $email,
         string $name,
         string $avatar,
         string $provider,
         int $apiId
     ) {
-        $this->username = $username;
+        $this->login = $login;
         $this->email = $email;
         $this->name = $name;
         $this->avatar = $avatar;
@@ -79,9 +79,9 @@ class User implements UserInterface
         return $this->id;
     }
 
-    public function getUsername(): string
+    public function getLogin(): string
     {
-        return $this->username;
+        return $this->login;
     }
 
     public function getAvatar(): string
@@ -117,6 +117,11 @@ class User implements UserInterface
     public function updateToken(string $accessToken): void
     {
         $this->accessToken = $accessToken;
+    }
+
+    public function getUsername(): string
+    {
+        return $this->getId();
     }
 
     public function getRoles(): array

@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
-class Create
+class Login
 {
     private $github;
     private $userRepository;
@@ -33,7 +33,7 @@ class Create
     }
 
     /**
-     * @Route("user", methods={"POST"})
+     * @Route("login", methods={"POST"})
      */
     public function handle(Request $request): Response
     {

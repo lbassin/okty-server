@@ -35,11 +35,11 @@ class Index
     public function handle(): JsonResponse
     {
         $token = $this->tokenManager->decode($this->tokenStorage->getToken());
-        $user = $this->userRepository->findByUsername($token['username']);
+        $user = $this->userRepository->findById($token['username']);
 
         return new JsonResponse([
             'id' => $user->getId(),
-            'username' => $user->getUsername(),
+            'login' => $user->getLogin(),
             'avatar' => $user->getAvatar(),
             'name' => $user->getName(),
             'email' => $user->getEmail(),

@@ -50,10 +50,10 @@ class UserRepository implements UserRepositoryInterface
         return $user;
     }
 
-    public function findByUsername(string $username): ?User
+    public function findById(string $id): ?User
     {
         /** @var User $user */
-        $user = $this->repository->findOneBy(['username' => $username]);
+        $user = $this->repository->findOneBy(['id' => $id]);
 
         return $user;
     }
