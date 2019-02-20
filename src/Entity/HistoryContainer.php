@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * @ORM\Entity()
@@ -41,7 +42,7 @@ class HistoryContainer
         $this->args = $args;
     }
 
-    public function getId(): int
+    public function getId(): ?UuidInterface
     {
         return $this->id;
     }

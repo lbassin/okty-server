@@ -18,4 +18,9 @@ class HistoryRepository implements HistoryRepositoryInterface
         $this->entityManager = $entityManager;
         $this->repository = $entityManager->getRepository(History::class);
     }
+
+    public function findAllByUserId(string $userId): array
+    {
+        return $this->repository->findBy(['user' => $userId]);
+    }
 }

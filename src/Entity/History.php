@@ -7,6 +7,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * @ORM\Entity()
@@ -44,7 +45,7 @@ class History
         $this->containers = new ArrayCollection();
     }
 
-    public function getId(): string
+    public function getId(): ?UuidInterface
     {
         return $this->id;
     }

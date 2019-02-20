@@ -9,5 +9,5 @@ namespace App\Repository;
  */
 interface HistoryRepositoryInterface
 {
-
+    public function findAllByUserId(string $userId);
 }

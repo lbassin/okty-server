@@ -7,6 +7,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -65,7 +66,7 @@ class User implements UserInterface
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\History", mappedBy="user", orphanRemoval=true)
      */
-    private $histories;
+    private $history;
 
     public function __construct(
         int $apiId,
@@ -82,10 +83,10 @@ class User implements UserInterface
         $this->apiId = $apiId;
         $this->provider = $provider;
 
-        $this->histories = new ArrayCollection();
+        $this->history = new ArrayCollection();
     }
 
-    public function getId(): string
+    public function getId(): ?UuidInterface
     {
         return $this->id;
     }
@@ -125,9 +126,9 @@ class User implements UserInterface
         return $this->accessToken;
     }
 
-    public function getHistories(): Collection
+    public function getHistory(): Collection
     {
-        return $this->histories;
+        return $this->history;
     }
 
     public function updateToken(string $accessToken): void
@@ -137,7 +138,7 @@ class User implements UserInterface
 
     public function getUsername(): string
     {
-        return $this->getId();
+        return $this->getId()->toString();
     }
 
     public function getRoles(): array
