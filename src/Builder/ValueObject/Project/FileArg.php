@@ -7,7 +7,7 @@ namespace App\Builder\ValueObject\Project;
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
-class FileArg
+class FileArg implements \JsonSerializable
 {
     private $key;
     private $value;
@@ -30,5 +30,13 @@ class FileArg
     public function getValue(): string
     {
         return $this->value;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'key' => $this->getKey(),
+            'value' => $this->getValue(),
+        ];
     }
 }

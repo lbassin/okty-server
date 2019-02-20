@@ -64,4 +64,9 @@ class History
     {
         return $this->containers;
     }
+
+    public function addContainer(HistoryContainer $container): void
+    {
+        $this->containers[] = $container;
+    }
 }

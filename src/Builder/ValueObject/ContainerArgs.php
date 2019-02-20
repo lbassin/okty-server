@@ -14,7 +14,7 @@ use App\Builder\ValueObject\Project\Volume;
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
-class ContainerArgs
+class ContainerArgs implements \JsonSerializable
 {
     /** @var Id $id */
     private $id;
@@ -131,5 +131,18 @@ class ContainerArgs
         }
 
         return '';
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->getId()->getValue(),
+            'version' => $this->getVersion(),
+            'compose' => $this->getComposeOptions(),
+            'ports' => $this->getPorts(),
+            'volumes' => $this->getVolumes(),
+            'environments' => $this->getEnvironments(),
+            'fileArgs' => $this->fileArgs,
+        ];
     }
 }

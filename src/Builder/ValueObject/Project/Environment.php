@@ -7,7 +7,7 @@ namespace App\Builder\ValueObject\Project;
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
-class Environment
+class Environment implements \JsonSerializable
 {
 
     private $key;
@@ -35,5 +35,13 @@ class Environment
     public function getValue(): string
     {
         return $this->value;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'key' => $this->getKey(),
+            'value' => $this->getValue(),
+        ];
     }
 }

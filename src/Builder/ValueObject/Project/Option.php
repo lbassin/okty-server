@@ -7,7 +7,7 @@ namespace App\Builder\ValueObject\Project;
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
-class Option
+class Option implements \JsonSerializable
 {
     private $key;
     private $value;
@@ -49,5 +49,13 @@ class Option
     public function getValue(): string
     {
         return $this->value;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'key' => $this->getKey(),
+            'value' => $this->getValue(),
+        ];
     }
 }

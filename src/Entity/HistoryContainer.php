@@ -36,8 +36,9 @@ class HistoryContainer
      */
     private $history;
 
-    public function __construct(string $image, string $args)
+    public function __construct(History $history, string $image, string $args)
     {
+        $this->history = $history;
         $this->image = $image;
         $this->args = $args;
     }

@@ -23,4 +23,14 @@ class HistoryRepository implements HistoryRepositoryInterface
     {
         return $this->repository->findBy(['user' => $userId]);
     }
+
+    public function save(History $history)
+    {
+        $this->entityManager->persist($history);
+        foreach ($history->getContainers() as $container) {
+            $this->entityManager->persist($container);
+        }
+
+        $this->entityManager->flush();
+    }
 }
