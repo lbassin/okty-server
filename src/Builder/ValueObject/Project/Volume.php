@@ -7,7 +7,7 @@ namespace App\Builder\ValueObject\Project;
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
-class Volume implements \JsonSerializable
+class Volume
 {
 
     private $host;
@@ -39,13 +39,5 @@ class Volume implements \JsonSerializable
     public function getContainer(): string
     {
         return $this->container;
-    }
-
-    public function jsonSerialize()
-    {
-        return [
-            'host' => $this->getHost(),
-            'container' => $this->getContainer(),
-        ];
     }
 }

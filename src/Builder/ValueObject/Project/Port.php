@@ -7,7 +7,7 @@ namespace App\Builder\ValueObject\Project;
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
-class Port implements \JsonSerializable
+class Port
 {
     private $host;
     private $container;
@@ -45,13 +45,5 @@ class Port implements \JsonSerializable
     public function getContainer(): int
     {
         return $this->container;
-    }
-
-    public function jsonSerialize()
-    {
-        return [
-            'host' => $this->getHost(),
-            'container' => $this->getContainer(),
-        ];
     }
 }

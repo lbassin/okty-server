@@ -14,7 +14,7 @@ use App\Builder\ValueObject\Project\Volume;
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
-class ContainerArgs implements \JsonSerializable
+class ContainerArgs
 {
     /** @var Id $id */
     private $id;
@@ -58,7 +58,7 @@ class ContainerArgs implements \JsonSerializable
             $host = $port['host'] ?? '';
             $container = $port['container'] ?? '';
 
-            $this->ports[] = new Port((string)$host, (string)$container);
+            $this->ports[] = new Port((string) $host, (string) $container);
         }
 
         $this->volumes = [];
@@ -121,6 +121,11 @@ class ContainerArgs implements \JsonSerializable
         return $this->environments;
     }
 
+    public function getFileArgs(): array
+    {
+        return $this->fileArgs;
+    }
+
     public function getFileArgValue($argName): string
     {
         /** @var FileArg $file */
@@ -131,18 +136,5 @@ class ContainerArgs implements \JsonSerializable
         }
 
         return '';
-    }
-
-    public function jsonSerialize(): array
-    {
-        return [
-            'id' => $this->getId()->getValue(),
-            'version' => $this->getVersion(),
-            'compose' => $this->getComposeOptions(),
-            'ports' => $this->getPorts(),
-            'volumes' => $this->getVolumes(),
-            'environments' => $this->getEnvironments(),
-            'fileArgs' => $this->fileArgs,
-        ];
     }
 }
