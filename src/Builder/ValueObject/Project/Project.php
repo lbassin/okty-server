@@ -28,6 +28,11 @@ class Project
         }
     }
 
+    public function getDockerCompose(): DockerCompose
+    {
+        return $this->dockerCompose;
+    }
+
     public function getFiles(): array
     {
         return array_merge(
