@@ -43,7 +43,7 @@ class Create
     }
 
     /**
-     * @Route("user/history", methods={"POST"})
+     * @Route("/user/history", methods={"POST"})
      */
     public function handle(Request $request): JsonResponse
     {

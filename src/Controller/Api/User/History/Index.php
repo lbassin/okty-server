@@ -35,7 +35,7 @@ class Index
     }
 
     /**
-     * @Route("user/history", methods={"GET"})
+     * @Route("/user/history", methods={"GET"})
      */
     public function handle(): JsonResponse
     {

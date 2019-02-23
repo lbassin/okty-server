@@ -33,7 +33,7 @@ class Login
     }
 
     /**
-     * @Route("login", methods={"POST"})
+     * @Route("/login", methods={"POST"})
      */
     public function handle(Request $request): Response
     {

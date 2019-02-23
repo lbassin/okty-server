@@ -30,7 +30,7 @@ class Index
     }
 
     /**
-     * @Route("user")
+     * @Route("/user")
      */
     public function handle(): JsonResponse
     {
