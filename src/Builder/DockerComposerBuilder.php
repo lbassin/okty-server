@@ -11,6 +11,9 @@ use App\Builder\Resolver\VolumesResolver;
 use App\Builder\ValueObject\ContainerArgs;
 use App\Builder\ValueObject\Project\DockerCompose;
 use App\Builder\ValueObject\Project\Service;
+use App\Event\Build\AddContainerEvent;
+use App\Event\Build\BuildEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
@@ -23,6 +26,7 @@ class DockerComposerBuilder
     private $environmentsResolver;
     private $optionsResolver;
     private $filesResolver;
+    private $eventDispatcher;
 
     public function __construct(
         ImageResolver $imageResolver,
@@ -30,7 +34,8 @@ class DockerComposerBuilder
         VolumesResolver $volumesResolver,
         EnvironmentsResolver $environmentsResolver,
         OptionsResolver $optionsResolver,
-        FilesResolver $filesResolver
+        FilesResolver $filesResolver,
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->imageResolver = $imageResolver;
         $this->portsResolver = $portsResolver;
@@ -38,6 +43,7 @@ class DockerComposerBuilder
         $this->environmentsResolver = $environmentsResolver;
         $this->optionsResolver = $optionsResolver;
         $this->filesResolver = $filesResolver;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function build(DockerCompose &$project, ContainerArgs $args): void
@@ -49,8 +55,10 @@ class DockerComposerBuilder
         $volumes = $this->volumesResolver->resolve($args);
         $environments = $this->environmentsResolver->resolve($args);
 
-        $container = new Service($id, $image, $options, $ports, $volumes, $environments);
+        $service = new Service($id, $image, $options, $ports, $volumes, $environments);
 
-        $project->addService($container);
+        $this->eventDispatcher->dispatch(BuildEvent::ADD_CONTAINER, new AddContainerEvent($project, $args, $service));
+
+        $project->addService($service);
     }
 }
