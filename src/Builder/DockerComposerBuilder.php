@@ -12,7 +12,7 @@ use App\Builder\ValueObject\ContainerArgs;
 use App\Builder\ValueObject\Project\DockerCompose;
 use App\Builder\ValueObject\Project\Service;
 use App\Event\Build\AddContainerEvent;
-use App\Event\BuildEvent;
+use App\Event\Build\BuildEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**

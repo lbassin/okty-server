@@ -59,7 +59,6 @@ class Create
 
             $history->addContainer($historyContainer);
         }
-
         $this->historyRepository->save($history);
 
         return new JsonResponse('', Response::HTTP_CREATED);

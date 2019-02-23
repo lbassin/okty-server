@@ -8,7 +8,7 @@ use App\Builder\ValueObject\Project\DockerCompose;
 use App\Builder\ValueObject\Project\Project;
 use App\Event\Build\AfterBuildEvent;
 use App\Event\Build\BeforeBuildEvent;
-use App\Event\BuildEvent;
+use App\Event\Build\BuildEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
