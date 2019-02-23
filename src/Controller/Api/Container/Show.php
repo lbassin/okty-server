@@ -4,6 +4,7 @@ namespace App\Controller\Api\Container;
 
 use App\Repository\ContainerRepositoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -11,7 +12,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
-class Index
+class Show
 {
     private $containerRepository;
     private $serializer;
@@ -23,14 +24,14 @@ class Index
     }
 
     /**
-     * @Route("containers", methods={"GET"})
+     * @Route("containers/{id}", methods={"GET"}, requirements={"id": "^[a-zA-Z]+(-)?[a-zA-Z]+$"})
      */
-    public function handle(): Response
+    public function handle(Request $request): Response
     {
-        $containers = $this->containerRepository->findAll();
+        $container = $this->containerRepository->findOneById($request->attributes->get('id'));
 
         return new JsonResponse(
-            $this->serializer->serialize($containers, 'json'),
+            $this->serializer->serialize($container, 'json'),
             Response::HTTP_OK,
             [],
             true
