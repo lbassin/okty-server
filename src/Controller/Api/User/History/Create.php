@@ -11,6 +11,7 @@ use App\Repository\HistoryRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use App\ValueObject\Json;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -44,6 +45,7 @@ class Create
 
     /**
      * @Route("/user/history", methods={"POST"})
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
      */
     public function handle(Request $request): JsonResponse
     {

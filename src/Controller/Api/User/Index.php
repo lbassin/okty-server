@@ -6,6 +6,7 @@ namespace App\Controller\Api\User;
 
 use App\Repository\UserRepositoryInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -31,6 +32,7 @@ class Index
 
     /**
      * @Route("/user")
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
      */
     public function handle(): JsonResponse
     {
