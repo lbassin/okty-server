@@ -58,7 +58,7 @@ class ContainerArgs
             $host = $port['host'] ?? '';
             $container = $port['container'] ?? '';
 
-            $this->ports[] = new Port((string)$host, (string)$container);
+            $this->ports[] = new Port((string) $host, (string) $container);
         }
 
         $this->volumes = [];
@@ -119,6 +119,11 @@ class ContainerArgs
     public function getEnvironments(): array
     {
         return $this->environments;
+    }
+
+    public function getFileArgs(): array
+    {
+        return $this->fileArgs;
     }
 
     public function getFileArgValue($argName): string

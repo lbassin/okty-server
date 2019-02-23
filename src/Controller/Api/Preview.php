@@ -4,7 +4,7 @@ namespace App\Controller\Api;
 
 use App\Builder\DockerComposerBuilder;
 use App\Builder\ValueObject\ContainerArgs;
-use App\Builder\ValueObject\Json;
+use App\ValueObject\Json;
 use App\Builder\ValueObject\Project\DockerCompose;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
