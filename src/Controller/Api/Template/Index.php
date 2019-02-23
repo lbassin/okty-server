@@ -2,21 +2,24 @@
 
 namespace App\Controller\Api\Template;
 
-use App\Provider\TemplateProvider;
+use App\Repository\TemplateRepositoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
 class Index
 {
-    private $templateProvider;
+    private $templateRepository;
+    private $serializer;
 
-    public function __construct(TemplateProvider $templateProvider)
+    public function __construct(TemplateRepositoryInterface $templateRepository, SerializerInterface $serializer)
     {
-        $this->templateProvider = $templateProvider;
+        $this->templateRepository = $templateRepository;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -24,8 +27,13 @@ class Index
      */
     public function handle(): Response
     {
-        $templates = $this->templateProvider->getList();
+        $templates = $this->templateRepository->findAll();
 
-        return new JsonResponse($templates);
+        return new JsonResponse(
+            $this->serializer->serialize($templates, 'json', ['groups' => ['list']]),
+            Response::HTTP_OK,
+            [],
+            true
+        );
     }
 }

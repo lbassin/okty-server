@@ -2,22 +2,25 @@
 
 namespace App\Controller\Api\Template;
 
-use App\Provider\TemplateProvider;
+use App\Repository\TemplateRepositoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
 class Show
 {
-    private $templateProvider;
+    private $templateRepository;
+    private $serializer;
 
-    public function __construct(TemplateProvider $templateProvider)
+    public function __construct(TemplateRepositoryInterface $templateRepository, SerializerInterface $serializer)
     {
-        $this->templateProvider = $templateProvider;
+        $this->templateRepository = $templateRepository;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -25,8 +28,13 @@ class Show
      */
     public function handle(Request $request): Response
     {
-        $templates = $this->templateProvider->getOne($request->attributes->get('id'));
+        $templates = $this->templateRepository->findOneById($request->attributes->get('id'));
 
-        return new JsonResponse($templates);
+        return new JsonResponse(
+            $this->serializer->serialize($templates, 'json'),
+            Response::HTTP_OK,
+            [],
+            true
+        );
     }
 }

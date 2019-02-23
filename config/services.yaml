@@ -5,7 +5,6 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     containers_path: 'containers'
-    templates_path: 'templates'
     locale: 'en'
     google_cloud_credentials: '%env(json:GOOGLE_APPLICATION_CREDENTIALS)%'
 
@@ -46,10 +45,6 @@ services:
     App\Provider\ContainerProvider:
         arguments:
             $path: '%containers_path%'
-
-    App\Provider\TemplateProvider:
-        arguments:
-            $path: '%templates_path%'
 
     ZipArchive:
         class: \ZipArchive
