@@ -33,7 +33,6 @@ class Gitlab
             ]);
         } catch (IdentityProviderException $e) {
             $this->logger->warning($e->getResponseBody());
-            dd($e);
             throw new BadCredentialsException('Gitlab OAuth (Wrong auth code)');
         }
 
