@@ -2,11 +2,12 @@
 
 namespace App\Builder\Resolver;
 
-use App\Builder\ValueObject\Container\FileConfig;
 use App\Builder\ValueObject\ContainerArgs;
 use App\Builder\ValueObject\Project\File;
 use App\Helper\LambdaHelper;
 use App\Provider\ContainerProvider;
+use App\Repository\ContainerRepositoryInterface;
+use App\ValueObject\Container\ManifestSourceConfig;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
@@ -15,16 +16,21 @@ class FilesResolver
 {
     private $containerProvider;
     private $lambdaHelper;
+    private $containerRepository;
 
-    public function __construct(ContainerProvider $containerProvider, LambdaHelper $lambdaHelper)
-    {
+    public function __construct(
+        ContainerProvider $containerProvider,
+        LambdaHelper $lambdaHelper,
+        ContainerRepositoryInterface $containerRepository
+    ) {
         $this->containerProvider = $containerProvider;
         $this->lambdaHelper = $lambdaHelper;
+        $this->containerRepository = $containerRepository;
     }
 
     public function resolve(ContainerArgs $containerArgs): array
     {
-        $manifest = $this->containerProvider->getManifest($containerArgs->getImage());
+        $manifest = $this->containerRepository->findManifestByContainerId($containerArgs->getImage());
         if (!$manifest->hasFiles()) {
             return [];
         }
@@ -37,7 +43,7 @@ class FilesResolver
         return $files;
     }
 
-    private function buildFile(ContainerArgs $containerArgs, string $filename, FileConfig $config): File
+    private function buildFile(ContainerArgs $containerArgs, string $filename, ManifestSourceConfig $config): File
     {
         $content = $this->containerProvider->getSource($containerArgs->getImage(), $filename);
 

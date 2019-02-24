@@ -2,9 +2,6 @@
 
 namespace App\Provider;
 
-use App\Builder\ValueObject\Container\Manifest;
-use Symfony\Component\Yaml\Yaml;
-
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
@@ -17,14 +14,6 @@ class ContainerProvider
     {
         $this->github = $github;
         $this->path = $path;
-    }
-
-    public function getManifest(string $container): Manifest
-    {
-        $content = $this->github->getFile($this->getPath($container).'manifest.yml');
-        $element = Yaml::parse($content, Yaml::PARSE_OBJECT);
-
-        return new Manifest($element);
     }
 
     public function getSource(string $container, string $file)

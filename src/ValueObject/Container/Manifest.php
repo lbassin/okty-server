@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Builder\ValueObject\Container;
+namespace App\ValueObject\Container;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
@@ -15,25 +15,25 @@ class Manifest
 
     private $files;
 
-    public function __construct(array $config)
+    public function __construct(array $docker, array $files = [], array $config = [])
     {
-        $this->image = $config['docker']['image'] ?? '';
-        $this->build = $config['docker']['build'] ?? '';
-        $this->tag = $config['docker']['tag'] ?? '';
+        $this->image = $docker['image'] ?? '';
+        $this->build = $docker['build'] ?? '';
+        $this->tag = $docker['tag'] ?? '';
 
         $this->files = [];
-        foreach ($config['files'] ?? [] as $filename) {
-            if (!$config['config'][$filename]) {
+        foreach ($files as $filename) {
+            if (!$config[$filename]) {
                 continue;
             }
 
-            $this->files[$filename] = new FileConfig($config['config'][$filename]);
+            $this->files[$filename] = new ManifestSourceConfig($config[$filename]);
         }
     }
 
     public function hasBuild(): bool
     {
-        return (bool)$this->build;
+        return (bool) $this->build;
     }
 
     public function getBuild(): string

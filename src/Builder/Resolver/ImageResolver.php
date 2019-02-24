@@ -3,25 +3,25 @@
 namespace App\Builder\Resolver;
 
 use App\Builder\ValueObject\ContainerArgs;
-use App\Provider\ContainerProvider;
+use App\Repository\ContainerRepositoryInterface;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
 class ImageResolver
 {
-    private $containerProvider;
+    private $containerRepository;
 
-    public function __construct(ContainerProvider $containerProvider)
+    public function __construct(ContainerRepositoryInterface $containerRepository)
     {
-        $this->containerProvider = $containerProvider;
+        $this->containerRepository = $containerRepository;
     }
 
     public function resolve(ContainerArgs $args): array
     {
         $output = [];
 
-        $manifest = $this->containerProvider->getManifest($args->getImage());
+        $manifest = $this->containerRepository->findManifestByContainerId($args->getImage());
 
         if ($manifest->hasBuild()) {
             return ['build' => $manifest->getBuild()];

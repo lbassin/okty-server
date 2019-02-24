@@ -6,8 +6,10 @@ namespace App\Repository;
 
 use App\Entity\Container;
 use App\Provider\Github;
+use App\ValueObject\Container\Manifest;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
@@ -17,12 +19,18 @@ class ContainerRepository implements ContainerRepositoryInterface
     private $github;
     private $decoder;
     private $denormalizer;
+    private $serializer;
 
-    public function __construct(Github $github, DecoderInterface $decoder, DenormalizerInterface $denormalizer)
-    {
+    public function __construct(
+        Github $github,
+        DecoderInterface $decoder,
+        DenormalizerInterface $denormalizer,
+        SerializerInterface $serializer
+    ) {
         $this->github = $github;
         $this->decoder = $decoder;
         $this->denormalizer = $denormalizer;
+        $this->serializer = $serializer;
     }
 
     public function findAll(): array
@@ -50,5 +58,17 @@ class ContainerRepository implements ContainerRepositoryInterface
         $container = $this->denormalizer->denormalize($data, Container::class, 'yaml');
 
         return $container;
+    }
+
+    public function findManifestByContainerId(string $id): Manifest
+    {
+        $file = "containers/${id}/manifest.yml";
+
+        $content = $this->github->getFile($file);
+
+        /** @var Manifest $element */
+        $element = $this->serializer->deserialize($content, Manifest::class, 'yaml');
+
+        return $element;
     }
 }

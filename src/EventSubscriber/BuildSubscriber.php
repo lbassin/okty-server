@@ -58,7 +58,7 @@ class BuildSubscriber implements EventSubscriberInterface
     {
         /** @var User $user */
         $user = $this->tokenStorage->getToken()->getUser();
-        if (!$user) {
+        if (!$user || $user == 'anon.') {
             return;
         }
 

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Builder\ValueObject\Container;
+namespace App\ValueObject\Container;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
-class FileConfig
+class ManifestSourceConfig
 {
     private $output;
     private $args;
