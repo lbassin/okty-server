@@ -3,12 +3,13 @@
 namespace App\Controller\Api;
 
 use App\Factory\Docker\ComposeFactory;
-use App\ValueObject\Service\Args;
 use App\ValueObject\Json;
+use App\ValueObject\Service\Args;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
@@ -16,10 +17,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class Preview
 {
     private $builder;
+    private $normalizer;
 
-    public function __construct(ComposeFactory $builder)
+    public function __construct(ComposeFactory $builder, NormalizerInterface $normalizer)
     {
         $this->builder = $builder;
+        $this->normalizer = $normalizer;
     }
 
     /**
@@ -32,7 +35,7 @@ class Preview
 
         $compose = $this->builder->build([$containerArgs]);
 
-        return new JsonResponse(['content' => $compose->toArray()]);
+        return new JsonResponse(['content' => $this->normalizer->normalize($compose)]);
     }
 
     /**
@@ -49,6 +52,6 @@ class Preview
 
         $compose = $this->builder->build($containers);
 
-        return new JsonResponse(['content' => $compose->toArray()]);
+        return new JsonResponse(['content' => $this->normalizer->normalize($compose)]);
     }
 }
