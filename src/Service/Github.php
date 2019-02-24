@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Provider;
+namespace App\Service;
 
 use App\Exception\BadCredentialsException;
 use App\Exception\FileNotFoundException;
@@ -55,7 +55,8 @@ class Github
     public function getFile(string $path): string
     {
         try {
-            return $this->getRepo()->contents()->download($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
+            return $this->getRepo()->contents()->download($this->githubUser, $this->githubRepo, $path,
+                $this->githubBranch);
         } catch (\RuntimeException $exception) {
             if ($exception->getCode() == 401 || $exception->getCode() == 403) {
                 throw new BadCredentialsException('Github API');
@@ -99,7 +100,7 @@ class Github
         try {
             $accessToken = $this->githubOAuth->getAccessToken('authorization_code', [
                 'code' => $code,
-                'state' => $state
+                'state' => $state,
             ]);
         } catch (IdentityProviderException $e) {
             throw new BadCredentialsException('Github OAuth (Wrong auth code)');

@@ -4,7 +4,7 @@ namespace App\Controller\Api;
 
 use App\Builder\ProjectBuilder;
 use App\ValueObject\Json;
-use App\Helper\ZipHelper;
+use App\Service\Zip;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +20,7 @@ class Build
     private $projectBuilder;
     private $zipHelper;
 
-    public function __construct(ProjectBuilder $projectBuilder, ZipHelper $zipHelper)
+    public function __construct(ProjectBuilder $projectBuilder, Zip $zipHelper)
     {
         $this->projectBuilder = $projectBuilder;
         $this->zipHelper = $zipHelper;

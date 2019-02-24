@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Builder\ValueObject\Project;
 
+use App\ValueObject\File;
 use Symfony\Component\Yaml\Yaml;
 
 /**

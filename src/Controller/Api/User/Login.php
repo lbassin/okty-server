@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Api\User;
 
-use App\Provider\Github;
+use App\Service\Github;
 use App\Repository\UserRepositoryInterface;
 use App\ValueObject\Json;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;

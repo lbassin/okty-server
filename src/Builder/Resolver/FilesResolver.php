@@ -3,29 +3,23 @@
 namespace App\Builder\Resolver;
 
 use App\Builder\ValueObject\ContainerArgs;
-use App\Builder\ValueObject\Project\File;
-use App\Helper\LambdaHelper;
-use App\Provider\ContainerProvider;
+use App\Service\Lambda;
 use App\Repository\ContainerRepositoryInterface;
 use App\ValueObject\Container\ManifestSourceConfig;
+use App\ValueObject\File;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
 class FilesResolver
 {
-    private $containerProvider;
-    private $lambdaHelper;
     private $containerRepository;
+    private $lambdaHelper;
 
-    public function __construct(
-        ContainerProvider $containerProvider,
-        LambdaHelper $lambdaHelper,
-        ContainerRepositoryInterface $containerRepository
-    ) {
-        $this->containerProvider = $containerProvider;
-        $this->lambdaHelper = $lambdaHelper;
+    public function __construct(ContainerRepositoryInterface $containerRepository, Lambda $lambdaHelper)
+    {
         $this->containerRepository = $containerRepository;
+        $this->lambdaHelper = $lambdaHelper;
     }
 
     public function resolve(ContainerArgs $containerArgs): array
@@ -45,7 +39,8 @@ class FilesResolver
 
     private function buildFile(ContainerArgs $containerArgs, string $filename, ManifestSourceConfig $config): File
     {
-        $content = $this->containerProvider->getSource($containerArgs->getImage(), $filename);
+        $file = $this->containerRepository->findSource($containerArgs->getImage(), $filename);
+        $content = $file->getContent();
 
         preg_match_all('/{{(?P<arg>\w+)}}/', $content, $matches);
         foreach ($matches['arg'] as $arg) {

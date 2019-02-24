@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Container;
-use App\Provider\Github;
+use App\Service\Github;
 use App\ValueObject\Container\Manifest;
+use App\ValueObject\File;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -70,5 +71,12 @@ class ContainerRepository implements ContainerRepositoryInterface
         $element = $this->serializer->deserialize($content, Manifest::class, 'yaml');
 
         return $element;
+    }
+
+    public function findSource(string $containerId, string $filename): File
+    {
+        $content = $this->github->getFile("containers/${containerId}/sources/${filename}");
+
+        return new File($filename, $content);
     }
 }

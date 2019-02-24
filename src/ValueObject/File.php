@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Builder\ValueObject\Project;
+namespace App\ValueObject;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
@@ -18,12 +18,8 @@ class File
             throw new \LogicException('File name cannot be empty');
         }
 
-        if (empty($content)) {
-            throw new \LogicException('File content cannot be empty');
-        }
-
         $this->name = $name;
-        $this->content = $content;
+        $this->content = $content ?? '';
     }
 
     public function getName(): string

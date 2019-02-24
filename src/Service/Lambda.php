@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Helper;
+namespace App\Service;
 
 use App\Exception\BadCredentialsException;
 use Aws\Lambda\Exception\LambdaException;
@@ -10,7 +10,7 @@ use GuzzleHttp\Psr7\Stream;
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
-class LambdaHelper
+class Lambda
 {
     private $lambdaClient;
 

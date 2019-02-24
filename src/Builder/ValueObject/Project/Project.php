@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Builder\ValueObject\Project;
 
+use App\ValueObject\File;
+
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */

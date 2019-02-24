@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Helper;
+namespace App\Service;
 
 use App\Builder\ValueObject\Project\File;
 use App\Builder\ValueObject\Project\Project;
@@ -9,7 +9,7 @@ use ZipArchive;
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
-class ZipHelper
+class Zip
 {
     private $zipArchive;
 
