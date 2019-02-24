@@ -2,9 +2,9 @@
 
 namespace App\Controller\Api;
 
-use App\Builder\ProjectBuilder;
+use App\Factory\Docker\ProjectFactory;
+use App\Service\Zip;
 use App\ValueObject\Json;
-use App\Helper\ZipHelper;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,12 +17,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class Build
 {
-    private $projectBuilder;
+    private $projectFactory;
     private $zipHelper;
 
-    public function __construct(ProjectBuilder $projectBuilder, ZipHelper $zipHelper)
+    public function __construct(ProjectFactory $projectFactory, Zip $zipHelper)
     {
-        $this->projectBuilder = $projectBuilder;
+        $this->projectFactory = $projectFactory;
         $this->zipHelper = $zipHelper;
     }
 
@@ -34,7 +34,7 @@ class Build
         $args = new Json($request->getContent());
 
         try {
-            $project = $this->projectBuilder->build($args->getValue());
+            $project = $this->projectFactory->build($args->getValue());
             $zip = $this->zipHelper->zip($project);
         } catch (\RuntimeException $exception) {
             return new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);

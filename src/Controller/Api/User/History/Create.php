@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Api\User\History;
 
-use App\Builder\ValueObject\ContainerArgs;
+use App\ValueObject\Service\Args;
 use App\Entity\History;
 use App\Repository\HistoryContainerRepositoryInterface;
 use App\Repository\HistoryRepositoryInterface;
@@ -56,7 +56,7 @@ class Create
 
         $history = new History($user);
         foreach ($data['containers'] as $container) {
-            $args = new ContainerArgs($container);
+            $args = new Args($container);
             $historyContainer = $this->historyContainerRepository->createFromArgs($history, $args);
 
             $history->addContainer($historyContainer);

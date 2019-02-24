@@ -2,21 +2,24 @@
 
 namespace App\Controller\Api\Container;
 
-use App\Provider\ContainerProvider;
+use App\Repository\ContainerRepositoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
 class Index
 {
-    private $containerProvider;
+    private $containerRepository;
+    private $serializer;
 
-    public function __construct(ContainerProvider $containerProvider)
+    public function __construct(ContainerRepositoryInterface $containerRepository, SerializerInterface $serializer)
     {
-        $this->containerProvider = $containerProvider;
+        $this->containerRepository = $containerRepository;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -24,8 +27,13 @@ class Index
      */
     public function handle(): Response
     {
-        $containers = $this->containerProvider->getList();
+        $containers = $this->containerRepository->findAll();
 
-        return new JsonResponse($containers);
+        return new JsonResponse(
+            $this->serializer->serialize($containers, 'json'),
+            Response::HTTP_OK,
+            [],
+            true
+        );
     }
 }

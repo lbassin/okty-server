@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace App\Controller\Api\Template;
+namespace App\Controller\Api\Container;
 
-use App\Repository\TemplateRepositoryInterface;
+use App\Repository\ContainerRepositoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,24 +14,24 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 class Show
 {
-    private $templateRepository;
+    private $containerRepository;
     private $serializer;
 
-    public function __construct(TemplateRepositoryInterface $templateRepository, SerializerInterface $serializer)
+    public function __construct(ContainerRepositoryInterface $containerRepository, SerializerInterface $serializer)
     {
-        $this->templateRepository = $templateRepository;
+        $this->containerRepository = $containerRepository;
         $this->serializer = $serializer;
     }
 
     /**
-     * @Route("templates/{id}", methods={"GET"}, requirements={"id": "^[a-zA-Z0-9]+$"})
+     * @Route("containers/{id}", methods={"GET"}, requirements={"id": "^[a-zA-Z]+(-)?[a-zA-Z]+$"})
      */
     public function handle(Request $request): Response
     {
-        $templates = $this->templateRepository->findOneById($request->attributes->get('id'));
+        $container = $this->containerRepository->findOneById($request->attributes->get('id'));
 
         return new JsonResponse(
-            $this->serializer->serialize($templates, 'json'),
+            $this->serializer->serialize($container, 'json'),
             Response::HTTP_OK,
             [],
             true

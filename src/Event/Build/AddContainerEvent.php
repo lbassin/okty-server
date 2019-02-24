@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Event\Build;
 
-use App\Builder\ValueObject\ContainerArgs;
-use App\Builder\ValueObject\Project\DockerCompose;
-use App\Builder\ValueObject\Project\Service;
+use App\ValueObject\Service\Args;
+use App\ValueObject\DockerCompose;
+use App\ValueObject\Service;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -18,7 +18,7 @@ class AddContainerEvent extends Event
     private $args;
     private $service;
 
-    public function __construct(DockerCompose $project, ContainerArgs $args, Service $service)
+    public function __construct(DockerCompose $project, Args $args, Service $service)
     {
         $this->project = $project;
         $this->args = $args;
@@ -30,7 +30,7 @@ class AddContainerEvent extends Event
         return $this->project;
     }
 
-    public function getArgs(): ContainerArgs
+    public function getArgs(): Args
     {
         return $this->args;
     }

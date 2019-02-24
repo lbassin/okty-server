@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Builder\ValueObject\ContainerArgs;
+use App\ValueObject\Service\Args;
 use App\Entity\History;
 use App\Entity\HistoryContainer;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,7 +24,7 @@ class HistoryContainerRepository implements HistoryContainerRepositoryInterface
         $this->serializer = $serializer;
     }
 
-    public function createFromArgs(History $history, ContainerArgs $args): HistoryContainer
+    public function createFromArgs(History $history, Args $args): HistoryContainer
     {
         return new HistoryContainer(
             $history,
