@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace App\Controller\Api\User;
 
-use App\Service\Github;
+use App\Entity\User;
 use App\Repository\UserRepositoryInterface;
+use App\Service\Github as GithubService;
+use App\Service\Gitlab as GitlabService;
 use App\ValueObject\Json;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -18,16 +21,19 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class Login
 {
-    private $github;
+    private $githubService;
+    private $gitlabService;
     private $userRepository;
     private $tokenManager;
 
     public function __construct(
-        Github $github,
+        GithubService $githubService,
+        GitlabService $gitlabService,
         UserRepositoryInterface $userRepository,
         JWTTokenManagerInterface $tokenManager
     ) {
-        $this->github = $github;
+        $this->githubService = $githubService;
+        $this->gitlabService = $gitlabService;
         $this->userRepository = $userRepository;
         $this->tokenManager = $tokenManager;
     }
@@ -39,8 +45,22 @@ class Login
     {
         $args = (new Json($request->getContent()))->getValue();
 
-        $accessToken = $this->github->auth($args['code'] ?? '', $args['state'] ?? '');
-        $apiData = $this->github->getUser($accessToken);
+        if (!method_exists($this, $args['provider'])) {
+            throw new NotFoundHttpException();
+        }
+
+        $user = $this->{$args['provider']}($args);
+
+        return new JsonResponse([
+            'token' => $this->tokenManager->create($user),
+        ]);
+    }
+
+    /** @noinspection PhpUnusedPrivateMethodInspection */
+    private function github(array $args): User
+    {
+        $accessToken = $this->githubService->auth($args['code'] ?? '', $args['state'] ?? '');
+        $apiData = $this->githubService->getUser($accessToken);
 
         $user = $this->userRepository->findByProvider($apiData['id'] ?? 0, UserRepositoryInterface::GITHUB_PROVIDER);
         if (!$user) {
@@ -50,8 +70,23 @@ class Login
         $user->updateToken($accessToken);
         $this->userRepository->save($user);
 
-        return new JsonResponse([
-            'token' => $this->tokenManager->create($user)
-        ]);
+        return $user;
+    }
+
+    /** @noinspection PhpUnusedPrivateMethodInspection */
+    private function gitlab(array $args): User
+    {
+        $accessToken = $this->gitlabService->auth($args['code'] ?? '', $args['state'] ?? '');
+        $apiData = $this->gitlabService->getUser($accessToken);
+
+        $user = $this->userRepository->findByProvider($apiData['id'] ?? 0, UserRepositoryInterface::GITLAB_PROVIDER);
+        if (!$user) {
+            $user = $this->userRepository->createFromGitlab($apiData);
+        }
+
+        $user->updateToken($accessToken);
+        $this->userRepository->save($user);
+
+        return $user;
     }
 }

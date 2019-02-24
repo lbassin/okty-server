@@ -9,6 +9,7 @@ use Github\Client as GithubClient;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\Github as GithubOAuth;
 use Psr\Cache\CacheItemPoolInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
@@ -21,11 +22,13 @@ class Github
     private $githubBranch;
     private $cacheItemPool;
     private $githubOAuth;
+    private $logger;
 
     public function __construct(
         GithubOAuth $githubOAuth,
         GithubClient $githubClient,
         CacheItemPoolInterface $cacheItemPool,
+        LoggerInterface $logger,
         string $githubUser,
         string $githubRepo,
         string $githubBranch
@@ -33,6 +36,7 @@ class Github
         $this->githubOAuth = $githubOAuth;
         $this->githubClient = $githubClient;
         $this->cacheItemPool = $cacheItemPool;
+        $this->logger = $logger;
         $this->githubUser = $githubUser;
         $this->githubRepo = $githubRepo;
         $this->githubBranch = $githubBranch;
@@ -55,8 +59,9 @@ class Github
     public function getFile(string $path): string
     {
         try {
-            return $this->getRepo()->contents()->download($this->githubUser, $this->githubRepo, $path,
-                $this->githubBranch);
+            return $this->getRepo()
+                ->contents()
+                ->download($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
         } catch (\RuntimeException $exception) {
             if ($exception->getCode() == 401 || $exception->getCode() == 403) {
                 throw new BadCredentialsException('Github API');
@@ -103,6 +108,7 @@ class Github
                 'state' => $state,
             ]);
         } catch (IdentityProviderException $e) {
+            $this->logger->warning($e->getResponseBody());
             throw new BadCredentialsException('Github OAuth (Wrong auth code)');
         }
 

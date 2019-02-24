@@ -40,3 +40,13 @@ services:
         arguments:
             $clientId: '%env(GITHUB_APP_ID)%'
             $clientSecret: '%env(GITHUB_APP_SECRET)%'
+
+    Omines\OAuth2\Client\Provider\Gitlab:
+        factory: [App\Factory\GitlabOAuthFactory, 'createService']
+        arguments:
+            $clientId: '%env(GITLAB_APP_ID)%'
+            $clientSecret: '%env(GITLAB_APP_SECRET)%'
+            $redirectUrl: '%env(GITLAB_REDIRECT_URL)%'
+
+    Gitlab\Client:
+        factory: [App\Factory\GitlabClientFactory, 'createService']
