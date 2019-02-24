@@ -4,7 +4,7 @@ namespace App\Service;
 
 use App\ValueObject\File;
 use App\ValueObject\Project;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use ZipArchive;
 
 /**
@@ -12,11 +12,11 @@ use ZipArchive;
  */
 class Zip
 {
-    private $serializer;
+    private $normalizer;
 
-    public function __construct(SerializerInterface $serializer)
+    public function __construct(NormalizerInterface $normalizer)
     {
-        $this->serializer = $serializer;
+        $this->normalizer = $normalizer;
     }
 
     public function zip(Project $project): string
@@ -30,8 +30,10 @@ class Zip
                 throw new \RuntimeException('Output directory not writable');
             }
 
+            $files = $this->normalizer->normalize($project);
+
             /** @var File $file */
-            foreach ($project->getFiles() as $file) {
+            foreach ($files as $file) {
                 $added = $zip->addFromString($file->getName(), $file->getContent());
                 if ($added !== true) {
                     throw new \RuntimeException(sprintf("Cannot add file %s inside zip", $file->getName()));

@@ -40,11 +40,4 @@ class DockerCompose
 
         return sprintf("%s%s%s", $header, PHP_EOL, $output);
     }
-
-    public function getAsFile(): File
-    {
-        $content = $this->__toString();
-
-        return new File('docker-compose.yaml', $content);
-    }
 }

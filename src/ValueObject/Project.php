@@ -35,9 +35,6 @@ class Project
 
     public function getFiles(): array
     {
-        return array_merge(
-            [$this->dockerCompose->getAsFile()],
-            $this->files
-        );
+        return $this->files;
     }
 }
