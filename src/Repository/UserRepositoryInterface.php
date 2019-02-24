@@ -12,8 +12,11 @@ use App\Entity\User;
 interface UserRepositoryInterface
 {
     public const GITHUB_PROVIDER = 'github';
+    public const GITLAB_PROVIDER = 'gitlab';
 
     public function createFromGithub(array $user): User;
+
+    public function createFromGitlab(array $user): User;
 
     public function save(User $user): void;
 

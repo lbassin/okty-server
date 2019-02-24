@@ -35,9 +35,26 @@ class UserRepository implements UserRepositoryInterface
         $name = $data['name'] ?? null;
         $avatar = $data['avatar_url'] ?? null;
 
-        $user = new User($apiId, $login, $email, $name, $avatar, self::GITHUB_PROVIDER);
+        return new User($apiId, $login, $email, $name, $avatar, self::GITHUB_PROVIDER);
+    }
 
-        return $user;
+    public function createFromGitlab(array $data): User
+    {
+        if (empty($data['id'])) {
+            throw new \LogicException('User ID is missing from Gitlab API');
+        }
+
+        if (empty($data['username'])) {
+            throw new \LogicException('Username is missing from Gitlab API');
+        }
+
+        $apiId = $data['id'];
+        $login = $data['username'];
+        $email = $data['email'] ?? null;
+        $name = $data['name'] ?? null;
+        $avatar = $data['avatar_url'] ?? null;
+
+        return new User($apiId, $login, $email, $name, $avatar, self::GITLAB_PROVIDER);
     }
 
     public function save(User $user): void
