@@ -1,16 +1,16 @@
 <?php declare(strict_types=1);
 
-namespace App\Builder\Resolver;
+namespace App\Factory\Docker\Resolver;
 
-use App\Builder\ValueObject\ContainerArgs;
-use App\Builder\ValueObject\Project\Volume;
+use App\ValueObject\Service\Args;
+use App\ValueObject\Service\Volume;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
 class VolumesResolver
 {
-    public function resolve(ContainerArgs $args): array
+    public function resolve(Args $args): array
     {
         $output = [];
 

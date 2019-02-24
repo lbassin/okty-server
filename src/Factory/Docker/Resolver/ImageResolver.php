@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace App\Builder\Resolver;
+namespace App\Factory\Docker\Resolver;
 
-use App\Builder\ValueObject\ContainerArgs;
+use App\ValueObject\Service\Args;
 use App\Repository\ContainerRepositoryInterface;
 
 /**
@@ -17,7 +17,7 @@ class ImageResolver
         $this->containerRepository = $containerRepository;
     }
 
-    public function resolve(ContainerArgs $args): array
+    public function resolve(Args $args): array
     {
         $output = [];
 

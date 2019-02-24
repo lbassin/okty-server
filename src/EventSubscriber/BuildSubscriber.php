@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\EventSubscriber;
 
-use App\Builder\ValueObject\ContainerArgs;
+use App\ValueObject\Service\Args;
 use App\Entity\History;
 use App\Entity\User;
 use App\Event\Build\AddContainerEvent;
@@ -64,7 +64,7 @@ class BuildSubscriber implements EventSubscriberInterface
 
         $history = new History($user);
         foreach ($event->getContainers() as $container) {
-            $args = new ContainerArgs($container);
+            $args = new Args($container);
             $historyContainer = $this->historyContainerRepository->createFromArgs($history, $args);
 
             $history->addContainer($historyContainer);

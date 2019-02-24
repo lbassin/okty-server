@@ -2,19 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Builder\ValueObject;
-
-use App\Builder\ValueObject\Project\Environment;
-use App\Builder\ValueObject\Project\FileArg;
-use App\Builder\ValueObject\Project\Id;
-use App\Builder\ValueObject\Project\Option;
-use App\Builder\ValueObject\Project\Port;
-use App\Builder\ValueObject\Project\Volume;
+namespace App\ValueObject\Service;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
-class ContainerArgs
+class Args
 {
     /** @var Id $id */
     private $id;

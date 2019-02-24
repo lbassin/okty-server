@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace App\Builder\ValueObject\Project;
+namespace App\ValueObject;
 
-use App\ValueObject\File;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -15,9 +14,9 @@ class DockerCompose
     private $version = '3.6';
     private $services = [];
 
-    public function addService(Service $container)
+    public function __construct(array $services)
     {
-        $this->services[] = $container;
+        $this->services = $services;
     }
 
     public function toArray(): array

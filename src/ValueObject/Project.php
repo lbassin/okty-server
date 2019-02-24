@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Builder\ValueObject\Project;
-
-use App\ValueObject\File;
+namespace App\ValueObject;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>

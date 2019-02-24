@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Builder\ValueObject\ContainerArgs;
+use App\ValueObject\Service\Args;
 use App\Entity\History;
 
 /**
@@ -12,5 +12,5 @@ use App\Entity\History;
  */
 interface HistoryContainerRepositoryInterface
 {
-    public function createFromArgs(History $history, ContainerArgs $args);
+    public function createFromArgs(History $history, Args $args);
 }

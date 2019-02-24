@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Builder\ValueObject\Project;
+namespace App\ValueObject;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
@@ -17,8 +17,14 @@ class Service
     private $volumes;
     private $environments;
 
-    public function __construct(string $id, array $image, array $options, array $ports, array $volumes, array $environments)
-    {
+    public function __construct(
+        string $id,
+        array $image,
+        array $options,
+        array $ports,
+        array $volumes,
+        array $environments
+    ) {
         $this->setId($id);
         $this->setImage($image);
         $this->setOptions($options);

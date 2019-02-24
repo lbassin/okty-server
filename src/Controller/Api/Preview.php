@@ -2,10 +2,9 @@
 
 namespace App\Controller\Api;
 
-use App\Builder\DockerComposerBuilder;
-use App\Builder\ValueObject\ContainerArgs;
+use App\Factory\Docker\ComposeFactory;
+use App\ValueObject\Service\Args;
 use App\ValueObject\Json;
-use App\Builder\ValueObject\Project\DockerCompose;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,7 +17,7 @@ class Preview
 {
     private $builder;
 
-    public function __construct(DockerComposerBuilder $builder)
+    public function __construct(ComposeFactory $builder)
     {
         $this->builder = $builder;
     }
@@ -28,18 +27,12 @@ class Preview
      */
     public function single(Request $request): Response
     {
-        $project = new DockerCompose();
-
         $args = new Json($request->getContent());
-        $containerArgs = new ContainerArgs($args->getValue());
+        $containerArgs = new Args($args->getValue());
 
-        try {
-            $this->builder->build($project, $containerArgs);
-        } catch (\LogicException $exception) {
-            return new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_BAD_REQUEST);
-        }
+        $compose = $this->builder->build([$containerArgs]);
 
-        return new JsonResponse(['content' => $project->toArray()]);
+        return new JsonResponse(['content' => $compose->toArray()]);
     }
 
     /**
@@ -47,19 +40,15 @@ class Preview
      */
     public function full(Request $request): Response
     {
-        $project = new DockerCompose();
         $args = new Json($request->getContent());
 
-        try {
-            foreach ($args->getValue() as $config) {
-                $containerArgs = new ContainerArgs($config);
-
-                $this->builder->build($project, $containerArgs);
-            }
-        } catch (\LogicException $exception) {
-            return new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_BAD_REQUEST);
+        $containers = [];
+        foreach ($args->getValue() as $config) {
+            $containers[] = new Args($config);
         }
 
-        return new JsonResponse(['content' => $project->toArray()]);
+        $compose = $this->builder->build($containers);
+
+        return new JsonResponse(['content' => $compose->toArray()]);
     }
 }

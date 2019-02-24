@@ -26,6 +26,10 @@ class Exception extends ExceptionController
             return new JsonResponse(['error' => $exception->getMessage()], $exception->getCode());
         }
 
+        if ($exception->getClass() === \LogicException::class) {
+            return new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
+
         return parent::showAction($request, $exception, $logger);
     }
 }

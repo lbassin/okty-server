@@ -1,16 +1,16 @@
 <?php declare(strict_types=1);
 
-namespace App\Builder\Resolver;
+namespace App\Factory\Docker\Resolver;
 
-use App\Builder\ValueObject\ContainerArgs;
-use App\Builder\ValueObject\Project\Port;
+use App\ValueObject\Service\Args;
+use App\ValueObject\Service\Port;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
 class PortsResolver
 {
-    public function resolve(ContainerArgs $args): array
+    public function resolve(Args $args): array
     {
         $output = [];
 

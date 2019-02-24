@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace App\Builder\Resolver;
+namespace App\Factory\Docker\Resolver;
 
-use App\Builder\ValueObject\ContainerArgs;
+use App\ValueObject\Service\Args;
 use App\Service\Lambda;
 use App\Repository\ContainerRepositoryInterface;
 use App\ValueObject\Container\ManifestSourceConfig;
@@ -22,7 +22,7 @@ class FilesResolver
         $this->lambdaHelper = $lambdaHelper;
     }
 
-    public function resolve(ContainerArgs $containerArgs): array
+    public function resolve(Args $containerArgs): array
     {
         $manifest = $this->containerRepository->findManifestByContainerId($containerArgs->getImage());
         if (!$manifest->hasFiles()) {
@@ -37,7 +37,7 @@ class FilesResolver
         return $files;
     }
 
-    private function buildFile(ContainerArgs $containerArgs, string $filename, ManifestSourceConfig $config): File
+    private function buildFile(Args $containerArgs, string $filename, ManifestSourceConfig $config): File
     {
         $file = $this->containerRepository->findSource($containerArgs->getImage(), $filename);
         $content = $file->getContent();

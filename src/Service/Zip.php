@@ -2,8 +2,9 @@
 
 namespace App\Service;
 
-use App\Builder\ValueObject\Project\File;
-use App\Builder\ValueObject\Project\Project;
+use App\ValueObject\File;
+use App\ValueObject\Project;
+use Symfony\Component\Serializer\SerializerInterface;
 use ZipArchive;
 
 /**
@@ -11,11 +12,11 @@ use ZipArchive;
  */
 class Zip
 {
-    private $zipArchive;
+    private $serializer;
 
-    public function __construct(ZipArchive $zipArchive)
+    public function __construct(SerializerInterface $serializer)
     {
-        $this->zipArchive = $zipArchive;
+        $this->serializer = $serializer;
     }
 
     public function zip(Project $project): string
@@ -23,7 +24,7 @@ class Zip
         $path = tempnam(sys_get_temp_dir(), 'okty');
 
         try {
-            $zip = $this->zipArchive;
+            $zip = new ZipArchive();
             $created = $zip->open($path, ZipArchive::OVERWRITE);
             if ($created !== true) {
                 throw new \RuntimeException('Output directory not writable');

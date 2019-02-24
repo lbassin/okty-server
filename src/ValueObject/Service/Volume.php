@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Builder\ValueObject\Project;
+namespace App\ValueObject\Service;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>

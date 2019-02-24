@@ -37,10 +37,6 @@ services:
             $githubRepo: '%env(CONFIG_GITHUB_REPO)%'
             $githubBranch: '%env(CONFIG_GITHUB_BRANCH)%'
 
-    ZipArchive:
-        class: \ZipArchive
-        factory: [App\Factory\ZipArchiveFactory, 'createService']
-
     League\OAuth2\Client\Provider\Github:
         factory: [App\Factory\GithubOAuthFactory, 'createService']
         arguments:

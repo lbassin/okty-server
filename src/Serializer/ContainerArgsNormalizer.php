@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Serializer;
 
-use App\Builder\ValueObject\ContainerArgs;
+use App\ValueObject\Service\Args;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
@@ -25,7 +25,7 @@ class ContainerArgsNormalizer implements NormalizerInterface
 
     public function normalize($container, $format = null, array $context = [])
     {
-        /** @var ContainerArgs $container */
+        /** @var Args $container */
 
         $this->format = $format;
         $this->context = $context;
@@ -43,7 +43,7 @@ class ContainerArgsNormalizer implements NormalizerInterface
 
     public function supportsNormalization($data, $format = null)
     {
-        return $data instanceof ContainerArgs;
+        return $data instanceof Args;
     }
 
     private function normalizeObject($object)
