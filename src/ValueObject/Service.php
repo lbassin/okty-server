@@ -25,46 +25,18 @@ class Service
         array $volumes,
         array $environments
     ) {
-        $this->setId($id);
-        $this->setImage($image);
-        $this->setOptions($options);
-        $this->setPorts($ports);
-        $this->setVolumes($volumes);
-        $this->setEnvironments($environments);
-    }
-
-    private function setId(string $id): void
-    {
         $this->id = $id;
-    }
 
-    private function setImage(array $data): void
-    {
-        $this->image = $data['image'] ?? '';
-        $this->build = $data['build'] ?? '';
+        $this->image = $image['image'] ?? '';
+        $this->build = $image['build'] ?? '';
 
         if (empty($this->image) && empty($this->build)) {
             throw new \LogicException("At least one of these two options is required (Image/Build");
         }
-    }
 
-    private function setOptions(array $options): void
-    {
         $this->options = $options;
-    }
-
-    private function setPorts(array $ports): void
-    {
         $this->ports = $ports;
-    }
-
-    private function setVolumes(array $volumes): void
-    {
         $this->volumes = $volumes;
-    }
-
-    private function setEnvironments(array $environments): void
-    {
         $this->environments = $environments;
     }
 
