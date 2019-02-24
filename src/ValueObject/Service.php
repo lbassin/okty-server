@@ -45,16 +45,33 @@ class Service
         return $this->id;
     }
 
-    public function toArray(): array
+    public function getImage()
     {
-        $output = [];
-        $output[$this->image ? 'image' : 'build'] = $this->image ? $this->image : $this->build;
-        $output = array_merge($output, $this->options);
+        return $this->image;
+    }
 
-        $output['ports'] = $this->ports;
-        $output['volumes'] = $this->volumes;
-        $output['environment'] = $this->environments;
+    public function getBuild()
+    {
+        return $this->build;
+    }
 
-        return array_filter($output);
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
+
+    public function getPorts(): array
+    {
+        return $this->ports;
+    }
+
+    public function getVolumes(): array
+    {
+        return $this->volumes;
+    }
+
+    public function getEnvironments(): array
+    {
+        return $this->environments;
     }
 }
