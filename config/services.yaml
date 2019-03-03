@@ -5,6 +5,8 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: 'en'
+    repository.container.class: 'App\Repository\ContainerDevRepository'
+    repository.template.class: 'App\Repository\TemplateDevRepository'
 
 services:
     _defaults:
@@ -34,6 +36,12 @@ services:
             $githubUser: '%env(CONFIG_GITHUB_USER)%'
             $githubRepo: '%env(CONFIG_GITHUB_REPO)%'
             $githubBranch: '%env(CONFIG_GITHUB_BRANCH)%'
+
+    App\Repository\ContainerRepositoryInterface:
+        class: '%repository.container.class%'
+
+    App\Repository\TemplateRepositoryInterface:
+        class: '%repository.template.class%'
 
     League\OAuth2\Client\Provider\Github:
         factory: [App\Factory\GithubOAuthFactory, 'createService']
