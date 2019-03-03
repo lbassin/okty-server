@@ -10,7 +10,7 @@ use GuzzleHttp\Psr7\Stream;
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
-class Lambda
+class Lambda implements LambdaInterface
 {
     private $lambdaClient;
 
@@ -25,14 +25,14 @@ class Lambda
             /** @var \Aws\Result $response */
             $response = $this->lambdaClient->invoke([
                 'FunctionName' => $function,
-                'Payload' => json_encode(['name' => $resolver, 'value' => $arg])
+                'Payload' => json_encode(['name' => $resolver, 'value' => $arg]),
             ]);
         } catch (LambdaException $exception) {
             if ($exception->getStatusCode() == 404) {
                 throw new \RuntimeException("Function $function not found");
             }
 
-            if($exception->getStatusCode() == 403 || $exception->getStatusCode() == 401){
+            if ($exception->getStatusCode() == 403 || $exception->getStatusCode() == 401) {
                 throw new BadCredentialsException('AWS Lambda');
             }
 
