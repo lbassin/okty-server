@@ -1,4 +1,14 @@
 services:
-  cache.adapter.null:
-    class: \Symfony\Component\Cache\Adapter\NullAdapter
-    arguments: [~]
+    cache.adapter.null:
+        class: \Symfony\Component\Cache\Adapter\NullAdapter
+        arguments: [~]
+
+    App\Service\LambdaInterface:
+        class: 'App\Service\LambdaDev'
+
+    App\Repository\ContainerRepositoryInterface:
+        alias: 'App\Repository\ContainerDevRepository'
+
+    App\Repository\TemplateRepositoryInterface:
+        alias: 'App\Repository\TemplateDevRepository'
+

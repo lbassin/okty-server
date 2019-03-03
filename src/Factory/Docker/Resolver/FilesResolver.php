@@ -2,11 +2,11 @@
 
 namespace App\Factory\Docker\Resolver;
 
-use App\ValueObject\Service\Args;
-use App\Service\Lambda;
 use App\Repository\ContainerRepositoryInterface;
+use App\Service\LambdaInterface;
 use App\ValueObject\Container\ManifestSourceConfig;
 use App\ValueObject\File;
+use App\ValueObject\Service\Args;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
@@ -16,7 +16,7 @@ class FilesResolver
     private $containerRepository;
     private $lambdaHelper;
 
-    public function __construct(ContainerRepositoryInterface $containerRepository, Lambda $lambdaHelper)
+    public function __construct(ContainerRepositoryInterface $containerRepository, LambdaInterface $lambdaHelper)
     {
         $this->containerRepository = $containerRepository;
         $this->lambdaHelper = $lambdaHelper;

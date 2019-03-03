@@ -1,4 +1,4 @@
-version: '3'
+version: '3.6'
 services:
     db:
         image: 'mariadb:10.3'
@@ -9,13 +9,15 @@ services:
             - MYSQL_RANDOM_ROOT_PASSWORD=yes
         volumes:
             - 'database:/var/lib/mysql'
-        ports:
-            - '3306:3306'
+        networks:
+            - okty-api
     php:
         build: 'docker/php'
         volumes:
             - './:/usr/share/nginx/html'
         working_dir: '/usr/share/nginx/html'
+        networks:
+            - okty-api
     nginx:
         build: 'docker/nginx'
         environment:
@@ -26,8 +28,17 @@ services:
             - './:/usr/share/nginx/html'
         ports:
             - '8080:80'
+        networks:
+            - okty-api
     redis:
         image: redis:4.0.2
         hostname: redis
+        networks:
+            - okty-api
+
 volumes:
-    database:
+    database: ~
+
+networks:
+    okty-api:
+        name: okty-api
