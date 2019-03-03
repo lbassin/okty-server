@@ -31,7 +31,7 @@ class ContainerDevRepository implements ContainerRepositoryInterface
         $this->denormalizer = $denormalizer;
         $this->serializer = $serializer;
 
-        $this->apiUrl = 'http://config-api:3000/';
+        $this->apiUrl = 'http://config-api/';
     }
 
     public function findAll(): array

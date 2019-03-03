@@ -23,7 +23,7 @@ class TemplateDevRepository implements TemplateRepositoryInterface
         $this->decoder = $decoder;
         $this->denormalizer = $denormalizer;
 
-        $this->apiUrl = 'http://config-api:3000/';
+        $this->apiUrl = 'http://config-api/';
     }
 
     public function findAll(): array
