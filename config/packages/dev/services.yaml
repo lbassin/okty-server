@@ -4,7 +4,7 @@ services:
         arguments: [~]
 
     App\Service\LambdaInterface:
-        class: 'App\Service\LambdaDev'
+        alias: 'App\Service\LambdaDev'
 
     App\Repository\ContainerRepositoryInterface:
         alias: 'App\Repository\ContainerDevRepository'

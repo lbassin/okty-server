@@ -1,6 +1,6 @@
 services:
     App\Service\LambdaInterface:
-        class: 'App\Service\Lambda'
+        alias: 'App\Service\Lambda'
 
     App\Repository\ContainerRepositoryInterface:
         alias: 'App\Repository\ContainerRepository'
