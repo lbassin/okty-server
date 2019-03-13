@@ -33,7 +33,7 @@ class TemplateDevRepository implements TemplateRepositoryInterface
 
         $elements = [];
         foreach ($list as $data) {
-            $elements[] = $this->findOneById(substr($data['name'], 0, -4));
+            $elements[] = $this->findOneById(substr($data, 0, -4));
         }
 
         return $elements;
