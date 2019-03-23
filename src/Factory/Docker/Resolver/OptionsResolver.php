@@ -16,9 +16,29 @@ class OptionsResolver
 
         /** @var Option $option */
         foreach ($args->getComposeOptions() as $option) {
-            $output[$option->getKey()] = $option->getValue();
+            $value = $option->getValue();
+
+            if ($option->getKey() === 'command') {
+                $value = $this->formatCommandValue($value);
+                $value = count($value) === 1 ? reset($value) : $value;
+            }
+
+            if (is_string($value)) {
+                $value = trim($value);
+            }
+
+            $output[$option->getKey()] = $value;
         }
 
         return $output;
+    }
+
+    private function formatCommandValue(string $value): array
+    {
+        if (strpos($value, '&&') === false) {
+            return [$value];
+        }
+
+        return ['/bin/sh', '-c', $value];
     }
 }
