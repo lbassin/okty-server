@@ -1,15 +1,3 @@
 index:
     path: /
     controller: App\Controller\Home::handle
-
-container:
-    resource: routes/container.yaml
-    prefix: container
-
-template:
-    resource: routes/template.yaml
-    prefix: template
-
-preview:
-    resource: routes/preview.yaml
-    prefix: preview
