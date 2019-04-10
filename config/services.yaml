@@ -35,6 +35,10 @@ services:
             $githubRepo: '%env(CONFIG_GITHUB_REPO)%'
             $githubBranch: '%env(CONFIG_GITHUB_BRANCH)%'
 
+    App\Service\Cache:
+        arguments:
+            $adapter: '@cache.app'
+
     League\OAuth2\Client\Provider\Github:
         factory: [App\Factory\GithubOAuthFactory, 'createService']
         arguments:

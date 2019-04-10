@@ -13,14 +13,26 @@ use GuzzleHttp\Psr7\Stream;
 class Lambda implements LambdaInterface
 {
     private $lambdaClient;
+    private $cache;
 
-    public function __construct(LambdaClient $lambdaClient)
+    public function __construct(LambdaClient $lambdaClient, Cache $cache)
     {
         $this->lambdaClient = $lambdaClient;
+        $this->cache = $cache;
     }
 
     public function invoke($function, $resolver, $arg): string
     {
+        $key = sprintf('%s.%s.%s',
+            hash('sha256', $function),
+            hash('sha256', $resolver),
+            hash('sha256', $arg)
+        );
+
+        if ($this->cache->has($key)) {
+            return (string) $this->cache->get($key);
+        }
+
         try {
             /** @var \Aws\Result $response */
             $response = $this->lambdaClient->invoke([
@@ -52,6 +64,8 @@ class Lambda implements LambdaInterface
         }
 
         $output = trim($output, '"');
+
+        $this->cache->set($key, $output);
 
         return $output;
     }

@@ -8,7 +8,6 @@ use Github\Api\Repo;
 use Github\Client as GithubClient;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\Github as GithubOAuth;
-use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -20,28 +19,26 @@ class Github
     private $githubUser;
     private $githubRepo;
     private $githubBranch;
-    private $cacheItemPool;
     private $githubOAuth;
     private $logger;
+    private $cache;
 
     public function __construct(
         GithubOAuth $githubOAuth,
         GithubClient $githubClient,
-        CacheItemPoolInterface $cacheItemPool,
         LoggerInterface $logger,
+        Cache $cache,
         string $githubUser,
         string $githubRepo,
         string $githubBranch
     ) {
         $this->githubOAuth = $githubOAuth;
         $this->githubClient = $githubClient;
-        $this->cacheItemPool = $cacheItemPool;
         $this->logger = $logger;
+        $this->cache = $cache;
         $this->githubUser = $githubUser;
         $this->githubRepo = $githubRepo;
         $this->githubBranch = $githubBranch;
-
-        $this->githubClient->addCache($cacheItemPool);
     }
 
     private function getRepo(): Repo
@@ -58,10 +55,18 @@ class Github
      */
     public function getFile(string $path): string
     {
+        if ($this->cache->has("github.$path")) {
+            return (string) $this->cache->get("github.$path");
+        }
+
         try {
-            return $this->getRepo()
+            $data = $this->getRepo()
                 ->contents()
                 ->download($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
+
+            $this->cache->set("github.$path", $data);
+
+            return $data;
         } catch (\RuntimeException $exception) {
             if ($exception->getCode() == 401 || $exception->getCode() == 403) {
                 throw new BadCredentialsException('Github API');
@@ -82,8 +87,18 @@ class Github
      */
     public function getTree(string $path): array
     {
+        if ($this->cache->has("github.$path")) {
+            return $this->cache->get("github.$path");
+        }
+
         try {
-            return $this->getRepo()->contents()->show($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
+            $data = $this->getRepo()
+                ->contents()
+                ->show($this->githubUser, $this->githubRepo, $path, $this->githubBranch);
+
+            $this->cache->set("github.$path", $data);
+
+            return $data;
         } catch (\RuntimeException $exception) {
             if ($exception->getCode() == 401 || $exception->getCode() == 403) {
                 throw new BadCredentialsException('Github API');
