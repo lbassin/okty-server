@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Repository\Learning;
 
-use App\Entity\Chapter;
+use App\Entity\Learning\Chapter;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityNotFoundException;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
@@ -26,4 +27,14 @@ class ChapterRepository implements ChapterRepositoryInterface
         return $this->repository->findBy([], ['position' => 'ASC']);
     }
 
+    public function findById(string $id): Chapter
+    {
+        /** @var Chapter $chapter */
+        $chapter = $this->repository->find($id);
+        if (!$chapter) {
+            throw new EntityNotFoundException();
+        }
+
+        return $chapter;
+    }
 }
