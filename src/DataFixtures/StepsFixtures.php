@@ -23,7 +23,7 @@ class StepsFixtures extends Fixture implements DependentFixtureInterface
         foreach ($chapters as $chapter) {
             /** @var Lesson $lesson */
             foreach ($chapter->getLessons() as $lesson) {
-                $stepCount = $faker->numberBetween(3, 6);
+                $stepCount = $faker->numberBetween(4, 6);
 
                 foreach (range(3, $stepCount) as $index) {
                     $text = '';
