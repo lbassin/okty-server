@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity\Learning;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
@@ -18,18 +19,30 @@ class Action
      * @ORM\Column(type="uuid", unique=true)
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
+     *
+     * @Groups({"step_show"})
      */
     private $id;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string")
+     *
+     * @Groups({"step_show"})
      */
     private $type;
 
-    public function __construct(string $id, string $type)
+    /**
+     * @ORM\Column(type="json")
+     *
+     * @Groups({"step_show"})
+     */
+    private $config;
+
+    public function __construct(string $id, string $type, array $config)
     {
         $this->id = $id;
         $this->type = $type;
+        $this->config = $config;
     }
 
     public function getId(): string
@@ -40,5 +53,10 @@ class Action
     public function getType(): string
     {
         return $this->type;
+    }
+
+    public function getConfig(): array
+    {
+        return $this->config;
     }
 }

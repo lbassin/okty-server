@@ -23,9 +23,9 @@ class StepsFixtures extends Fixture implements DependentFixtureInterface
         foreach ($chapters as $chapter) {
             /** @var Lesson $lesson */
             foreach ($chapter->getLessons() as $lesson) {
-                $stepCount = $faker->numberBetween(2, 5);
+                $stepCount = $faker->numberBetween(3, 6);
 
-                foreach (range(2, $stepCount) as $index) {
+                foreach (range(3, $stepCount) as $index) {
                     $text = $faker->realText(400);
                     $step = new Step(Uuid::uuid4()->toString(), $index - 1, $text, $lesson);
                     $manager->persist($step);

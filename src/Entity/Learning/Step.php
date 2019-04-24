@@ -44,12 +44,21 @@ class Step
      */
     private $lesson;
 
-    public function __construct(string $id, int $position, string $text, Lesson $lesson)
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Learning\Action")
+     * @ORM\JoinColumn(nullable=true)
+     *
+     * @Groups({"step_show"})
+     */
+    private $action;
+
+    public function __construct(string $id, int $position, string $text, Lesson $lesson, ?Action $action = null)
     {
         $this->id = $id;
         $this->position = $position;
         $this->text = $text;
         $this->lesson = $lesson;
+        $this->action = $action;
     }
 
     public function getId(): string
@@ -70,5 +79,15 @@ class Step
     public function getLesson(): Lesson
     {
         return $this->lesson;
+    }
+
+    public function getAction(): ?Action
+    {
+        return $this->action;
+    }
+
+    public function setAction(?Action $action): void
+    {
+        $this->action = $action;
     }
 }
