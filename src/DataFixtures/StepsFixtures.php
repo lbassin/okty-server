@@ -26,7 +26,11 @@ class StepsFixtures extends Fixture implements DependentFixtureInterface
                 $stepCount = $faker->numberBetween(3, 6);
 
                 foreach (range(3, $stepCount) as $index) {
-                    $text = $faker->realText(400);
+                    $text = '';
+                    for ($i = 0; $i < $faker->numberBetween(1, 4); $i++) {
+                        $text .= sprintf('<p>%s</p>', $faker->text(400));
+                    }
+
                     $step = new Step(Uuid::uuid4()->toString(), $index - 1, $text, $lesson);
                     $manager->persist($step);
                 }
