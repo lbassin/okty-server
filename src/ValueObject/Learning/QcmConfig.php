@@ -14,7 +14,7 @@ class QcmConfig
     {
         $this->questions = [];
 
-        foreach ($config as $questionConfig) {
+        foreach ($config['questions'] as $questionConfig) {
             $this->questions[] = new Question($questionConfig);
         }
     }

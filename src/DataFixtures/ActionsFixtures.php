@@ -39,28 +39,30 @@ class ActionsFixtures extends Fixture implements DependentFixtureInterface
     private function getQcmConfig(): array
     {
         return [
-            [
-                'title' => 'Which one of these color is the best ?',
-                'questions' => [
-                    'Blue',
-                    'Red',
-                    'Green',
+            'questions' => [
+                [
+                    'title' => 'Which one of these color is the best ?',
+                    'questions' => [
+                        'Blue',
+                        'Red',
+                        'Green',
+                    ],
+                    'responses' => [
+                        1,
+                    ],
                 ],
-                'responses' => [
-                    1,
-                ],
-            ],
-            [
-                'title' => 'Which of these statements are true ?',
-                'questions' => [
-                    'There is snow during summer',
-                    'Okty is a great application',
-                    'False',
-                    'Youtube is a website',
-                ],
-                'responses' => [
-                    2,
-                    4,
+                [
+                    'title' => 'Which of these statements are true ?',
+                    'questions' => [
+                        'There is snow during summer',
+                        'Okty is a great application',
+                        'False',
+                        'Youtube is a website',
+                    ],
+                    'responses' => [
+                        2,
+                        4,
+                    ],
                 ],
             ],
         ];
