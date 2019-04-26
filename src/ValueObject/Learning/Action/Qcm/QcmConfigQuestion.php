@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\ValueObject\Learning\QcmConfig;
+namespace App\ValueObject\Learning\Action\Qcm;
 
-class Question
+/**
+ * @author Laurent Bassin <laurent@bassin.info>
+ */
+class QcmConfigQuestion
 {
     private $title;
     private $questions;

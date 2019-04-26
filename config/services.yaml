@@ -11,6 +11,10 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         public: false       # Allows optimizing the container by removing unused services; this also means
 
+    _instanceof:
+        App\Service\Learning\Validators\ValidatorInterface:
+            tags: ['app.learning.validator']
+
     App\:
         resource: '../src/*'
         exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
@@ -53,3 +57,7 @@ services:
 
     Gitlab\Client:
         factory: [App\Factory\GitlabClientFactory, 'createService']
+
+    App\Service\Learning\ActionValidator:
+        arguments:
+            $validators: !tagged app.learning.validator
