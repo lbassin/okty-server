@@ -33,9 +33,9 @@
     "require-dev": {
         "php-coveralls/php-coveralls": "^2.1",
         "symfony/browser-kit": "*",
-        "symfony/dotenv": "*",
-        "symfony/phpunit-bridge": "*",
-        "symfony/var-dumper": "*"
+        "symfony/dotenv": "^4.2",
+        "symfony/phpunit-bridge": "^4.2",
+        "symfony/var-dumper": "^4.2"
     },
     "config": {
         "preferred-install": {
