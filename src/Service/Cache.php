@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Cache\Adapter\AbstractAdapter;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
@@ -15,7 +15,7 @@ class Cache
     private $adapter;
     private $logger;
 
-    public function __construct(AbstractAdapter $adapter, LoggerInterface $logger)
+    public function __construct(AdapterInterface $adapter, LoggerInterface $logger)
     {
         $this->adapter = $adapter;
         $this->logger = $logger;
