@@ -61,3 +61,7 @@ services:
     App\Service\Learning\ActionValidator:
         arguments:
             $validators: !tagged app.learning.validator
+
+    App\EventSubscriber\WebhookSubscriber:
+        arguments:
+            $webhookSecret: '%env(WEBHOOK_LEARNING_SECRET)%'
