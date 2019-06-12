@@ -65,3 +65,4 @@ services:
     App\EventSubscriber\WebhookSubscriber:
         arguments:
             $webhookSecret: '%env(WEBHOOK_LEARNING_SECRET)%'
+            $webhookBranch: '%env(WEBHOOK_LEARNING_BRANCH)%'
