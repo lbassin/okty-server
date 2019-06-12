@@ -66,7 +66,7 @@ class Github
 
             $this->cache->set("github.$path", $data);
 
-            return $data;
+            return $data ?? '';
         } catch (\RuntimeException $exception) {
             if ($exception->getCode() == 401 || $exception->getCode() == 403) {
                 throw new BadCredentialsException('Github API');

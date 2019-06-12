@@ -38,11 +38,19 @@ class Action
      */
     private $config;
 
-    public function __construct(string $id, string $type, array $config)
+    /**
+     * @ORM\Column(type="string", length=5)
+     *
+     * @Groups({"step_show"})
+     */
+    private $language;
+
+    public function __construct(string $id, string $type, array $config, string $language)
     {
         $this->id = $id;
         $this->type = $type;
         $this->config = $config;
+        $this->language = $language;
     }
 
     public function getId(): string
@@ -58,5 +66,10 @@ class Action
     public function getConfig(): array
     {
         return $this->config;
+    }
+
+    public function getLanguage(): string
+    {
+        return $this->language;
     }
 }
