@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Api\Registry;
 
+use App\ValueObject\Json;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,10 +32,16 @@ class Search
     public function handle(Request $request): JsonResponse
     {
         $search = $request->query->get('query');
-        $response = $this->httpClient->request('GET', "https://hub.docker.com/v2/search/repositories/?query=$search&page_size=25");
+        $responseCommunity = $this->httpClient->request('GET', "https://hub.docker.com/api/content/v1/products/search?source=community&q=$search&page_size=25", ['headers' => ['Search-Version' => 'v3']]);
+        $responseOfficial = $this->httpClient->request('GET', "https://hub.docker.com/api/content/v1/products/search?image_filter=store%2Cofficial&q=$search&page_size=25", ['headers' => ['Search-Version' => 'v3']]);
+
+        $summariesCommunity = (new Json($responseCommunity->getContent()))->getValue()['summaries'];
+        $summariesOfficial = (new Json($responseOfficial->getContent()))->getValue()['summaries'];
+
+        $response = array_merge($summariesOfficial ?? [], $summariesCommunity);
 
         return new JsonResponse(
-            $this->serializer->serialize($response->getContent(), 'json'),
+            $this->serializer->serialize($response, 'json'),
             Response::HTTP_OK,
             [],
             true
