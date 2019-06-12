@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Api\Learning;
 
+use App\Service\Learning\Import as LearningImport;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -16,11 +17,16 @@ class Deploy
 {
     private $serializer;
     private $logger;
+    private $learningImport;
 
-    public function __construct(SerializerInterface $serializer, LoggerInterface $logger)
-    {
+    public function __construct(
+        SerializerInterface $serializer,
+        LoggerInterface $logger,
+        LearningImport $learningImport
+    ) {
         $this->serializer = $serializer;
         $this->logger = $logger;
+        $this->learningImport = $learningImport;
     }
 
     /**
@@ -29,6 +35,7 @@ class Deploy
     public function handle(): Response
     {
         echo 'Deploy ...';
+        $this->learningImport->import();
 
         return new Response('', Response::HTTP_NO_CONTENT);
     }
