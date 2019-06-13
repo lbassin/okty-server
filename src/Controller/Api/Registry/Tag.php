@@ -41,14 +41,14 @@ class Tag
         $imageName = $slashCount > 0 ? $imageName : "library/$imageName";
         $apiRoute = "https://hub.docker.com/v2/repositories/$imageName/tags/";
 
-
-        $response = $this->httpClient->request('GET', "$apiRoute");
-        $tagCount = (new Json($response->getContent()))->getValue()['count'];
-
-        $responseFullTag = $this->httpClient->request('GET', "$apiRoute?page_size=$tagCount");
+        do {
+            $response = $this->httpClient->request('GET', $apiRoute);
+            $tags = array_merge($tags ?? [], (new Json($response->getContent()))->getValue()['results']);
+            $apiRoute = (new Json($response->getContent()))->getValue()['next'];
+        } while($apiRoute);
 
         return new JsonResponse(
-            $this->serializer->serialize($responseFullTag->getContent(), 'json'),
+            $this->serializer->serialize($response->getContent(), 'json'),
             Response::HTTP_OK,
             [],
             true
