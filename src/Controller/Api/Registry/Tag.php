@@ -39,16 +39,21 @@ class Tag
         }
 
         $imageName = $slashCount > 0 ? $imageName : "library/$imageName";
-        $apiRoute = "https://hub.docker.com/v2/repositories/$imageName/tags/";
+        $authUrl = "https://auth.docker.io/token?scope=repository:$imageName:pull&service=registry.docker.io";
 
-        do {
-            $response = $this->httpClient->request('GET', $apiRoute);
-            $tags = array_merge($tags ?? [], (new Json($response->getContent()))->getValue()['results']);
-            $apiRoute = (new Json($response->getContent()))->getValue()['next'];
-        } while($apiRoute);
+        $imageAccessToken = $this->httpClient->request('GET', $authUrl);
+        $authResponse = (new Json($imageAccessToken->getContent()))->getValue();
+
+        $apiUrl = "https://registry.hub.docker.com/v2/$imageName/tags/list";
+
+        $response = $this->httpClient->request('GET', $apiUrl, [
+            'headers' => [
+                'Authorization' => "Bearer " . $authResponse['access_token']
+            ]
+        ]);
 
         return new JsonResponse(
-            $this->serializer->serialize($tags, 'json'),
+            $this->serializer->serialize($response->getContent(), 'json'),
             Response::HTTP_OK,
             [],
             true
