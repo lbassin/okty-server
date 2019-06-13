@@ -4,6 +4,10 @@ namespace App\Service;
 
 use App\Exception\BadCredentialsException;
 use App\Exception\FileNotFoundException;
+use App\ValueObject\File;
+use App\ValueObject\Github\Author;
+use App\ValueObject\Github\Commit;
+use App\ValueObject\Github\Target;
 use Github\Api\Repo;
 use Github\Client as GithubClient;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
@@ -135,5 +139,86 @@ class Github
         $this->githubClient->authenticate($accessToken, null, GithubClient::AUTH_URL_TOKEN);
 
         return $this->githubClient->me()->show();
+    }
+
+    public function getLastCommit(): Commit
+    {
+        $data = $this->githubClient->repos()
+            ->branches($this->githubUser, 'contributing', 'master');  // TODO Branch + ref
+
+        return new Commit($data);
+    }
+
+    public function sendFile(File $file): string
+    {
+        $params = [
+            'content' => base64_encode($file->getContent()),
+            'encoding' => 'base64',
+        ];
+
+        $response = $this->githubClient->gitData()->blobs()
+            ->create($this->githubUser, 'contributing', $params);  // TODO Branch
+
+        return $response['sha'];
+    }
+
+    public function createTree(string $baseTree, string $fileSha): string
+    {
+        $treeData = [
+            'base_tree' => $baseTree,
+            'tree' => [
+                [
+                    'path' => 'README2.md',
+                    'mode' => '100644',
+                    'type' => 'blob',
+                    'sha' => $fileSha,
+                ],
+            ],
+        ];
+
+        $response = $this->githubClient->gitData()->trees()
+            ->create($this->githubUser, 'contributing', $treeData);  // TODO Branch
+
+        return $response['sha'];
+    }
+
+    public function commit(Author $author, Target $target, string $lastCommit, string $newTreeSha): void
+    {
+        $params = [
+            'message' => $target->getCommitMessage(),
+            'tree' => $newTreeSha,
+            'parents' => [$lastCommit],
+            'author' => [
+                'name' => $author->getName(),
+                'email' => $author->getEmail(),
+            ],
+            'committer' => [
+                'name' => 'Okty Builder',
+                'email' => 'okty@okty.io',
+            ],
+        ];
+
+        $commit = $this->githubClient->gitData()->commits()
+            ->create($this->githubUser, 'contributing', $params);  // TODO branch
+
+        $reference = [
+            'sha' => $commit['sha'],
+            'force' => false,
+        ];
+
+        $response = $this->githubClient->git()->references()
+            ->update($this->githubUser, 'contributing', 'heads/master', $reference); // TODO branch + ref
+
+        dd($response); // TODO Remove
+    }
+
+    public function upload($file, $author, $target)
+    {
+        $sha = $this->sendFile($file);
+
+        $lastCommit = $this->getLastCommit();
+        $newTreeSha = $this->createTree($lastCommit->getTreeSha(), $sha);
+
+        $this->commit($author, $target, $lastCommit->getCommitSha(), $newTreeSha);
     }
 }
