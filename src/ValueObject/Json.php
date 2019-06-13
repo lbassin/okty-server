@@ -25,4 +25,9 @@ class Json
     {
         return $this->value;
     }
+
+    public function getData(string $key)
+    {
+        return $this->value[$key];
+    }
 }
