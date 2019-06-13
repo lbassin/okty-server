@@ -66,3 +66,9 @@ services:
         arguments:
             $webhookSecret: '%env(WEBHOOK_LEARNING_SECRET)%'
             $webhookBranch: '%env(WEBHOOK_LEARNING_BRANCH)%'
+
+    App\Service\Hub:
+        arguments:
+            $hubUrl: 'https://hub.docker.com/api'
+            $pageSize: 15
+            $authUrl: 'https://auth.docker.io/token'
