@@ -48,7 +48,7 @@ class Tag
         } while($apiRoute);
 
         return new JsonResponse(
-            $this->serializer->serialize($response->getContent(), 'json'),
+            $this->serializer->serialize($tags, 'json'),
             Response::HTTP_OK,
             [],
             true
