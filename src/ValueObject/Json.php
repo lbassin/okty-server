@@ -21,8 +21,13 @@ class Json
         $this->value = $value;
     }
 
-    public function getValue(): array
+    public function getValue(string $key = null): array
     {
         return $this->value;
+    }
+
+    public function getData(string $key)
+    {
+        return $this->value[$key];
     }
 }
