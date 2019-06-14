@@ -28,12 +28,16 @@ class Push
      */
     public function handle(): Response
     {
-        $file = new File('test.txt', '# Salut');
-        $author = new Author('Laurent', 'laurentbassin91@gmail.com');
-        $target = new Target('master', 'Add new file');
+        $files = [
+            new File('test1.txt', '# Salut 1'),
+            new File('test2.txt', '# Salut 2'),
+        ];
 
-        $this->github->upload($file, $author, $target);
+        $author = new Author('Laurent', 'laurent@bassin.info');
+        $target = new Target('master', 'Add new file', 'containers/java2');
 
-        return new Response('ok');
+        $this->github->upload($files, $author, $target);
+
+        return new Response('', Response::HTTP_NO_CONTENT);
     }
 }

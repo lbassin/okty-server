@@ -26,6 +26,8 @@ class Github
     private $githubOAuth;
     private $logger;
     private $cache;
+    private $committerName;
+    private $committerEmail;
 
     public function __construct(
         GithubOAuth $githubOAuth,
@@ -34,7 +36,9 @@ class Github
         Cache $cache,
         string $githubUser,
         string $githubRepo,
-        string $githubBranch
+        string $githubBranch,
+        string $committerName,
+        string $committerEmail
     ) {
         $this->githubOAuth = $githubOAuth;
         $this->githubClient = $githubClient;
@@ -43,6 +47,8 @@ class Github
         $this->githubUser = $githubUser;
         $this->githubRepo = $githubRepo;
         $this->githubBranch = $githubBranch;
+        $this->committerName = $committerName;
+        $this->committerEmail = $committerEmail;
     }
 
     private function getRepo(): Repo
@@ -141,10 +147,10 @@ class Github
         return $this->githubClient->me()->show();
     }
 
-    public function getLastCommit(): Commit
+    public function getLastCommit(string $branch): Commit
     {
         $data = $this->githubClient->repos()
-            ->branches($this->githubUser, 'contributing', 'master');  // TODO Branch + ref
+            ->branches($this->githubUser, $this->githubRepo, $branch);
 
         return new Commit($data);
     }
@@ -157,27 +163,30 @@ class Github
         ];
 
         $response = $this->githubClient->gitData()->blobs()
-            ->create($this->githubUser, 'contributing', $params);  // TODO Branch
+            ->create($this->githubUser, $this->githubRepo, $params);
 
         return $response['sha'];
     }
 
-    public function createTree(string $baseTree, string $fileSha): string
+    public function createTree(string $baseTree, array $uploaded, Target $target): string
     {
+        $files = [];
+        foreach ($uploaded as $file) {
+            $files[] = [
+                'path' => $target->getFolder().$file['name'],
+                'mode' => '100644',
+                'type' => 'blob',
+                'sha' => $file['sha'],
+            ];
+        }
+
         $treeData = [
             'base_tree' => $baseTree,
-            'tree' => [
-                [
-                    'path' => 'README2.md',
-                    'mode' => '100644',
-                    'type' => 'blob',
-                    'sha' => $fileSha,
-                ],
-            ],
+            'tree' => $files,
         ];
 
         $response = $this->githubClient->gitData()->trees()
-            ->create($this->githubUser, 'contributing', $treeData);  // TODO Branch
+            ->create($this->githubUser, $this->githubRepo, $treeData);
 
         return $response['sha'];
     }
@@ -193,31 +202,41 @@ class Github
                 'email' => $author->getEmail(),
             ],
             'committer' => [
-                'name' => 'Okty Builder',
-                'email' => 'okty@okty.io',
+                'name' => $this->committerName,
+                'email' => $this->committerEmail,
             ],
         ];
 
         $commit = $this->githubClient->gitData()->commits()
-            ->create($this->githubUser, 'contributing', $params);  // TODO branch
+            ->create($this->githubUser, $this->githubRepo, $params);
 
         $reference = [
+            'ref' => 'refs/heads/'.$target->getBranch(),
             'sha' => $commit['sha'],
-            'force' => false,
         ];
 
-        $response = $this->githubClient->git()->references()
-            ->update($this->githubUser, 'contributing', 'heads/master', $reference); // TODO branch + ref
-
-        dd($response); // TODO Remove
+        try {
+            $this->githubClient->git()->references()
+                ->create($this->githubUser, $this->githubRepo, $reference);
+        } catch (\Exception $exception) {
+            throw new \LogicException('Branch already exists');
+        }
     }
 
-    public function upload($file, $author, $target)
+    public function upload(array $files, Author $author, Target $target): void
     {
-        $sha = $this->sendFile($file);
+        $uploaded = [];
 
-        $lastCommit = $this->getLastCommit();
-        $newTreeSha = $this->createTree($lastCommit->getTreeSha(), $sha);
+        /** @var File $file */
+        foreach ($files as $file) {
+            $uploaded[] = [
+                'name' => $file->getName(),
+                'sha' => $this->sendFile($file),
+            ];
+        }
+
+        $lastCommit = $this->getLastCommit('dev');
+        $newTreeSha = $this->createTree($lastCommit->getTreeSha(), $uploaded, $target);
 
         $this->commit($author, $target, $lastCommit->getCommitSha(), $newTreeSha);
     }
