@@ -240,4 +240,16 @@ class Github
 
         $this->commit($author, $target, $lastCommit->getCommitSha(), $newTreeSha);
     }
+
+    public function requestMerge(Target $target, string $title, string $message): string
+    {
+        $pullRequest = $this->githubClient->pullRequest()->create($this->githubUser, $this->githubRepo, [
+            'base' => 'dev',
+            'head' => $target->getBranch(),
+            'title' => $title,
+            'body' => $message,
+        ]);
+
+        return $pullRequest['url'];
+    }
 }
