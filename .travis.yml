@@ -17,6 +17,9 @@ install:
 script:
     - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then docker run -v $(pwd):/usr/src newtmitch/sonar-scanner  -Dsonar.projectBaseDir=/usr/src -Dsonar.login=$SONAR_TOKEN; fi
 
+after_script:
+    - rm -rf .scannerwork
+
 deploy:
     -   provider: heroku
         api_key:
