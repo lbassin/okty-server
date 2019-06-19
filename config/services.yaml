@@ -37,6 +37,8 @@ services:
             $githubUser: '%env(CONFIG_GITHUB_USER)%'
             $githubRepo: '%env(CONFIG_GITHUB_REPO)%'
             $githubBranch: '%env(CONFIG_GITHUB_BRANCH)%'
+            $committerName: 'Okty Builder'
+            $committerEmail: 'builder@okty.io'
 
     App\Service\Cache:
         arguments:
