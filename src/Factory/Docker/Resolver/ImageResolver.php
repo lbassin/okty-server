@@ -2,8 +2,10 @@
 
 namespace App\Factory\Docker\Resolver;
 
-use App\ValueObject\Service\Args;
 use App\Repository\ContainerRepositoryInterface;
+use App\ValueObject\Container\Manifest;
+use App\ValueObject\Service\Args;
+use Exception;
 
 /**
  * @author Laurent Bassin <laurent@bassin.info>
@@ -21,7 +23,15 @@ class ImageResolver
     {
         $output = [];
 
-        $manifest = $this->containerRepository->findManifestByContainerId($args->getImage());
+        try {
+            $manifest = $this->containerRepository->findManifestByContainerId($args->getImage());
+        } catch (Exception $exception) {
+            if (!$args->isFromBuilder()) {
+                throw $exception;
+            }
+
+            $manifest = new Manifest(['image' => $args->getImage(), 'tag' => $args->getVersion()]);
+        }
 
         if ($manifest->hasBuild()) {
             return ['build' => $manifest->getBuild()];
@@ -35,7 +45,7 @@ class ImageResolver
             $tag = $version;
         }
 
-        $output['image'] .= ':'.$tag;
+        $output['image'] .= $tag ? ':'.$tag : '';
 
         return $output;
     }
