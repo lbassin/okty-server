@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\ValueObject\Service;
 
+use LogicException;
+
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
@@ -25,11 +27,13 @@ class Args
     private $environments;
     /** @var array $fileArgs */
     private $fileArgs;
+    /** @var bool $fromBuilder */
+    private $fromBuilder;
 
     public function __construct(array $config)
     {
         if (empty($config['image']) || !isset($config['args'])) {
-            throw new \LogicException('Missing mandatory field(s)');
+            throw new LogicException('Missing mandatory field(s)');
         }
         $this->image = $config['image'];
 
@@ -76,6 +80,11 @@ class Args
             $value = $file['value'] ?? '';
 
             $this->fileArgs[] = new FileArg($key, $value);
+        }
+
+        $this->fromBuilder = false;
+        if (isset($config['builder']) && $config['builder'] === true) {
+            $this->fromBuilder = true;
         }
     }
 
@@ -129,5 +138,10 @@ class Args
         }
 
         return '';
+    }
+
+    public function isFromBuilder(): bool
+    {
+        return $this->fromBuilder;
     }
 }
