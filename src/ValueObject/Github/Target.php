@@ -22,7 +22,7 @@ class Target
         if (in_array($branch, ['dev'])) {
             throw new \InvalidArgumentException('Specified branch name is not allowed');
         }
-        $this->branch = $branch;
+        $this->branch = $branch . substr(uniqid('-'), 0, 4);
 
         if (empty($message)) {
             throw new \InvalidArgumentException('Commit message is require');
