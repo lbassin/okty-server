@@ -34,7 +34,6 @@ class Deploy
      */
     public function handle(): Response
     {
-        echo 'Deploy ...';
         $this->learningImport->import();
 
         return new Response('', Response::HTTP_NO_CONTENT);
