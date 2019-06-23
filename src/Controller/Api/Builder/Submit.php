@@ -44,7 +44,7 @@ class Submit
             new File('form.yml', $this->pullRequest->requestToFormContent($form)),
         ];
 
-        $author = new Author('Anonymous', 'anonymous@emal.fr'); // TODO Change with real user
+        $author = new Author('Anonymous', 'anonymous@email.fr'); // TODO Change with real user
 
         $target = new Target(
             "container-{$container['image']}",

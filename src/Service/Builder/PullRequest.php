@@ -29,7 +29,7 @@ class PullRequest
         }
 
         $hubLink = 'https://hub.docker.com/r/';
-        $name = strpos('/', $container['image']) === 0 ? '_/'.$container['image'] : $container['image'];
+        $name = strpos('/', $container['image']) === false ? '_/'.$container['image'] : $container['image'];
 
         $hubLink .= $name;
 
