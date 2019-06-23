@@ -9,6 +9,7 @@ use App\Repository\Learning\LessonRepositoryInterface;
 use App\Service\Github;
 use App\ValueObject\Learning\Github\Chapter;
 use App\ValueObject\Learning\Github\Lesson;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Yaml\Yaml;
 
@@ -21,17 +22,20 @@ class Import
     private $serializer;
     private $chapterRepository;
     private $lessonRepository;
+    private $logger;
 
     public function __construct(
         Github $github,
         SerializerInterface $serializer,
         ChapterRepositoryInterface $chapterRepository,
-        LessonRepositoryInterface $lessonRepository
+        LessonRepositoryInterface $lessonRepository,
+        LoggerInterface $logger
     ) {
         $this->github = $github;
         $this->serializer = $serializer;
         $this->chapterRepository = $chapterRepository;
         $this->lessonRepository = $lessonRepository;
+        $this->logger = $logger;
     }
 
     public function import(): void
@@ -41,6 +45,7 @@ class Import
 
         /** @var Chapter $chapter */
         foreach ($chapters as $chapter) {
+            $this->logger->info("Loading lessons for chapter : {$chapter->getFilename()}");
             $lessons[$chapter->getFilename()] = $this->getLessons($chapter);
         }
 
@@ -73,7 +78,11 @@ class Import
         $chapters = [];
         $data = Yaml::parse($this->github->getFile('learning/chapters.yml'));
 
+        $this->logger->info("Chapters to load", $data);
+
         foreach ($data['chapters'] ?? [] as $filename => $config) {
+            $this->logger->info("Chapter {$filename} found");
+
             $chapters[] = new Chapter($filename, $config, $position);
 
             $position++;
