@@ -219,7 +219,7 @@ class Github
             $this->githubClient->git()->references()
                 ->create($this->githubUser, $this->githubRepo, $reference);
         } catch (\Exception $exception) {
-            throw new \LogicException('Branch already exists');
+            throw new \LogicException("Branch {$target->getBranch()} already exists");
         }
     }
 
@@ -250,6 +250,6 @@ class Github
             'body' => $message,
         ]);
 
-        return $pullRequest['url'];
+        return $pullRequest['html_url'];
     }
 }
