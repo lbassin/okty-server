@@ -13,6 +13,6 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 [![Build Status](https://travis-ci.org/Okty-io/okty-server.svg?branch=dev)](https://travis-ci.org/Okty-io/okty-server)
-[![Requirements Status](https://requires.io/github/Okty-io/okty-server/requirements.svg?branch=dev)](https://requires.io/github/Okty-io/okty-server/requirements/?branch=dev)
+![Libraries.io dependency status for GitHub repo](https://img.shields.io/librariesio/github/okty-io/okty-server.svg)
 ![Contributions welcome](https://img.shields.io/badge/contributions-welcome-lightgrey.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
