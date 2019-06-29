@@ -78,3 +78,9 @@ services:
     App\Command\LearningImportCommand:
         arguments:
             $learningImport: '@App\Service\Learning\Import'
+
+    App\EventListener\JWTCreatedListener:
+        arguments:
+            $userRepository: '@App\Repository\UserRepositoryInterface'
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
