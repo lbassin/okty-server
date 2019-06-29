@@ -30,6 +30,12 @@ services:
             - '8080:80'
         networks:
             - okty-api
+    adminer:
+        image: 'adminer:4.7'
+        networks:
+            - okty-api
+        ports:
+            - '8081:8080'
     redis:
         image: redis:4.0.2
         hostname: redis
