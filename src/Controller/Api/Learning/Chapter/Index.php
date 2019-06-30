@@ -28,7 +28,7 @@ class Index
      */
     public function handle(Request $request): Response
     {
-        $language = $request->attributes->get('lang', 'en_US');
+        $language = $request->query->get('lang', 'en_US');
         $chapters = $this->chapterRepository->findAll($language);
 
         return new JsonResponse(
