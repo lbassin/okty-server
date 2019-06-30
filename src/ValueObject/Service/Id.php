@@ -17,7 +17,7 @@ class Id
             throw new \LogicException("Id cannot be empty");
         }
 
-        if (!preg_match('/^[a-zA-Z]+(-)?[a-zA-Z]+$/', $value)) {
+        if (!preg_match('/^([a-zA-Z0-9]-?)*[a-zA-Z0-9]+$/', $value)) {
             throw new \LogicException("Id doesn't match the required format");
         }
 
