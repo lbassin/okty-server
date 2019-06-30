@@ -14,11 +14,7 @@ before_install:
 install:
     - docker run -v $(pwd):/app -v $HOME/.composer/cache:/tmp composer:1.8 install
 
-script:
-    - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then docker run -v $(pwd):/usr/src newtmitch/sonar-scanner  -Dsonar.projectBaseDir=/usr/src -Dsonar.login=$SONAR_TOKEN; fi
-
-after_script:
-    - rm -rf .scannerwork
+script: true
 
 deploy:
     -   provider: heroku
@@ -35,3 +31,6 @@ deploy:
         on:
             repo: Okty-io/okty-server
             branch: dev
+
+after_deploy:
+    - docker run -v $(pwd):/usr/src newtmitch/sonar-scanner  -Dsonar.projectBaseDir=/usr/src -Dsonar.login=$SONAR_TOKEN
