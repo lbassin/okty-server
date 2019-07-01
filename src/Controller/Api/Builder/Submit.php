@@ -51,12 +51,14 @@ class Submit
             new File('form.yml', $this->pullRequest->requestToFormContent($form)),
         ];
 
+        $anonymousEmail = 'anynomous@okty.io';
+
         $user = $this->userRepository->findById($userData['id']);
         if (!$user) {
-            $user = new User(0, 'Anonymous', 'anonymous@okty.io', null, null, 'anonymous');
+            $user = new User(0, 'Anonymous', $anonymousEmail, null, null, 'anonymous');
         }
 
-        $author = new Author($user->getLogin(), $user->getEmail());
+        $author = new Author($user->getLogin(), $user->getEmail() ?? $anonymousEmail);
 
         $target = new Target(
             "container-{$container['image']}",
