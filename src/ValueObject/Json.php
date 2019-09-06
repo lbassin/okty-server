@@ -14,7 +14,7 @@ class Json
     public function __construct(string $json)
     {
         $value = json_decode($json, true);
-        if (!$value) {
+        if (!is_array($value)) {
             throw new \LogicException('JSON Syntax Error');
         }
 
