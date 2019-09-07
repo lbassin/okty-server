@@ -14,7 +14,14 @@ class DockerCompose
 
     public function __construct(array $services)
     {
+        array_walk($services, function ($service) {
+            if (!$service instanceof Service){
+                throw new \InvalidArgumentException('An array of service is expected');
+            }
+        });
+
         $this->services = $services;
+
     }
 
     public function getVersion(): string
