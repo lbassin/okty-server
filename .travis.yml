@@ -16,7 +16,7 @@ install:
 
 script:
     - docker run -v $(pwd):/app -w /app composer ./bin/phpunit -c phpunit.xml.dist
-    - docker run -v $(pwd):/usr/src newtmitch/sonar-scanner sonar-scanner -Dsonar.projectBaseDir=/usr/src
+    - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then docker run -v $(pwd):/usr/src newtmitch/sonar-scanner sonar-scanner -Dsonar.projectBaseDir=/usr/src; fi
 
 deploy:
     -   provider: heroku
