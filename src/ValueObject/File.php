@@ -15,7 +15,7 @@ class File
     public function __construct(string $name, string $content)
     {
         if (empty($name)) {
-            throw new \LogicException('File name cannot be empty');
+            throw new \InvalidArgumentException('File name cannot be empty');
         }
 
         $this->name = $name;
