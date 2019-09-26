@@ -7,14 +7,24 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-final class Version20190629173542 extends AbstractMigration
+/**
+ * Auto-generated Migration: Please modify to your needs!
+ */
+final class Version20190926162430 extends AbstractMigration
 {
+    public function getDescription() : string
+    {
+        return '';
+    }
+
     public function up(Schema $schema) : void
     {
+        // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('CREATE TABLE action (id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\', type VARCHAR(255) NOT NULL, config LONGTEXT NOT NULL COMMENT \'(DC2Type:json)\', language VARCHAR(5) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE chapter (id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\', name VARCHAR(255) NOT NULL, position INT NOT NULL, language VARCHAR(5) NOT NULL, UNIQUE INDEX chapter_position_unique (language, position), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE translation (id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\', locale VARCHAR(255) NOT NULL, `key` VARCHAR(255) NOT NULL, value VARCHAR(255) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE chapter (id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\', position INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
         $this->addSql('CREATE TABLE step (id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\', lesson_id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\', action_id CHAR(36) DEFAULT NULL COMMENT \'(DC2Type:uuid)\', position INT NOT NULL, text LONGTEXT NOT NULL, INDEX IDX_43B9FE3CCDF80196 (lesson_id), UNIQUE INDEX UNIQ_43B9FE3C9D32F035 (action_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
         $this->addSql('CREATE TABLE lesson (id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\', chapter_id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\', name VARCHAR(255) NOT NULL, position INT NOT NULL, INDEX IDX_F87474F3579F4768 (chapter_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
         $this->addSql('CREATE TABLE user (id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\', login VARCHAR(255) NOT NULL, avatar VARCHAR(255) DEFAULT NULL, name VARCHAR(255) DEFAULT NULL, email VARCHAR(255) DEFAULT NULL, api_id INT NOT NULL, provider VARCHAR(255) NOT NULL, access_token VARCHAR(255) DEFAULT NULL, roles VARCHAR(255) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
@@ -29,6 +39,7 @@ final class Version20190629173542 extends AbstractMigration
 
     public function down(Schema $schema) : void
     {
+        // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE step DROP FOREIGN KEY FK_43B9FE3C9D32F035');
@@ -37,6 +48,7 @@ final class Version20190629173542 extends AbstractMigration
         $this->addSql('ALTER TABLE history DROP FOREIGN KEY FK_27BA704BA76ED395');
         $this->addSql('ALTER TABLE history_container DROP FOREIGN KEY FK_51EBBFF91E058452');
         $this->addSql('DROP TABLE action');
+        $this->addSql('DROP TABLE translation');
         $this->addSql('DROP TABLE chapter');
         $this->addSql('DROP TABLE step');
         $this->addSql('DROP TABLE lesson');
