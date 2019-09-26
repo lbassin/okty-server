@@ -27,9 +27,9 @@ class ChapterRepository implements ChapterRepositoryInterface
         $this->github = $github;
     }
 
-    public function findAll(string $language): array
+    public function findAll(): array
     {
-        return $this->repository->findBy(['language' => $language], ['position' => 'ASC']);
+        return $this->repository->findBy([], ['position' => 'ASC']);
     }
 
     public function findById(string $id): Chapter

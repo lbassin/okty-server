@@ -84,3 +84,7 @@ services:
             $userRepository: '@App\Repository\UserRepositoryInterface'
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
+
+    App\EventSubscriber\TranslationSubscriber:
+        tags:
+            - { name: 'doctrine.event_subscriber', connection: 'default' }

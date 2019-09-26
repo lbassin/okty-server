@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityNotFoundException;
  */
 interface ChapterRepositoryInterface
 {
-    public function findAll(string $language): array;
+    public function findAll(): array;
 
     /** @throws EntityNotFoundException */
     public function findById(string $id): Chapter;
