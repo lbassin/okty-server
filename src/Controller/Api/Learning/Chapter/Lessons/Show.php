@@ -33,7 +33,7 @@ class Show
         $lesson = $this->lessonRepository->findByChapterAndId($chapterId, $lessonId);
 
         return new JsonResponse(
-            $this->serializer->serialize($lesson, 'json', ['groups' => ['show', 'step_show']]),
+            $this->serializer->serialize($lesson, 'json', ['groups' => ['lesson_show']]),
             Response::HTTP_OK,
             [],
             true

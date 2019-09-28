@@ -23,14 +23,14 @@ class Lesson
      * @ORM\Id()
      * @ORM\Column(type="uuid", unique=true)
      *
-     * @Groups({"list", "show"})
+     * @Groups({"chapter_list", "chapter_show", "lesson_list", "lesson_show"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      *
-     * @Groups({"list", "show"})
+     * @Groups({"chapter_list", "chapter_show", "lesson_list", "lesson_show"})
      *
      * @Translatable()
      */
@@ -39,7 +39,7 @@ class Lesson
     /**
      * @ORM\Column(type="integer")
      *
-     * @Groups({"list", "show"})
+     * @Groups({"lesson_show"})
      */
     private $position;
 
@@ -53,7 +53,7 @@ class Lesson
      * @ORM\OneToMany(targetEntity="App\Entity\Learning\Step", mappedBy="lesson", orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
      *
-     * @Groups({"step_show"})
+     * @Groups({"lesson_show"})
      */
     private $steps;
 

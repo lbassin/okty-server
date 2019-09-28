@@ -32,7 +32,7 @@ class Show
         $chapter = $this->chapterRepository->findById($id);
 
         return new JsonResponse(
-            $this->serializer->serialize($chapter, 'json', ['groups' => ['show']]),
+            $this->serializer->serialize($chapter, 'json', ['groups' => ['chapter_show']]),
             Response::HTTP_OK,
             [],
             true

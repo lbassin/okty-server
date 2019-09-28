@@ -20,21 +20,21 @@ class Action
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      *
-     * @Groups({"step_show"})
+     * @Groups({"lesson_show"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string")
      *
-     * @Groups({"step_show"})
+     * @Groups({"lesson_show"})
      */
     private $type;
 
     /**
      * @ORM\Column(type="json")
      *
-     * @Groups({"step_show"})
+     * @Groups({"lesson_show"})
      */
     private $config;
 

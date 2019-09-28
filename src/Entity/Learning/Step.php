@@ -20,21 +20,21 @@ class Step
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      *
-     * @Groups({"step_show"})
+     * @Groups({"lesson_show"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="integer")
      *
-     * @Groups({"step_show"})
+     * @Groups({"lesson_show"})
      */
     private $position;
 
     /**
      * @ORM\Column(type="text")
      *
-     * @Groups({"step_show"})
+     * @Groups({"lesson_show"})
      */
     private $text;
 
@@ -48,7 +48,7 @@ class Step
      * @ORM\OneToOne(targetEntity="App\Entity\Learning\Action")
      * @ORM\JoinColumn(nullable=true)
      *
-     * @Groups({"step_show"})
+     * @Groups({"lesson_show"})
      */
     private $action;
 

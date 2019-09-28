@@ -30,7 +30,7 @@ class Index
         $chapters = $this->chapterRepository->findAll();
 
         return new JsonResponse(
-            $this->serializer->serialize($chapters, 'json', ['groups' => ['list']]),
+            $this->serializer->serialize($chapters, 'json', ['groups' => ['chapter_list']]),
             Response::HTTP_OK,
             [],
             true
