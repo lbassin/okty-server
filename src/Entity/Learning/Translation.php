@@ -27,14 +27,22 @@ class Translation
     private $locale;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, name="translation_key")
      */
     private $key;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", length=255)
      */
     private $value;
+
+    public function __construct(string $id, string $locale, string $key, string $value)
+    {
+        $this->id = $id;
+        $this->locale = $locale;
+        $this->key = $key;
+        $this->value = $value;
+    }
 
     public function getId()
     {
