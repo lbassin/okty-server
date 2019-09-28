@@ -31,7 +31,7 @@ class ChaptersFixtures extends Fixture
                     Uuid::uuid4()->toString(),
                     $locale,
                     $id.'.name',
-                    $faker[$locale]->realText(30)
+                    $faker[$locale]->text(30)
                 );
                 $manager->persist($translation);
             }
