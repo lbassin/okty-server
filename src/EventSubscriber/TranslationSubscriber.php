@@ -40,6 +40,10 @@ class TranslationSubscriber implements EventSubscriber
      */
     public function postLoad(LifecycleEventArgs $event): void
     {
+        if (!$this->request) {
+            return; // Triggered by a fixture
+        }
+
         $language = $this->request->query->get('lang', 'en_US');
 
         $entity = $event->getEntity();
