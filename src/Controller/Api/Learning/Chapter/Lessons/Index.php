@@ -31,7 +31,7 @@ class Index
         $lessons = $this->lessonRepository->findByChapterId($id);
 
         return new JsonResponse(
-            $this->serializer->serialize($lessons, 'json', ['groups' => ['list']]),
+            $this->serializer->serialize($lessons, 'json', ['groups' => ['lesson_list']]),
             Response::HTTP_OK,
             [],
             true

@@ -28,21 +28,21 @@ class Chapter
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      *
-     * @Groups({"list", "show"})
+     * @Groups({"chapter_list", "chapter_show"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      *
-     * @Groups({"list", "show"})
+     * @Groups({"chapter_list", "chapter_show"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="integer")
      *
-     * @Groups({"show"})
+     * @Groups({"chapter_show"})
      */
     private $position;
 
@@ -57,7 +57,7 @@ class Chapter
      * @ORM\OneToMany(targetEntity="App\Entity\Learning\Lesson", mappedBy="chapter", orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
      *
-     * @Groups({"list", "show"})
+     * @Groups({"chapter_list", "chapter_show"})
      */
     private $lessons;
 
