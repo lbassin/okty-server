@@ -6,9 +6,6 @@ namespace App\Domain\Generator\ValueObject\DockerCompose;
 
 use App\Domain\Generator\Exception\DockerCompose\UnknownDockerComposeVersionException;
 
-/**
- * @author Laurent Bassin <laurent@bassin.info>
- */
 class Version
 {
     private const AVAILABLE_VERSIONS = [

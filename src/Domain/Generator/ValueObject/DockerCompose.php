@@ -8,9 +8,6 @@ use App\Domain\Generator\Exception\WrongServiceValueProvidedException;
 use App\Domain\Generator\ValueObject\DockerCompose\Service;
 use App\Domain\Generator\ValueObject\DockerCompose\Version;
 
-/**
- * @author Laurent Bassin <laurent@bassin.info>
- */
 class DockerCompose
 {
     /** @var Version */
