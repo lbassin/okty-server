@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Domain\Generator\ValueObject;
+namespace App\Tests\Domain\Generator\ValueObject\DockerCompose;
 
 use App\Domain\Generator\Exception\DockerCompose\UnknownDockerComposeVersionException;
 use App\Domain\Generator\ValueObject\DockerCompose\Version;

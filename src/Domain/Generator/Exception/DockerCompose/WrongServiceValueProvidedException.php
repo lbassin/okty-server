@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Generator\Exception;
+namespace App\Domain\Generator\Exception\DockerCompose;
 
 use RuntimeException;
-use Throwable;
 
 class WrongServiceValueProvidedException extends RuntimeException
 {
