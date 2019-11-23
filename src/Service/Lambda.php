@@ -23,15 +23,15 @@ class Lambda implements LambdaInterface
 
     public function invoke($function, $resolver, $arg): string
     {
-        $key = sprintf('%s.%s.%s',
-            hash('sha256', $function),
-            hash('sha256', $resolver),
-            hash('sha256', $arg)
-        );
-
-        if ($this->cache->has($key)) {
-            return (string) $this->cache->get($key);
-        }
+//        $key = sprintf('%s.%s.%s',
+//            hash('sha256', $function),
+//            hash('sha256', $resolver),
+//            hash('sha256', $arg)
+//        );
+//
+//        if ($this->cache->has($key)) {
+//            return (string) $this->cache->get($key);
+//        }
 
         try {
             /** @var \Aws\Result $response */
@@ -65,7 +65,7 @@ class Lambda implements LambdaInterface
 
         $output = trim($output, '"');
 
-        $this->cache->set($key, $output);
+//        $this->cache->set($key, $output);
 
         return $output;
     }
