@@ -12,7 +12,7 @@ final class Build
     /**
      * @Route(path="/build", methods={"GET"})
      */
-    public function __invoke(): Response
+    public function handle(): Response
     {
         return new Response('test');
     }

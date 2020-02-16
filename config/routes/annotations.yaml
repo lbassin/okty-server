@@ -1,6 +1,3 @@
 api:
     resource: ../../src/Controller
     type: annotation
-    prefix: v1
-    defaults:
-        _format: json
