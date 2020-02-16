@@ -1,0 +1,86 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+
+services:
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        public: false       # Allows optimizing the container by removing unused services; this also means
+
+    _instanceof:
+        App\Service\Learning\Validators\ValidatorInterface:
+            tags: ['app.learning.validator']
+
+    App\:
+        resource: '../src/*'
+        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+
+    App\Controller\:
+        resource: '../src/Controller'
+        tags: ['controller.service_arguments']
+
+    App\Controller\Exception:
+        public: true
+        arguments:
+            $debug: '%kernel.debug%'
+
+    App\Serializer\:
+        resource: '../src/Serializer'
+        tags: ['serializer.normalizer']
+
+    App\Service\Github:
+        arguments:
+            $githubUser: '%env(CONFIG_GITHUB_USER)%'
+            $githubRepo: '%env(CONFIG_GITHUB_REPO)%'
+            $githubBranch: '%env(CONFIG_GITHUB_BRANCH)%'
+            $committerName: 'Okty Builder'
+            $committerEmail: 'builder@okty.io'
+
+    App\Service\Cache:
+        arguments:
+            $adapter: '@cache.app'
+
+    League\OAuth2\Client\Provider\Github:
+        factory: [App\Factory\GithubOAuthFactory, 'createService']
+        arguments:
+            $clientId: '%env(GITHUB_APP_ID)%'
+            $clientSecret: '%env(GITHUB_APP_SECRET)%'
+
+    Omines\OAuth2\Client\Provider\Gitlab:
+        factory: [App\Factory\GitlabOAuthFactory, 'createService']
+        arguments:
+            $clientId: '%env(GITLAB_APP_ID)%'
+            $clientSecret: '%env(GITLAB_APP_SECRET)%'
+            $redirectUrl: '%env(GITLAB_REDIRECT_URL)%'
+
+    Gitlab\Client:
+        factory: [App\Factory\GitlabClientFactory, 'createService']
+
+    App\Service\Learning\ActionValidator:
+        arguments:
+            $validators: !tagged app.learning.validator
+
+    App\EventSubscriber\WebhookSubscriber:
+        arguments:
+            $webhookSecret: '%env(WEBHOOK_LEARNING_SECRET)%'
+            $webhookBranch: '%env(WEBHOOK_LEARNING_BRANCH)%'
+
+    App\Service\Hub:
+        arguments:
+            $hubUrl: 'https://hub.docker.com/api'
+            $pageSize: 15
+            $authUrl: 'https://auth.docker.io/token'
+
+    App\Command\LearningImportCommand:
+        arguments:
+            $learningImport: '@App\Service\Learning\Import'
+
+    App\EventListener\JWTCreatedListener:
+        arguments:
+            $userRepository: '@App\Repository\UserRepositoryInterface'
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }

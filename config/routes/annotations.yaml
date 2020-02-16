@@ -1,5 +1,5 @@
 api:
-    resource: ../../src/Controller/Api
+    resource: ../../src/Controller
     type: annotation
     prefix: v1
     defaults:

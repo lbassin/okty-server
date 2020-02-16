@@ -4,7 +4,10 @@ namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
 
-final class Home
+/**
+ * @author Laurent Bassin <laurent@bassin.info>
+ */
+class Home
 {
     public function handle(): Response
     {
