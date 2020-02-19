@@ -5,15 +5,24 @@ declare(strict_types=1);
 namespace App\Normalizer;
 
 use App\Entity\Container;
+use App\Entity\Volume\DockerVolume;
+use App\Entity\Volume\SharedVolume;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class ContainerNormalizer implements NormalizerInterface
 {
     private $portNormalizer;
+    private $sharedVolumeNormalizer;
+    private $dockerVolumeNormalizer;
 
-    public function __construct(PortNormalizer $portNormalizer)
-    {
+    public function __construct(
+        PortNormalizer $portNormalizer,
+        SharedVolumeNormalizer $sharedVolumeNormalizer,
+        DockerVolumeNormalizer $dockerVolumeNormalizer
+    ) {
         $this->portNormalizer = $portNormalizer;
+        $this->sharedVolumeNormalizer = $sharedVolumeNormalizer;
+        $this->dockerVolumeNormalizer = $dockerVolumeNormalizer;
     }
 
     public function supportsNormalization($data, $format = null): bool
@@ -28,6 +37,7 @@ class ContainerNormalizer implements NormalizerInterface
     {
         return [
             'ports' => $this->normalizePorts($container),
+            'volumes' => $this->normalizeVolumes($container),
         ];
     }
 
@@ -38,5 +48,24 @@ class ContainerNormalizer implements NormalizerInterface
         return array_map(static function ($port) use ($portNormalizer) {
             return $portNormalizer->normalize($port);
         }, $container->getPorts());
+    }
+
+    private function normalizeVolumes(Container $container): array
+    {
+        $sharedVolumeNormalizer = $this->sharedVolumeNormalizer;
+        $dockerVolumeNormalizer = $this->dockerVolumeNormalizer;
+
+        return array_map(static function ($volume) use ($sharedVolumeNormalizer, $dockerVolumeNormalizer) {
+            if ($volume instanceof SharedVolume) {
+                return $sharedVolumeNormalizer->normalize($volume);
+            }
+
+            if ($volume instanceof DockerVolume) {
+                return $dockerVolumeNormalizer->normalize($volume);
+            }
+
+            // TODO Add log
+            return [];
+        }, $container->getVolumes());
     }
 }

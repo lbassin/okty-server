@@ -16,4 +16,14 @@ class DockerVolume extends Volume
         $this->name = $name;
         $this->container = $container;
     }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getTarget(): string
+    {
+        return sprintf('/%s', ltrim($this->container, "/"));
+    }
 }

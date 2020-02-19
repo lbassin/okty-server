@@ -27,4 +27,9 @@ class Container
     {
         return $this->ports;
     }
+
+    public function getVolumes(): array
+    {
+        return $this->volumes;
+    }
 }

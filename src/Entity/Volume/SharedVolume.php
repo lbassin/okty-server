@@ -16,4 +16,14 @@ class SharedVolume extends Volume
         $this->host = $host;
         $this->container = $container;
     }
+
+    public function getSource(): string
+    {
+        return sprintf('./%s', ltrim($this->host, "./"));
+    }
+
+    public function getTarget(): string
+    {
+        return sprintf('/%s', ltrim($this->container, "/"));
+    }
 }
