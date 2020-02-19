@@ -22,4 +22,9 @@ class Container
         $this->environments = $environments;
         $this->volumes = $volumes;
     }
+
+    public function getPorts(): array
+    {
+        return $this->ports;
+    }
 }

@@ -14,7 +14,7 @@ class PortFactory
 
         $output = [];
         foreach ($ports as $port) {
-            $output[] = new Port((int) $port['host'], (int) $port['container'], $port['localOnly'] ?? true);
+            $output[] = new Port((int) $port['host'], (int) $port['container'], $port['local_only'] ?? true);
         }
 
         return $output;

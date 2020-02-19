@@ -21,8 +21,8 @@ class PortFactoryTest extends TestCase
         $request = $this->getRequestWithPorts([
             ['container' => 3306, 'host' => 80],
             ['container' => 443, 'host' => '443'],
-            ['container' => '8080', 'host' => '8080', 'localOnly' => true],
-            ['container' => '21', 'host' => 22, 'localOnly' => false],
+            ['container' => '8080', 'host' => '8080', 'local_only' => true],
+            ['container' => '21', 'host' => 22, 'local_only' => false],
         ]);
 
         $ports = (new PortFactory())->createAllFromRequest($request);
