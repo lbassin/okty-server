@@ -16,17 +16,20 @@ class ContainerFactory
     private $portFactory;
     private $environmentFactory;
     private $volumeFactory;
+    private $optionFactory;
 
     public function __construct(
         ImageFactory $imageFactory,
         PortFactory $portFactory,
         EnvironmentFactory $environmentFactory,
-        VolumeFactory $volumeFactory
+        VolumeFactory $volumeFactory,
+        OptionFactory $optionFactory
     ) {
         $this->portFactory = $portFactory;
         $this->environmentFactory = $environmentFactory;
         $this->volumeFactory = $volumeFactory;
         $this->imageFactory = $imageFactory;
+        $this->optionFactory = $optionFactory;
     }
 
     public function buildOneFromRequest(string $template, RequestArgs $args): Container
@@ -40,7 +43,8 @@ class ContainerFactory
             $this->imageFactory->create($template, $args->getVersion()),
             $this->portFactory->createAll($args->getPorts()),
             $this->environmentFactory->createAll($args->getEnvironments()),
-            $this->volumeFactory->createAll($args->getVolumes())
+            $this->volumeFactory->createAll($args->getVolumes()),
+            $this->optionFactory->createAll($args->getOptions())
         );
     }
 

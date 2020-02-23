@@ -32,11 +32,15 @@ final class Build
         $payload = new Json($request->getContent());
         $project = new Project($this->containerFactory->buildAllFromRequestPayload($payload));
 
+        $content = $this->serializer->serialize($project, 'yaml', ['yaml_inline' => 4]);
+
+        dd($content);
+
         return new JsonResponse(
-            $this->serializer->serialize($project, 'yaml', ['yaml_inline' => 4]),
+            ['content' => base64_encode($content)],
             Response::HTTP_OK,
             [],
-            true
+            false
         );
     }
 }

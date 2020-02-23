@@ -18,14 +18,17 @@ class Container
     private $environments;
     /** @var Volume[] */
     private $volumes;
+    /** @var Option[] $options */
+    private $options;
 
-    public function __construct(Id $id, Image $image, array $ports, array $environments, array $volumes)
+    public function __construct(Id $id, Image $image, array $ports, array $environments, array $volumes, array $options)
     {
         $this->id = $id;
         $this->image = $image;
         $this->ports = $ports;
         $this->environments = $environments;
         $this->volumes = $volumes;
+        $this->options = $options;
     }
 
     public function getId(): Id
@@ -51,5 +54,26 @@ class Container
     public function getEnvironments(): array
     {
         return $this->environments;
+    }
+
+    public function getCommand(): string
+    {
+        return $this->getOptionValue('command');
+    }
+
+    public function getWorkingDir(): string
+    {
+        return $this->getOptionValue('working_dir');
+    }
+
+    private function getOptionValue(string $name): string
+    {
+        foreach ($this->options as $option) {
+            if ($option->getName() === $name) {
+                return $option->getValue();
+            }
+        }
+
+        return '';
     }
 }

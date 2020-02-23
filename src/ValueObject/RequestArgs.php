@@ -11,6 +11,7 @@ class RequestArgs
     private $ports;
     private $environments;
     private $volumes;
+    private $options;
 
     public function __construct(array $args)
     {
@@ -19,6 +20,7 @@ class RequestArgs
         $this->ports = $args['ports'] ?? [];
         $this->environments = $args['environments'] ?? [];
         $this->volumes = $args['volumes'] ?? [];
+        $this->options = $args['options'] ?? [];
     }
 
     public function getId(): string
@@ -44,5 +46,10 @@ class RequestArgs
     public function getVolumes(): array
     {
         return $this->volumes;
+    }
+
+    public function getOptions(): array
+    {
+        return $this->options;
     }
 }

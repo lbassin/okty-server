@@ -48,6 +48,8 @@ class ContainerNormalizer implements NormalizerInterface
         $output[$imageKey] = (string) $container->getImage();
 
         $output += [
+            'command' => $container->getCommand(),
+            'working_dir' => $container->getWorkingDir(),
             'ports' => $this->normalizePorts($container),
             'volumes' => $this->normalizeVolumes($container),
             'environments' => $this->normalizeEnvironments($container),
