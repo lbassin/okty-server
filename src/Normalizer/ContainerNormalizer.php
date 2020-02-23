@@ -40,6 +40,7 @@ class ContainerNormalizer implements NormalizerInterface
     public function normalize($container, $format = null, array $context = []): array
     {
         return [
+            'image' => '',
             'ports' => $this->normalizePorts($container),
             'volumes' => $this->normalizeVolumes($container),
             'environments' => $this->normalizeEnvironments($container),

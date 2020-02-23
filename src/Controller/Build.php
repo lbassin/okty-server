@@ -37,7 +37,11 @@ final class Build
 
         dump($project);
 
-        $data = $this->serializer->serialize($project->getContainers(), 'yaml', ['yaml_inline' => 3]);
+        $data = $this->serializer->serialize(
+            $project,
+            'yaml',
+            ['yaml_inline' => 4]
+        );
 
         dd($data);
 

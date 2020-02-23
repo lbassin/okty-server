@@ -23,6 +23,11 @@ class Container
         $this->volumes = $volumes;
     }
 
+    public function getImage(): Image
+    {
+        return $this->image;
+    }
+
     public function getPorts(): array
     {
         return $this->ports;

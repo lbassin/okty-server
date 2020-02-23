@@ -6,5 +6,5 @@ namespace App\Entity;
 
 abstract class Image
 {
-
+    abstract public function __toString(): string;
 }

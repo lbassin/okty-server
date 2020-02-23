@@ -26,6 +26,21 @@ class Project
         }
     }
 
+    public function getVersion(): string
+    {
+        return $this->version;
+    }
+
+    public function getContainers(): array
+    {
+        return $this->containers;
+    }
+
+    public function getVolumes(): array
+    {
+        return $this->volumes;
+    }
+
     public function addContainer(Container $container): void
     {
         foreach ($container->getVolumes() as $volume) {
@@ -48,10 +63,4 @@ class Project
 
         $this->volumes[] = $newVolume;
     }
-
-    public function getContainers(): array
-    {
-        return $this->containers;
-    }
-
 }
