@@ -10,10 +10,8 @@ use LogicException;
 
 class VolumeFactory
 {
-    public function createAllFromRequest(array $request): array
+    public function createAll(array $volumes): array
     {
-        $volumes = $request['args']['volumes'] ?? [];
-
         return array_map(function ($volume) {
             if ($volume['type'] === 'shared') {
                 return new SharedVolume($volume['host'], $volume['container']);

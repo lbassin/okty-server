@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Entity\Project;
 use App\Factory\ContainerFactory;
 use App\ValueObject\Json;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -29,22 +30,13 @@ final class Build
     public function handle(Request $request): Response
     {
         $payload = new Json($request->getContent());
+        $project = new Project($this->containerFactory->buildAllFromRequestPayload($payload));
 
-        $project = new Project(
-            Project::DEFAULT_VERSION,
-            $this->containerFactory->buildAllFromRequestPayload($payload)
+        return new JsonResponse(
+            $this->serializer->serialize($project, 'yaml', ['yaml_inline' => 4]),
+            Response::HTTP_OK,
+            [],
+            true
         );
-
-        dump($project);
-
-        $data = $this->serializer->serialize(
-            $project,
-            'yaml',
-            ['yaml_inline' => 4]
-        );
-
-        dd($data);
-
-        return new Response('test');
     }
 }

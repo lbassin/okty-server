@@ -17,7 +17,7 @@ class Project
     /** @var DockerVolume[] $volumes */
     private $volumes = [];
 
-    public function __construct(string $version = self::DEFAULT_VERSION, array $containers = [])
+    public function __construct(array $containers = [], string $version = self::DEFAULT_VERSION)
     {
         $this->version = $version;
 

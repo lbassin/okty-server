@@ -11,7 +11,7 @@ class PortFactoryTest extends TestCase
     {
         $request = $this->getRequestWithPorts([]);
 
-        $ports = (new PortFactory())->createAllFromRequest($request);
+        $ports = (new PortFactory())->createAll($request);
 
         $this->assertEmpty($ports);
     }
@@ -25,7 +25,7 @@ class PortFactoryTest extends TestCase
             ['container' => '21', 'host' => 22, 'local_only' => false],
         ]);
 
-        $ports = (new PortFactory())->createAllFromRequest($request);
+        $ports = (new PortFactory())->createAll($request);
 
         $this->assertCount(4, $ports);
         $this->assertSame('127.0.0.1:80:3306', (string) $ports[0]);

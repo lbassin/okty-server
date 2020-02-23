@@ -13,7 +13,7 @@ class VolumeFactoryTest extends TestCase
     {
         $request = $this->getRequestWithVolumes([]);
 
-        $ports = (new VolumeFactory())->createAllFromRequest($request);
+        $ports = (new VolumeFactory())->createAll($request);
 
         $this->assertEmpty($ports);
     }
@@ -25,7 +25,7 @@ class VolumeFactoryTest extends TestCase
             ['type' => 'docker', 'name' => 'mysql-data', 'container' => '/var/db/data'],
         ]);
 
-        $volumes = (new VolumeFactory())->createAllFromRequest($request);
+        $volumes = (new VolumeFactory())->createAll($request);
 
         $this->assertCount(2, $volumes);
         $this->assertInstanceOf(SharedVolume::class, $volumes[0]);

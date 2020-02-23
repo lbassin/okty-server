@@ -8,10 +8,8 @@ use App\Entity\Port;
 
 class PortFactory
 {
-    public function createAllFromRequest(array $request): array
+    public function createAll(array $ports): array
     {
-        $ports = $request['args']['ports'] ?? [];
-
         $output = [];
         foreach ($ports as $port) {
             $output[] = new Port((int) $port['host'], (int) $port['container'], $port['local_only'] ?? true);

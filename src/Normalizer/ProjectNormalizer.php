@@ -41,7 +41,7 @@ class ProjectNormalizer implements NormalizerInterface
 
         /** @var Container $container */
         foreach ($project->getContainers() as $container) {
-            $containers[uniqid()] = $this->containerNormalizer->normalize($container);
+            $containers[(string) $container->getId()] = $this->containerNormalizer->normalize($container);
         }
 
         return $containers;

@@ -5,17 +5,15 @@ declare(strict_types=1);
 namespace App\Factory;
 
 use App\Entity\Image;
-use App\Entity\Image\Repository;
+use App\Entity\Image\RepositoryImage;
 
 class ImageFactory
 {
-    public function createAllFromRequest(array $request): Image
+    public function create(string $template, string $tag): Image
     {
-        $name = $request['template']; // Todo replace with getDockerImageFromTemplate($template)
-        $tag = $request['args']['version'] ?? 'latest';
-
+        // Todo add getDockerImageFromTemplate($template)
         // Todo check from template if a dockerfile is provided and use Image\Build
 
-        return new Repository($name, $tag);
+        return new RepositoryImage($template, $tag);
     }
 }

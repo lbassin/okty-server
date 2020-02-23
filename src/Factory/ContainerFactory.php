@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Factory;
 
 use App\Entity\Container;
+use App\ValueObject\Id;
 use App\ValueObject\Json;
+use App\ValueObject\RequestArgs;
+use InvalidArgumentException;
 
 class ContainerFactory
 {
@@ -26,21 +29,29 @@ class ContainerFactory
         $this->imageFactory = $imageFactory;
     }
 
-    public function buildOneFromRequest(array $request): Container
+    public function buildOneFromRequest(string $template, RequestArgs $args): Container
     {
         return new Container(
-            $this->imageFactory->createAllFromRequest($request),
-            $this->portFactory->createAllFromRequest($request),
-            $this->environmentFactory->createAllFromRequest($request),
-            $this->volumeFactory->createAllFromRequest($request)
+            new Id($args->getId()),
+            $this->imageFactory->create($template, $args->getVersion()),
+            $this->portFactory->createAll($args->getPorts()),
+            $this->environmentFactory->createAll($args->getEnvironments()),
+            $this->volumeFactory->createAll($args->getVolumes())
         );
     }
 
     public function buildAllFromRequestPayload(Json $payload): array
     {
         $containers = [];
-        foreach ($payload->getValue() as $containerData) {
-            $containers[] = $this->buildOneFromRequest($containerData);
+        foreach ($payload->getAsArray() as $containerData) {
+            if (empty($containerData['template'])) {
+                throw new InvalidArgumentException('A template is required to build a container');
+            }
+
+            $template = $containerData['template'];
+            $args = new RequestArgs($containerData['args'] ?? []);
+
+            $containers[] = $this->buildOneFromRequest($template, $args);
         }
 
         return $containers;

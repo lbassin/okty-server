@@ -6,7 +6,7 @@ namespace App\Entity\Image;
 
 use App\Entity\Image;
 
-class Repository extends Image
+class RepositoryImage extends Image
 {
     private $name;
     private $tag;

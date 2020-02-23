@@ -11,7 +11,7 @@ class EnvironmentFactoryTest extends TestCase
     {
         $request = $this->getRequestWithEnvs([]);
 
-        $envs = (new EnvironmentFactory())->createAllFromRequest($request);
+        $envs = (new EnvironmentFactory())->createAll($request);
 
         $this->assertEmpty($envs);
     }
@@ -23,7 +23,7 @@ class EnvironmentFactoryTest extends TestCase
             ['key' => 'user', 'value' => 'John'],
         ]);
 
-        $envs = (new EnvironmentFactory())->createAllFromRequest($request);
+        $envs = (new EnvironmentFactory())->createAll($request);
 
         $this->assertCount(2, $envs);
 

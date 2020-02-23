@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Normalizer;
 
 use App\Entity\Container;
+use App\Entity\Image\BuildImage;
 use App\Entity\Volume\DockerVolume;
 use App\Entity\Volume\SharedVolume;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -39,12 +40,20 @@ class ContainerNormalizer implements NormalizerInterface
      */
     public function normalize($container, $format = null, array $context = []): array
     {
-        return [
-            'image' => '',
+        $imageKey = 'image';
+        if ($container->getImage() instanceof BuildImage) {
+            $imageKey = 'build';
+        }
+
+        $output[$imageKey] = (string) $container->getImage();
+
+        $output += [
             'ports' => $this->normalizePorts($container),
             'volumes' => $this->normalizeVolumes($container),
             'environments' => $this->normalizeEnvironments($container),
         ];
+
+        return $output;
     }
 
     private function normalizePorts(Container $container): array

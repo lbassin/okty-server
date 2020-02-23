@@ -8,12 +8,9 @@ use App\Entity\Environment;
 
 class EnvironmentFactory
 {
-    public function createAllFromRequest(array $request): array
+    public function createAll(array $environments): array
     {
-        $environments = $request['args']['environments'] ?? [];
-
         $output = [];
-
         foreach ($environments as $env) {
             $output[] = new Environment($env['key'], $env['value']);
         }
