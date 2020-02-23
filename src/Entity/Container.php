@@ -32,4 +32,9 @@ class Container
     {
         return $this->volumes;
     }
+
+    public function getEnvironments(): array
+    {
+        return $this->environments;
+    }
 }

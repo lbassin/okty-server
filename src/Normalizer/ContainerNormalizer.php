@@ -14,15 +14,19 @@ class ContainerNormalizer implements NormalizerInterface
     private $portNormalizer;
     private $sharedVolumeNormalizer;
     private $dockerVolumeNormalizer;
+    private $environmentNormalizer;
 
     public function __construct(
         PortNormalizer $portNormalizer,
         SharedVolumeNormalizer $sharedVolumeNormalizer,
-        DockerVolumeNormalizer $dockerVolumeNormalizer
+        DockerVolumeNormalizer $dockerVolumeNormalizer,
+        EnvironmentNormalizer $environmentNormalizer
+
     ) {
         $this->portNormalizer = $portNormalizer;
         $this->sharedVolumeNormalizer = $sharedVolumeNormalizer;
         $this->dockerVolumeNormalizer = $dockerVolumeNormalizer;
+        $this->environmentNormalizer = $environmentNormalizer;
     }
 
     public function supportsNormalization($data, $format = null): bool
@@ -38,6 +42,7 @@ class ContainerNormalizer implements NormalizerInterface
         return [
             'ports' => $this->normalizePorts($container),
             'volumes' => $this->normalizeVolumes($container),
+            'environments' => $this->normalizeEnvironments($container),
         ];
     }
 
@@ -67,5 +72,14 @@ class ContainerNormalizer implements NormalizerInterface
             // TODO Add log
             return [];
         }, $container->getVolumes());
+    }
+
+    private function normalizeEnvironments(Container $container): array
+    {
+        $environmentNormalizer = $this->environmentNormalizer;
+
+        return array_map(static function ($environment) use ($environmentNormalizer) {
+            return $environmentNormalizer->normalize($environment);
+        }, $container->getEnvironments());
     }
 }

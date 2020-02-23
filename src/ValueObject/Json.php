@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\ValueObject;
 
-/**
- * @author Laurent Bassin <laurent@bassin.info>
- */
 class Json
 {
     private $value;

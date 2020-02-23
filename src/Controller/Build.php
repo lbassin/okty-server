@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Project;
 use App\Factory\ContainerFactory;
+use App\ValueObject\Json;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -26,17 +28,16 @@ final class Build
      */
     public function handle(Request $request): Response
     {
-        $payload = json_decode($request->getContent(), true);
+        $payload = new Json($request->getContent());
 
-        $containers = [];
-        foreach ($payload as $data) {
+        $project = new Project(
+            Project::DEFAULT_VERSION,
+            $this->containerFactory->buildAllFromRequestPayload($payload)
+        );
 
-            // TODO Assert template is provided
+        dump($project);
 
-            $containers[] = $this->containerFactory->buildFromRequest($data);
-        }
-
-        $data = $this->serializer->serialize($containers, 'yaml');
+        $data = $this->serializer->serialize($project->getContainers(), 'yaml', ['yaml_inline' => 3]);
 
         dd($data);
 

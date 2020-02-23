@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Factory;
 
 use App\Entity\Container;
+use App\ValueObject\Json;
 
 class ContainerFactory
 {
@@ -25,7 +26,7 @@ class ContainerFactory
         $this->imageFactory = $imageFactory;
     }
 
-    public function buildFromRequest(array $request): Container
+    public function buildOneFromRequest(array $request): Container
     {
         return new Container(
             $this->imageFactory->createAllFromRequest($request),
@@ -33,5 +34,15 @@ class ContainerFactory
             $this->environmentFactory->createAllFromRequest($request),
             $this->volumeFactory->createAllFromRequest($request)
         );
+    }
+
+    public function buildAllFromRequestPayload(Json $payload): array
+    {
+        $containers = [];
+        foreach ($payload->getValue() as $containerData) {
+            $containers[] = $this->buildOneFromRequest($containerData);
+        }
+
+        return $containers;
     }
 }
