@@ -31,6 +31,10 @@ class ContainerFactory
 
     public function buildOneFromRequest(string $template, RequestArgs $args): Container
     {
+        if (empty($template)) {
+            throw new InvalidArgumentException('A template is required to build a container');
+        }
+
         return new Container(
             new Id($args->getId()),
             $this->imageFactory->create($template, $args->getVersion()),
@@ -43,13 +47,9 @@ class ContainerFactory
     public function buildAllFromRequestPayload(Json $payload): array
     {
         $containers = [];
-        foreach ($payload->getAsArray() as $containerData) {
-            if (empty($containerData['template'])) {
-                throw new InvalidArgumentException('A template is required to build a container');
-            }
-
-            $template = $containerData['template'];
-            $args = new RequestArgs($containerData['args'] ?? []);
+        foreach ($payload->getAsArray() as $request) {
+            $template = $request['template'] ?? '';
+            $args = new RequestArgs($request['args'] ?? []);
 
             $containers[] = $this->buildOneFromRequest($template, $args);
         }
