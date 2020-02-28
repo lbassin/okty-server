@@ -7,14 +7,28 @@ cache:
 services:
     - docker
 
+env:
+    - DOCKER_COMPOSE_VERSION=1.8
+
 before_install:
-    - cp .env.dist .env
-    - echo $SONAR_TOKEN
+    - sudo rm /usr/local/bin/docker-compose
+    - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+    - chmod +x docker-compose
+    - sudo mv docker-compose /usr/local/bin
 
 install:
     - docker run -v $(pwd):/app -v $HOME/.composer/cache:/tmp composer:1.8 install
+    - docker-compose pull
 
-script: true
+before_script:
+    - docker-compose up -d
+
+script:
+    - docker-compose exec php ./bin/phpunit --testdox --coverage-text
+    - docker-compose exec php ./vendor/bin/behat -f progress -v
+
+after_script:
+    - docker-compose down -v
 
 deploy:
     -   provider: heroku

@@ -1,0 +1,13 @@
+default:
+    suites:
+        default:
+            contexts:
+                -   App\Behat\Context\FeatureContext:
+                        kernel: '@kernel'
+                        baseUri: 'http://nginx/'
+
+    extensions:
+        Behat\Symfony2Extension:
+            kernel:
+                bootstrap: features/bootstrap.php
+                class: App\Kernel

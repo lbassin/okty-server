@@ -11,6 +11,21 @@
             "ref": "d1753f9e2a669c464b2b0618af9b0123426b67b4"
         }
     },
+    "behat/symfony2-extension": {
+        "version": "2.1",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "2.1",
+            "ref": "af4f8fa93b1fee9e6f15d1e208ce743bb31cb2b2"
+        },
+        "files": [
+            "behat.yml.dist",
+            "features/bootstrap/FeatureContext.php",
+            "features/bootstrap/bootstrap.php",
+            "features/demo.feature"
+        ]
+    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {
