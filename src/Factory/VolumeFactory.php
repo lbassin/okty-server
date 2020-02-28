@@ -6,7 +6,7 @@ namespace App\Factory;
 
 use App\Entity\Volume\DockerVolume;
 use App\Entity\Volume\SharedVolume;
-use LogicException;
+use InvalidArgumentException;
 
 class VolumeFactory
 {
@@ -21,7 +21,7 @@ class VolumeFactory
                 return new DockerVolume($volume['name'], $volume['container']);
             }
 
-            throw new LogicException(sprintf('"%s" is not a valid volume type', $volume['type']));
+            throw new InvalidArgumentException(sprintf('"%s" is not a valid volume type', $volume['type']));
         }, $volumes);
     }
 }
