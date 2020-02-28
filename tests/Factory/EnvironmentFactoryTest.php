@@ -9,21 +9,17 @@ class EnvironmentFactoryTest extends TestCase
 {
     public function test_build_with_empty_data(): void
     {
-        $request = $this->getRequestWithEnvs([]);
-
-        $envs = (new EnvironmentFactory())->createAll($request);
+        $envs = (new EnvironmentFactory())->createAll([]);
 
         $this->assertEmpty($envs);
     }
 
     public function test_build_with_right_data(): void
     {
-        $request = $this->getRequestWithEnvs([
+        $envs = (new EnvironmentFactory())->createAll([
             ['key' => 'MYSQL_ROOT_PASSWORD', 'value' => 'root'],
             ['key' => 'user', 'value' => 'John'],
         ]);
-
-        $envs = (new EnvironmentFactory())->createAll($request);
 
         $this->assertCount(2, $envs);
 
@@ -32,15 +28,5 @@ class EnvironmentFactoryTest extends TestCase
 
         $this->assertSame('user', $envs[1]->getKey());
         $this->assertSame('John', $envs[1]->getValue());
-    }
-
-    private function getRequestWithEnvs(array $envs): array
-    {
-        return [
-            "template" => "test",
-            "args" => [
-                "environments" => $envs,
-            ],
-        ];
     }
 }

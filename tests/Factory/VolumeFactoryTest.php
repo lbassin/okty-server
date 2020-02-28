@@ -11,34 +11,29 @@ class VolumeFactoryTest extends TestCase
 {
     public function test_build_with_empty_data(): void
     {
-        $request = $this->getRequestWithVolumes([]);
-
-        $ports = (new VolumeFactory())->createAll($request);
+        $ports = (new VolumeFactory())->createAll([]);
 
         $this->assertEmpty($ports);
     }
 
     public function test_build_with_right_data(): void
     {
-        $request = $this->getRequestWithVolumes([
+        $volumes = (new VolumeFactory())->createAll([
             ['type' => 'shared', 'host' => './src', 'container' => '/app'],
             ['type' => 'docker', 'name' => 'mysql-data', 'container' => '/var/db/data'],
         ]);
-
-        $volumes = (new VolumeFactory())->createAll($request);
 
         $this->assertCount(2, $volumes);
         $this->assertInstanceOf(SharedVolume::class, $volumes[0]);
         $this->assertInstanceOf(DockerVolume::class, $volumes[1]);
     }
 
-    private function getRequestWithVolumes(array $ports): array
+    public function test_build_unknown_type(): void
     {
-        return [
-            "template" => "test",
-            "args" => [
-                "volumes" => $ports,
-            ],
-        ];
+        $this->expectException(InvalidArgumentException::class);
+
+        (new VolumeFactory())->createAll([
+            ['type' => 'test'],
+        ]);
     }
 }
