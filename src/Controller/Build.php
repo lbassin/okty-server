@@ -25,7 +25,7 @@ final class Build
     }
 
     /**
-     * @Route(path="/build", methods={"GET"})
+     * @Route(path="/build", methods={"POST"})
      */
     public function handle(Request $request): Response
     {
