@@ -7,4 +7,6 @@ Feature:
     []
     """
     When I send a POST request to "/build"
-    Then the response should be received
+    Then the version should be greater than 3.3
+    And the response should contain 0 containers
+    And the response should contain 0 volumes

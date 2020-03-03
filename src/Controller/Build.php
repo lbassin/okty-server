@@ -34,10 +34,11 @@ final class Build
 
         $content = $this->serializer->serialize($project, 'yaml', ['yaml_inline' => 4]);
 
-        dd($content);
-
         return new JsonResponse(
-            ['content' => base64_encode($content)],
+            [
+                'content' => base64_encode($content),
+                'preview' => $this->serializer->serialize($project, 'yaml', ['yaml_inline' => 0]),
+            ],
             Response::HTTP_OK,
             [],
             false
