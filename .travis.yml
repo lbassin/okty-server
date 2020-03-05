@@ -3,7 +3,7 @@ language: bash
 cache:
     directories:
         - $HOME/.composer/cache
-        - $HOME/.owasp
+        - /.owasp
 
 services:
     - docker

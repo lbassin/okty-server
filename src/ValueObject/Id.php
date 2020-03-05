@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\ValueObject;
 
+use App\Exception\ValueObject\InvalidIdException;
+
 class Id
 {
     private $name;
@@ -11,11 +13,11 @@ class Id
     public function __construct(string $name)
     {
         if (empty($name)) {
-            throw new \LogicException("Id cannot be empty");
+            throw new InvalidIdException($name);
         }
 
         if (!preg_match('/^([a-zA-Z0-9]-?)*[a-zA-Z0-9]+$/', $name)) {
-            throw new \LogicException("Id doesn't match the required format");
+            throw new InvalidIdException($name);
         }
 
         $this->name = $name;

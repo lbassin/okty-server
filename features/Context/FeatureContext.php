@@ -6,6 +6,7 @@ use App\Kernel;
 use App\ValueObject\Json;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
+use Exception;
 use InvalidArgumentException;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\Yaml\Yaml;
@@ -66,7 +67,7 @@ class FeatureContext implements Context
     public function theResponseShouldBeReceived()
     {
         if (empty($this->response)) {
-            throw new \Exception('There is no reponse');
+            throw new Exception('There is no reponse');
         }
     }
 
@@ -75,7 +76,7 @@ class FeatureContext implements Context
      */
     public function displayTheResponse()
     {
-        dump($this->response->getContent());
+        dump($this->response->getContent(false));
     }
 
     /**
@@ -86,12 +87,12 @@ class FeatureContext implements Context
         $content = $this->decodeResponse();
 
         if (!isset($content[$key])) {
-            throw new \Exception(sprintf('The key %s in not set in the response', $key));
+            throw new Exception(sprintf('The key %s in not set in the response', $key));
         }
 
         $countResponse = count($content[$key]);
         if ($countResponse !== $count) {
-            throw new \Exception(sprintf('%s contains %d values, %d expected', $key, $countResponse, $count));
+            throw new Exception(sprintf('%s contains %d values, %d expected', $key, $countResponse, $count));
         }
     }
 
@@ -103,13 +104,38 @@ class FeatureContext implements Context
         $content = $this->decodeResponse();
 
         if (!isset($content['version'])) {
-            throw new \Exception('No version set');
+            throw new Exception('No version set');
         }
 
         if ($content['version'] < $expectedVersion) {
-            throw new \Exception(
+            throw new Exception(
                 sprintf('Version is %s, expected greater than %s', $content['version'], $expectedVersion)
             );
         }
     }
+
+    /**
+     * @Then /^the HTTP code in the response should be (\d+)$/
+     */
+    public function theHTTPCodeInTheResponseShouldBe(int $code)
+    {
+        if ($code !== $this->response->getStatusCode()) {
+            throw new Exception(
+                sprintf('Response code is %d, %d expected', $this->response->getStatusCode(), $code)
+            );
+        }
+    }
+
+    /**
+     * @Given the error message should be :message
+     */
+    public function theErrorMessageShouldBe($message)
+    {
+        $content = json_decode($this->response->getContent(false), true);
+
+        if ($message != $content['message']) {
+            throw new Exception('Response message does not match');
+        }
+    }
+
 }
