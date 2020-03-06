@@ -8,9 +8,15 @@ use App\Entity\Image;
 
 class BuildImage extends Image
 {
+    private $path;
+
+    public function __construct(string $path)
+    {
+        $this->path = $path;
+    }
 
     public function __toString(): string
     {
-        return '';
+        return $this->path;
     }
 }

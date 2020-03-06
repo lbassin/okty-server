@@ -2,7 +2,7 @@
 
 namespace App\Controller\Api\Template;
 
-use App\Repository\TemplateRepositoryInterface;
+use App\Repository\ContainerRepositoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,7 +17,7 @@ class Show
     private $templateRepository;
     private $serializer;
 
-    public function __construct(TemplateRepositoryInterface $templateRepository, SerializerInterface $serializer)
+    public function __construct(ContainerRepositoryInterface $templateRepository, SerializerInterface $serializer)
     {
         $this->templateRepository = $templateRepository;
         $this->serializer = $serializer;

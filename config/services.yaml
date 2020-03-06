@@ -26,3 +26,10 @@ services:
     App\Event\Subscriber\ExceptionSubscriber:
         arguments:
             $handlers: !tagged app.exception.handler
+
+    App\Repository\TemplateRepository:
+        arguments:
+            $finder: '@Symfony\Component\Finder\Finder'
+            $configPath: '%kernel.project_dir%'
+
+    Symfony\Component\Finder\Finder: ~

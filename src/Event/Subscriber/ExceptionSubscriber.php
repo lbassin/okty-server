@@ -47,7 +47,7 @@ class ExceptionSubscriber implements EventSubscriberInterface
 
         $event->setResponse(
             new JsonResponse([
-                'message' => 'An unknown error occured',
+                'message' => 'Oups, something went wrong.',
             ])
         );
     }

@@ -11,7 +11,7 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 /**
  * @author Laurent Bassin <laurent@bassin.info>
  */
-class TemplateDevRepository implements TemplateRepositoryInterface
+class TemplateDevRepository implements ContainerRepositoryInterface
 {
     private $decoder;
     private $denormalizer;
