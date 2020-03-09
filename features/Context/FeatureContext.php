@@ -38,6 +38,17 @@ class FeatureContext implements Context
         return Yaml::parse($content);
     }
 
+    private function getContainerInResponse(string $name): array
+    {
+        $content = $this->decodeResponse();
+
+        if (!isset($content['containers'][$name])) {
+            throw new Exception(sprintf('Container %s not found', $name));
+        }
+
+        return $content['containers'][$name];
+    }
+
     /**
      * @Given /^I have the payload$/
      */
@@ -138,4 +149,33 @@ class FeatureContext implements Context
         }
     }
 
+    /**
+     * @Given /^the container (.*) should have the tag (.*)$/
+     */
+    public function theContainerShouldHaveTheTag($containerName, $expectedTag)
+    {
+        $container = $this->getContainerInResponse($containerName);
+
+        [, $tag] = explode(':', $container['image']);
+
+        if ($tag != $expectedTag) {
+            throw new Exception(sprintf('Tag %s excepted, got %s', $expectedTag, $tag));
+        }
+    }
+
+    /**
+     * @Given /^the container (.*) should have (.*) as build path$/
+     */
+    public function theContainerShouldHaveAsBuildPath($name, $path)
+    {
+        $container = $this->getContainerInResponse($name);
+
+        if ($container['build'] != $path) {
+            throw new Exception(sprintf('Build %s excepted, got %s', $path, $container['build']));
+        }
+
+        if (!empty($container['image'])) {
+            throw new Exception('A container from build file should not have an image specified');
+        }
+    }
 }

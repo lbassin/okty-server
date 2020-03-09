@@ -11,10 +11,15 @@ class RepositoryImage extends Image
     private $name;
     private $tag;
 
-    public function __construct(string $name, ?string $tag = 'latest')
+    public function __construct(string $name, ?string $tag)
     {
         $this->name = $name;
         $this->tag = $tag ?: 'latest';
+    }
+
+    public function setTag(string $tag): void
+    {
+        $this->tag = $tag;
     }
 
     public function __toString(): string

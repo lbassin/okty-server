@@ -16,7 +16,7 @@ class RequestArgs
     public function __construct(array $args)
     {
         $this->id = $args['id'];
-        $this->version = $args['version'] ?? 'latest';
+        $this->version = $args['version'] ?? null;
         $this->ports = $args['ports'] ?? [];
         $this->environments = $args['environments'] ?? [];
         $this->volumes = $args['volumes'] ?? [];

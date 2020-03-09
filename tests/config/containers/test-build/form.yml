@@ -1,0 +1,15 @@
+name: 'Test Build'
+logo: 'https://i.imgur.com/Gf111SP.png'
+config:
+  - id: general
+    label: General
+    fields:
+      - id: name
+        label: 'Container ID'
+        type: input
+        base: container_id
+        destination: id
+        value: test-build
+        validators:
+          required: true
+          regex: '^[a-z]+(-)?[a-z]+$'
