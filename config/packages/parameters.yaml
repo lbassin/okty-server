@@ -1,0 +1,2 @@
+parameters:
+    config_files_path: '%kernel.project_dir%/tests/config/containers'

@@ -52,7 +52,7 @@ Feature:
     """
     [
       {
-        "template": "test",
+        "template": "adminer",
         "args": {
           "id": "my-service"
         }
@@ -60,6 +60,7 @@ Feature:
     ]
     """
     When I send a POST request to "/build"
+    Then display the response
     Then the HTTP code in the response should be 200
     And the version should be greater than 3.3
     And the response should contain 1 containers

@@ -31,7 +31,7 @@ class TemplateRepository implements TemplateRepositoryInterface
 
     public function getOne(string $name): Template
     {
-        $path = sprintf('%s/var/config/containers/%s', rtrim($this->configPath, '/'), $name);
+        $path = sprintf('%s/%s', rtrim($this->configPath, '/'), $name);
 
         try {
             $files = $this->finder->in($path)->files()->name('manifest.yml');
