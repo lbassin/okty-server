@@ -55,7 +55,7 @@ class ContainerNormalizer implements NormalizerInterface
             'environments' => $this->normalizeEnvironments($container),
         ];
 
-        return $output;
+        return array_filter($output);
     }
 
     private function normalizePorts(Container $container): array

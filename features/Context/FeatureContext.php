@@ -52,7 +52,7 @@ class FeatureContext implements Context
     /**
      * @Given /^I have the payload$/
      */
-    public function iHaveThePayload(PyStringNode $payload)
+    public function iHaveThePayload(PyStringNode $payload): void
     {
         $this->payload = $payload->getRaw();
     }
@@ -75,7 +75,7 @@ class FeatureContext implements Context
     /**
      * @Then /^the response should be received$/
      */
-    public function theResponseShouldBeReceived()
+    public function theResponseShouldBeReceived(): void
     {
         if (empty($this->response)) {
             throw new Exception('There is no reponse');
@@ -85,7 +85,7 @@ class FeatureContext implements Context
     /**
      * @Then /^display the response$/
      */
-    public function displayTheResponse()
+    public function displayTheResponse(): void
     {
         dump($this->response->getContent(false));
     }
@@ -93,7 +93,7 @@ class FeatureContext implements Context
     /**
      * @Then /^the response should contain (\d+) (\w+)$/
      */
-    public function theResponseShouldContain(int $count, string $key)
+    public function theResponseShouldContain(int $count, string $key): void
     {
         $content = $this->decodeResponse();
 
@@ -110,7 +110,7 @@ class FeatureContext implements Context
     /**
      * @Then /^the version should be greater than (\d+(.\d+)?)$/
      */
-    public function theVersionShouldBeGreaterThan($expectedVersion)
+    public function theVersionShouldBeGreaterThan(string $expectedVersion): void
     {
         $content = $this->decodeResponse();
 
@@ -128,7 +128,7 @@ class FeatureContext implements Context
     /**
      * @Then /^the HTTP code in the response should be (\d+)$/
      */
-    public function theHTTPCodeInTheResponseShouldBe(int $code)
+    public function theHTTPCodeInTheResponseShouldBe(int $code): void
     {
         if ($code !== $this->response->getStatusCode()) {
             throw new Exception(
@@ -140,7 +140,7 @@ class FeatureContext implements Context
     /**
      * @Given the error message should be :message
      */
-    public function theErrorMessageShouldBe($message)
+    public function theErrorMessageShouldBe(string $message): void
     {
         $content = json_decode($this->response->getContent(false), true);
 
@@ -152,7 +152,7 @@ class FeatureContext implements Context
     /**
      * @Given /^the container (.*) should have the tag (.*)$/
      */
-    public function theContainerShouldHaveTheTag($containerName, $expectedTag)
+    public function theContainerShouldHaveTheTag(string $containerName, string $expectedTag): void
     {
         $container = $this->getContainerInResponse($containerName);
 
@@ -166,7 +166,7 @@ class FeatureContext implements Context
     /**
      * @Given /^the container (.*) should have (.*) as build path$/
      */
-    public function theContainerShouldHaveAsBuildPath($name, $path)
+    public function theContainerShouldHaveAsBuildPath(string $name, string $path): void
     {
         $container = $this->getContainerInResponse($name);
 
@@ -177,5 +177,129 @@ class FeatureContext implements Context
         if (!empty($container['image'])) {
             throw new Exception('A container from build file should not have an image specified');
         }
+    }
+
+    /**
+     * @Given /^the container (.*) should have (\d+) ports?$/
+     */
+    public function theContainerShouldHavePorts(string $name, int $portCount): void
+    {
+        $container = $this->getContainerInResponse($name);
+
+        if ($portCount === 0 && isset($container['ports'])) {
+            throw new Exception(sprintf(
+                'Container %s is not supposed to have ports entry, %s found',
+                $name,
+                count($container['ports'])
+            ));
+        }
+
+        if (count($container['ports'] ?? []) !== $portCount) {
+            throw new Exception(sprintf(
+                'Container %s should have %s ports, %s found',
+                $name,
+                count($container['ports']),
+                $portCount
+            ));
+        }
+    }
+
+    /**
+     * @Given /^the container (.*) should have his port (\d+) mapped to the (\d+) of the host$/
+     */
+    public function theContainerHavePortMappedToHost(string $name, int $expectedContainer, int $expectedHost): void
+    {
+        $container = $this->getContainerInResponse($name);
+
+        foreach ($container['ports'] as $port) {
+            $details = explode(':', $port);
+
+            $responseIp = '';
+            [$responseHost, $responseContainer] = $details;
+            if (count($details) === 3) {
+                [$responseIp, $responseHost, $responseContainer] = $details;
+            }
+
+            if ($responseContainer != $expectedContainer) {
+                continue;
+            }
+
+            if ($responseHost != $expectedHost) {
+                throw new Exception(sprintf(
+                    'Port %d is supposed to be map to %d, got %d',
+                    $expectedContainer,
+                    $expectedHost,
+                    $responseHost
+                ));
+            }
+
+            return;
+        }
+
+        throw new Exception(sprintf('No mapping for port %s found', $expectedContainer));
+    }
+
+    /**
+     * @Given /^the container (.*) should allows local traffic only on the host port (\d+)$/
+     */
+    public function theContainerShouldAllowsLocalTrafficOnlyOnTheHostPort(string $name, int $expectedHostPort): void
+    {
+        $container = $this->getContainerInResponse($name);
+
+        foreach ($container['ports'] as $port) {
+            $details = explode(':', $port);
+
+            $responseIp = '';
+            [$responseHost, $responseContainer] = $details;
+            if (count($details) === 3) {
+                [$responseIp, $responseHost, $responseContainer] = $details;
+            }
+
+            if ($expectedHostPort != $responseHost) {
+                continue;
+            }
+
+            if ($responseIp === '127.0.0.1') {
+                return;
+            }
+        }
+
+        throw new Exception(sprintf(
+            'Container %s should allows only local traffic on the host port %d',
+            $name,
+            $expectedHostPort
+        ));
+    }
+
+    /**
+     * @Given /^the container (.*) should allows all traffic on the host port (\d+)$/
+     */
+    public function theContainerShouldAllowsAllTrafficOnTheHostPort(string $name, int $expectedHostPort): void
+    {
+        $container = $this->getContainerInResponse($name);
+
+        foreach ($container['ports'] as $port) {
+            $details = explode(':', $port);
+
+            $responseIp = '';
+            [$responseHost, $responseContainer] = $details;
+            if (count($details) === 3) {
+                [$responseIp, $responseHost, $responseContainer] = $details;
+            }
+
+            if ($expectedHostPort != $responseHost) {
+                continue;
+            }
+
+            if (count($details) === 2 && $responseIp === '') {
+                return;
+            }
+        }
+
+        throw new Exception(sprintf(
+            'Container %s should allows all traffic on the host port %d',
+            $name,
+            $expectedHostPort
+        ));
     }
 }
