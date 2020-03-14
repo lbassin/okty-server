@@ -302,4 +302,50 @@ class FeatureContext implements Context
             $expectedHostPort
         ));
     }
+
+    /**
+     * @Given /^the container (.+) should have (\d+) env$/
+     */
+    public function theContainerShouldHaveEnv(string $name, int $expectedEnvCount): void
+    {
+        $container = $this->getContainerInResponse($name);
+
+        $envCount = count($container['environments'] ?? []);
+        if ($envCount !== $expectedEnvCount) {
+            throw new Exception(sprintf(
+                'Container %s was excepted to have %d env, got %s',
+                $name,
+                $expectedEnvCount,
+                $envCount
+            ));
+        }
+
+    }
+
+    /**
+     * @Given /^the container (.+) should have the value set to "([^"]*)" for the env "([^"]*)"$/
+     */
+    public function theContainerShouldHaveTheValueSetToForTheEnv(string $name, string $value, string $key): void
+    {
+        $container = $this->getContainerInResponse($name);
+
+        if (!isset($container['environments'][$key])) {
+            throw new Exception(sprintf(
+                'Container %s does not have env with key %s',
+                $name,
+                $key
+            ));
+        }
+
+        $containerValue = $container['environments'][$key];
+        if ($containerValue !== $value) {
+            throw new Exception(sprintf(
+                'Container %s is expected to have %s for %s, got %s',
+                $name,
+                $value,
+                $key,
+                $containerValue
+            ));
+        }
+    }
 }

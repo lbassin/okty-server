@@ -90,8 +90,10 @@ class ContainerNormalizer implements NormalizerInterface
     {
         $environmentNormalizer = $this->environmentNormalizer;
 
-        return array_map(static function ($environment) use ($environmentNormalizer) {
+        $environments = array_map(static function ($environment) use ($environmentNormalizer) {
             return $environmentNormalizer->normalize($environment);
         }, $container->getEnvironments());
+
+        return array_merge(...$environments);
     }
 }

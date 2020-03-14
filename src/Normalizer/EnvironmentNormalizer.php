@@ -15,8 +15,8 @@ class EnvironmentNormalizer implements NormalizerInterface
     }
 
     /** @var $environment Environment */
-    public function normalize($environment, $format = null, array $context = []): string
+    public function normalize($environment, $format = null, array $context = []): array
     {
-        return sprintf('%s=%s', $environment->getKey(), $environment->getValue());
+        return [$environment->getKey() => $environment->getValue()];
     }
 }

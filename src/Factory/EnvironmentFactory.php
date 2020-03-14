@@ -12,7 +12,7 @@ class EnvironmentFactory
     {
         $output = [];
         foreach ($environments as $env) {
-            $output[] = new Environment($env['key'], $env['value']);
+            $output[] = new Environment((string) $env['key'], (string) $env['value']);
         }
 
         return $output;
