@@ -43,7 +43,7 @@ class FeatureContext implements Context
         $content = $this->decodeResponse();
 
         if (!isset($content['containers'][$name])) {
-            throw new Exception(sprintf('Container %s not found', $name));
+            throw new \RuntimeException(sprintf('Container %s not found', $name));
         }
 
         return $content['containers'][$name];
@@ -347,5 +347,83 @@ class FeatureContext implements Context
                 $containerValue
             ));
         }
+    }
+
+    /**
+     * @Given /^the container (.+) should have (\d+) volumes$/
+     */
+    public function theContainerShouldHaveVolumes(string $name, int $expectedVolumeCount): void
+    {
+        $container = $this->getContainerInResponse($name);
+
+        $volumeCount = count($container['volumes'] ?? []);
+        if ($volumeCount !== $expectedVolumeCount) {
+            throw new Exception(sprintf(
+                'Container %s should have %d volumes, found %d',
+                $name,
+                $expectedVolumeCount,
+                $volumeCount
+            ));
+        }
+    }
+
+    /**
+     * @Given /^the container (.+) should have the folder "(.+)" bound to the folder "(.+)" on the host$/
+     */
+    public function theContainerFolderShouldBeBoundToHost(string $name, string $containerPath, string $hostPath): void
+    {
+        $container = $this->getContainerInResponse($name);
+
+        foreach ($container['volumes'] as $volume) {
+            if (is_array($volume)) {
+                continue;
+            }
+
+            [$hostInResponse, $containerInResponse] = explode(':', $volume);
+
+            if ($hostInResponse !== $hostPath) {
+                continue;
+            }
+
+            if ($containerInResponse === $containerPath) {
+                return;
+            }
+        }
+
+        throw new Exception(sprintf(
+            'Container %s should have his folder %s bound to the host folder %s',
+            $name,
+            $containerPath,
+            $hostPath ?? ''
+        ));
+    }
+
+    /**
+     * @Given /^the container (.+) should have the folder "(.+)" bound to the volume "(.+)"$/
+     */
+    public function theContainerFolderBoundToVolume(string $name, string $containerPath, string $volumeName): void
+    {
+        $container = $this->getContainerInResponse($name);
+
+        foreach ($container['volumes'] as $volume) {
+            if (!is_array($volume)) {
+                continue;
+            }
+
+            if ($volume['source'] !== $volumeName) {
+                continue;
+            }
+
+            if ($volume['target'] === $containerPath) {
+                return;
+            }
+        }
+
+        throw new Exception(sprintf(
+            'Container %s should have his folder %s bound to the volume %s',
+            $name,
+            $containerPath,
+            $volumeName
+        ));
     }
 }

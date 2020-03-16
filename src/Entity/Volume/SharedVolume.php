@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity\Volume;
 
 use App\Entity\Volume;
+use App\Exception\ValueObject\EmptyVolumePathInContainerException;
 
 class SharedVolume extends Volume
 {
@@ -13,7 +14,11 @@ class SharedVolume extends Volume
 
     public function __construct(string $host, string $container)
     {
-        $this->host = $host;
+        if (empty($container)) {
+            throw new EmptyVolumePathInContainerException($container);
+        }
+
+        $this->host = './'.ltrim($host, './');
         $this->container = $container;
     }
 

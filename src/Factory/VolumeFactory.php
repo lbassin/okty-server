@@ -14,11 +14,11 @@ class VolumeFactory
     {
         return array_map(function ($volume) {
             if ($volume['type'] === 'shared') {
-                return new SharedVolume($volume['host'], $volume['container']);
+                return new SharedVolume($volume['host'] ?? '', $volume['container'] ?? '');
             }
 
             if ($volume['type'] === 'docker') {
-                return new DockerVolume($volume['name'], $volume['container']);
+                return new DockerVolume($volume['name'] ?? '', $volume['container'] ?? '');
             }
 
             throw new InvalidArgumentException(sprintf('"%s" is not a valid volume type', $volume['type']));
